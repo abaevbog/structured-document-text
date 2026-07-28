@@ -17,6 +17,8 @@ const sameStyle = (a, b) =>
 	!!a.sup === !!b.sup &&
 	!!a.monospace === !!b.monospace;
 
+const isDashPunctuation = text => /^\p{Dash_Punctuation}+$/u.test(text);
+
 function styleFromChar(ch) {
 	const s = {};
 	if (ch.bold) s.bold = true;
@@ -266,7 +268,12 @@ export function charsToTextNodes(pageIndex, chars) {
 
 		// Normal character
 		const hasSpace = !!ch.spaceAfter;
-		const addBreakSpace = ch.lineBreakAfter && !isLast;
+		// A line break is layout, not whitespace. Insert a synthetic space to
+		// rejoin ordinary words, but not after preserved dash punctuation.
+		// An explicit source space is still retained through `spaceAfter`.
+		const dashHasLeadingSpace = isDashPunctuation(ch.c) && !!chars[i - 1]?.spaceAfter;
+		const addBreakSpace = ch.lineBreakAfter && !isLast
+			&& (!isDashPunctuation(ch.c) || dashHasLeadingSpace);
 		const charLen = ch.c.length; // UTF-16 length for cluster support
 
 		// Add to text (includes spaces)
