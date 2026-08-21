@@ -4,15 +4,25 @@ export function exportOutline(structure) {
 	function normalizeItem(item) {
 		if (!item || typeof item !== 'object') return null;
 		if (typeof item.title !== 'string' || !item.title) return null;
-		if (!Array.isArray(item.ref) || !item.ref.length) return null;
 
 		const children = Array.isArray(item.children)
 			? item.children.map(normalizeItem).filter(Boolean)
 			: [];
 		const normalized = {
 			title: item.title,
-			startRef: item.ref.join('.'),
 		};
+		if (Array.isArray(item.ref) && item.ref.length) {
+			normalized.startRef = item.ref.join('.');
+		}
+		if (typeof item.target?.url === 'string') {
+			normalized.url = item.target.url;
+		}
+		if (item.target?.position && typeof item.target.position === 'object') {
+			normalized.position = item.target.position;
+		}
+		if (item.source === 'native' || item.source === 'detected') {
+			normalized.source = item.source;
+		}
 		if (children.length) {
 			normalized.children = children;
 		}

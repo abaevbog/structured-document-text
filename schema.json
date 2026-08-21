@@ -88,7 +88,7 @@
       "properties": {
         "outline": {
           "type": "array",
-          "description": "Document outline (table of contents).",
+          "description": "Document outline (table of contents). Native and detected entries can be mixed: the native outline is preserved, but enriched with detected entries where it falls short.",
           "items": {
             "$ref": "#/$defs/OutlineItem"
           }
@@ -923,6 +923,11 @@
         },
         "target": {
           "$ref": "#/$defs/Target"
+        },
+        "source": {
+          "type": "string",
+          "enum": ["native", "detected"],
+          "description": "Where the entry came from: \"native\" for an entry authored in the source document (PDF outline, EPUB nav), \"detected\" for an entry inferred from the content. Absent means \"detected\"."
         },
         "children": {
           "type": "array",

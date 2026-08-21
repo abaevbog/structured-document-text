@@ -67,7 +67,7 @@ export interface StructuredDocumentText {
    */
   catalog: {
     /**
-     * Document outline (table of contents).
+     * Document outline (table of contents). Native and detected entries can be mixed: the native outline is preserved, but enriched with detected entries where it falls short.
      */
     outline: OutlineItem[];
     /**
@@ -215,6 +215,10 @@ export interface OutlineItem {
   title: string;
   ref?: RefPath;
   target?: Target;
+  /**
+   * Where the entry came from: "native" for an entry authored in the source document (PDF outline, EPUB nav), "detected" for an entry inferred from the content. Absent means "detected".
+   */
+  source?: "native" | "detected";
   children?: OutlineItem[];
 }
 /**
