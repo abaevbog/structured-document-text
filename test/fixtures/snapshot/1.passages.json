@@ -1,0 +1,21 @@
+{
+  "digest": "d8380d00b6c2b614",
+  "passages": [
+    {
+      "text": "First paragraph with bold and italic text.\n\nSome content in section one.\nItem one\nItem two\nItem three\n\nContent with a link.\n\nDeeper content.\nA quoted passage.\nHeader 1\nHeader 2\nCell 1\nCell 2\n\nThis should be excluded from outline.\nCode block\nwith preserved whitespace\n\nCafé lattés are nice.\nViet Nam: Hṍ Chí Minh\nKorean: 한글\nNormal text, café is NFC but café is NFD, then more normal.\nEspañol and Swedish: ångström\nÀB́ĈD̃Ë\nNFC: café\nNFD: café",
+      "embedText": "Main Title\n\nFirst paragraph with bold and italic text.\n\nMain Title > Section One\n\nSome content in section one.\nItem one\nItem two\nItem three\n\nMain Title > Section Two\n\nContent with a link.\n\nMain Title > Section Two > Subsection\n\nDeeper content.\nA quoted passage.\nHeader 1\nHeader 2\nCell 1\nCell 2\n\nMain Title > Navigation Heading\n\nThis should be excluded from outline.\nCode block\nwith preserved whitespace\n\nMain Title > NFC Stress Tests\n\nCafé lattés are nice.\nViet Nam: Hṍ Chí Minh\nKorean: 한글\nNormal text, café is NFC but café is NFD, then more normal.\nEspañol and Swedish: ångström\nÀB́ĈD̃Ë\nNFC: café\nNFD: café",
+      "size": 624,
+      "outlinePath": "Main Title",
+      "startBlock": 1,
+      "endBlock": 21,
+      "startOffset": 0,
+      "endOffset": 19,
+      "pageIndex": 0,
+      "pageLabel": null,
+      "position": null,
+      "sectionPart": 1,
+      "sectionParts": 1,
+      "auxiliary": false
+    }
+  ]
+}

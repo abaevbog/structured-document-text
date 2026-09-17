@@ -1,0 +1,317 @@
+{
+  "digest": "3918846265e9b90e",
+  "passages": [
+    {
+      "text": "Abstract - The proclamation of the fourth industrial revolution shocked the industrial world. Suddenly almost every modern enterprise aspired to become a proper \"Industry 4.0\" factory. In the industrial environment, a curious feeling of uncertainty grew. In order to overcome the negative perception, proper means, which establish the implementation grade and the needs for a specific Industry 4.0 measure of enterprises, have to be identified and scrutinised. The root cause can be explained quite straightforwardly: improvements in an Industry 4.0 perspective can be achieved if and only if the measurability is provided. This work analyses the state of art of existing Industry 4.0 assessment and maturity stage models. Results of this research will be used in further research to develop a specific assessment model for small and medium-sized enterprises in order to assess their progress in implementing Industry 4.0.\nKeywords – assessment models, industry 4.0, maturity stage models, systematic literature review.",
+      "embedText": "Abstract - The proclamation of the fourth industrial revolution shocked the industrial world. Suddenly almost every modern enterprise aspired to become a proper \"Industry 4.0\" factory. In the industrial environment, a curious feeling of uncertainty grew. In order to overcome the negative perception, proper means, which establish the implementation grade and the needs for a specific Industry 4.0 measure of enterprises, have to be identified and scrutinised. The root cause can be explained quite straightforwardly: improvements in an Industry 4.0 perspective can be achieved if and only if the measurability is provided. This work analyses the state of art of existing Industry 4.0 assessment and maturity stage models. Results of this research will be used in further research to develop a specific assessment model for small and medium-sized enterprises in order to assess their progress in implementing Industry 4.0.\nKeywords – assessment models, industry 4.0, maturity stage models, systematic literature review.",
+      "size": 1020,
+      "outlinePath": "",
+      "startBlock": 0,
+      "endBlock": 1,
+      "startOffset": 0,
+      "endOffset": 96,
+      "pageIndex": 0,
+      "pageLabel": "1",
+      "position": {
+        "pageIndex": 0,
+        "rects": [
+          [
+            53.86,
+            474.07,
+            287.97,
+            648.13
+          ]
+        ]
+      },
+      "sectionPart": 1,
+      "sectionParts": 1,
+      "auxiliary": false
+    },
+    {
+      "text": "At first glance, Industry 4.0 was not indeed perceived as an opportunity, but more as a challenge. Only a few years later, research institutions were able to render vital assistance through the publication of guidelines, which for the first time covered the topic associated with the concrete realisation of the concept. One of the remarkable works, titled \"Guideline Industry 4.0- Guiding principles for the implementation of Industry 4.0 in small and medium-sized businesses\", which was presented in the VDMA forum, offered an \"Industry 4.0-toolbox\" that should provide first guidance in the challenging reorientation process [1].\nThe presented solution-approach touches mainly two dimensions, which are represented by the (i) productsphere and the (ii) production-sphere. In particular, the combination of a wide range of harmonising technologies connected to both realms should allow the enterprises to turn the industrial redirection to good account. The supplied toolbox was perceived as an acceptable starting base, which was characterised by the exhibition of conspicuous gaps. This fact induced researchers, to exploit the elaborated directives as a foundation for the development of further assessment and maturity stage models, which are the object of study of this work. By means of a systematic literature review, 60 papers treating\nthe topic of Industry 4.0 assessment, as well as maturity stage models, are identified.\nThe entire record collection is examined by dint of a literature review that follows a qualitative and quantitative approach. Especially the last proceeding enables through five evaluation criteria, the determination of four models, whose structure, functionalities, as well as practical deployment, are scrutinised with the intent of establishing a solid fundament for the advancement of Industry 4.0 assessment tools that are still experiencing their infancy.",
+      "embedText": "I. INTRODUCTION\n\nAt first glance, Industry 4.0 was not indeed perceived as an opportunity, but more as a challenge. Only a few years later, research institutions were able to render vital assistance through the publication of guidelines, which for the first time covered the topic associated with the concrete realisation of the concept. One of the remarkable works, titled \"Guideline Industry 4.0- Guiding principles for the implementation of Industry 4.0 in small and medium-sized businesses\", which was presented in the VDMA forum, offered an \"Industry 4.0-toolbox\" that should provide first guidance in the challenging reorientation process [1].\nThe presented solution-approach touches mainly two dimensions, which are represented by the (i) productsphere and the (ii) production-sphere. In particular, the combination of a wide range of harmonising technologies connected to both realms should allow the enterprises to turn the industrial redirection to good account. The supplied toolbox was perceived as an acceptable starting base, which was characterised by the exhibition of conspicuous gaps. This fact induced researchers, to exploit the elaborated directives as a foundation for the development of further assessment and maturity stage models, which are the object of study of this work. By means of a systematic literature review, 60 papers treating\nthe topic of Industry 4.0 assessment, as well as maturity stage models, are identified.\nThe entire record collection is examined by dint of a literature review that follows a qualitative and quantitative approach. Especially the last proceeding enables through five evaluation criteria, the determination of four models, whose structure, functionalities, as well as practical deployment, are scrutinised with the intent of establishing a solid fundament for the advancement of Industry 4.0 assessment tools that are still experiencing their infancy.",
+      "size": 1915,
+      "outlinePath": "I. INTRODUCTION",
+      "startBlock": 3,
+      "endBlock": 6,
+      "startOffset": 0,
+      "endOffset": 461,
+      "pageIndex": 0,
+      "pageLabel": "1",
+      "position": {
+        "pageIndex": 0,
+        "rects": [
+          [
+            53.86,
+            261.77,
+            287.95,
+            397
+          ]
+        ]
+      },
+      "sectionPart": 1,
+      "sectionParts": 1,
+      "auxiliary": false
+    },
+    {
+      "text": "The initiation of the literature review is represented by the deployment of the research database Scopus. By means of the research query ((TITLE-ABS-KEY (\"maturity model\") OR TITLE-ABS-KEY (\"assessment\")) AND TITLE-ABS-KEY (\"industry 4.0\")), an output of 60 search hits was obtained, which are analysed according to a bipartite literature review approach, which is graphically summarized in figure 1.\nCommencing with the first execution passage, which is severely imprinted by a qualitative nature, the research base is categorised according to the typology of a model, which is epitomised by either (i) assessment models or (ii) maturity stage models. For each typology of models, two categories are established. The mentioned categories are on the one hand represented by \"general\", in case the model does not exhibit a particular focal point, and on the",
+      "embedText": "II. LITERATURE REVIEW\n\nThe initiation of the literature review is represented by the deployment of the research database Scopus. By means of the research query ((TITLE-ABS-KEY (\"maturity model\") OR TITLE-ABS-KEY (\"assessment\")) AND TITLE-ABS-KEY (\"industry 4.0\")), an output of 60 search hits was obtained, which are analysed according to a bipartite literature review approach, which is graphically summarized in figure 1.\nCommencing with the first execution passage, which is severely imprinted by a qualitative nature, the research base is categorised according to the typology of a model, which is epitomised by either (i) assessment models or (ii) maturity stage models. For each typology of models, two categories are established. The mentioned categories are on the one hand represented by \"general\", in case the model does not exhibit a particular focal point, and on the",
+      "size": 880,
+      "outlinePath": "II. LITERATURE REVIEW",
+      "startBlock": 8,
+      "endBlock": 11,
+      "startOffset": 0,
+      "endOffset": 455,
+      "pageIndex": 0,
+      "pageLabel": "1",
+      "position": {
+        "pageIndex": 0,
+        "rects": [
+          [
+            307.34,
+            411.14,
+            541.49,
+            500.41
+          ]
+        ]
+      },
+      "sectionPart": 1,
+      "sectionParts": 1,
+      "auxiliary": false
+    },
+    {
+      "text": "M. Unterhofer1, E. Rauch1, Dominik T. Matt1,2, S. Santiteerakul3\n1Industrial Engineering and Automation, Faculty of Science and Technology, Free University of Bozen-Bolzano, Italy\n2Innovation Engineering Center, Fraunhofer Italia Research s.c.a.r.l., Bolzano, Italy\n3Department of Industrial Engineering of Industrial Engineering, Faculty of Engineering, Chiang Mai University, Thailand (erwin.rauch@unibz.it)\nother hand by \"focused\", in case the model is concerned with a peculiar industrial thematic area. To ensure the comprehensiveness of the bipartite review approach, a quantitative examination based on five criteria is executed. In particular, (1) the thematical compliance, (2) the theoretical foundation, (3) the structure accuracy, (4) the intuitive operability as well as (5) the practice orientation, are of interest. To each of the mentioned judging criteria a value entailed in a range, which starts with zero and ends with four, is ascribed. Provided the fact that each criterion is equipped with the same grade of relevance, the goodness of the evaluated model is established by computing the average of the values.\nThe result of the executed literature review is presented in tabular form in the section dedicated to the annexes at the end of the work. The four highlighted records, which possess the highest score, are the object of study of the subsequent paragraph denominated as results..",
+      "embedText": "II. LITERATURE REVIEW > Investigation of Assessment and Maturity Stage Models for Assessing the Implementation of Industry 4.0\n\nM. Unterhofer1, E. Rauch1, Dominik T. Matt1,2, S. Santiteerakul3\n1Industrial Engineering and Automation, Faculty of Science and Technology, Free University of Bozen-Bolzano, Italy\n2Innovation Engineering Center, Fraunhofer Italia Research s.c.a.r.l., Bolzano, Italy\n3Department of Industrial Engineering of Industrial Engineering, Faculty of Engineering, Chiang Mai University, Thailand (erwin.rauch@unibz.it)\nother hand by \"focused\", in case the model is concerned with a peculiar industrial thematic area. To ensure the comprehensiveness of the bipartite review approach, a quantitative examination based on five criteria is executed. In particular, (1) the thematical compliance, (2) the theoretical foundation, (3) the structure accuracy, (4) the intuitive operability as well as (5) the practice orientation, are of interest. To each of the mentioned judging criteria a value entailed in a range, which starts with zero and ends with four, is ascribed. Provided the fact that each criterion is equipped with the same grade of relevance, the goodness of the evaluated model is established by computing the average of the values.\nThe result of the executed literature review is presented in tabular form in the section dedicated to the annexes at the end of the work. The four highlighted records, which possess the highest score, are the object of study of the subsequent paragraph denominated as results..",
+      "size": 1543,
+      "outlinePath": "II. LITERATURE REVIEW > Investigation of Assessment and Maturity Stage Models for Assessing the Implementation of Industry 4.0",
+      "startBlock": 13,
+      "endBlock": 17,
+      "startOffset": 0,
+      "endOffset": 277,
+      "pageIndex": 0,
+      "pageLabel": "1",
+      "position": {
+        "pageIndex": 0,
+        "rects": [
+          [
+            151.75,
+            720.34,
+            462.62,
+            732.82
+          ]
+        ]
+      },
+      "sectionPart": 1,
+      "sectionParts": 1,
+      "auxiliary": false
+    },
+    {
+      "text": "The initial section emphasises the analysis of two samples of assessment models, whose focus of attention regarding Industry 4.0 is profoundly diverse.\nThe scattered nature of \"Development of an assessment model for Industry 4.0: Industry 4.0-MM\" can be immediately recognised in the introductory phase, in which the leading role of the German economy within the novel revolutionary movement is treated [2]. The prefatory section is immediately followed by systematic literature research; whose aim consists of the generation of a maturity model database. Seven frameworks and their related characteristics, which are classified into a model name, research context, maturity levels and finally dimensions, are presented in tabular form.\nThe ranking of the already implementable models is grounded in six assessment criteria, which are represented by fitness for purpose, completeness of aspects, the granularity of dimensions, the definition of measurement attributes, description of assessment method as well objectivity of assessment method.\nTo provide a complete review, the evaluations are clarified and reinforced through brief statements. The conclusion of the extensive review process allows to pass over to the actual development of an Industry 4.0 assessment model.\nIn order to be on the safe side, this work opts for the ISO/IEC 15504 - also termed as Software Process Improvement and Capability dEtermination (SPICE) as a base for structuring the maturity model. In this light, the framework relies on two separate dimensions, which are respectively the capability, which is a broader sense entails the evolution stages, and the aspect dimension, which is an inseparable bundle composed of infrastructure, information systems, data organisation and integration. Provided the fact that several key terms offer a clear-cut idea of their peculiar significance, exclusively\nnotions that do not exhibit absolute transparency are specified. The aspect dimension is characterised by the inclusion of asset management, data governance, process transformation, organisational alignment as well as application management. While the application management focuses on the harmonisation of the assets belonging to the enterprise, whose uppermost objective is constituted by the maximisation of the industrial efficiency, the organisational alignment puts the attention on the generation of a technological and organisational balance.",
+      "embedText": "A. Existing Assessment Models for Industry 4.0\n\nThe initial section emphasises the analysis of two samples of assessment models, whose focus of attention regarding Industry 4.0 is profoundly diverse.\nThe scattered nature of \"Development of an assessment model for Industry 4.0: Industry 4.0-MM\" can be immediately recognised in the introductory phase, in which the leading role of the German economy within the novel revolutionary movement is treated [2]. The prefatory section is immediately followed by systematic literature research; whose aim consists of the generation of a maturity model database. Seven frameworks and their related characteristics, which are classified into a model name, research context, maturity levels and finally dimensions, are presented in tabular form.\nThe ranking of the already implementable models is grounded in six assessment criteria, which are represented by fitness for purpose, completeness of aspects, the granularity of dimensions, the definition of measurement attributes, description of assessment method as well objectivity of assessment method.\nTo provide a complete review, the evaluations are clarified and reinforced through brief statements. The conclusion of the extensive review process allows to pass over to the actual development of an Industry 4.0 assessment model.\nIn order to be on the safe side, this work opts for the ISO/IEC 15504 - also termed as Software Process Improvement and Capability dEtermination (SPICE) as a base for structuring the maturity model. In this light, the framework relies on two separate dimensions, which are respectively the capability, which is a broader sense entails the evolution stages, and the aspect dimension, which is an inseparable bundle composed of infrastructure, information systems, data organisation and integration. Provided the fact that several key terms offer a clear-cut idea of their peculiar significance, exclusively\nnotions that do not exhibit absolute transparency are specified. The aspect dimension is characterised by the inclusion of asset management, data governance, process transformation, organisational alignment as well as application management. While the application management focuses on the harmonisation of the assets belonging to the enterprise, whose uppermost objective is constituted by the maximisation of the industrial efficiency, the organisational alignment puts the attention on the generation of a technological and organisational balance.",
+      "size": 2484,
+      "outlinePath": "A. Existing Assessment Models for Industry 4.0",
+      "startBlock": 20,
+      "endBlock": 25,
+      "startOffset": 0,
+      "endOffset": 550,
+      "pageIndex": 1,
+      "pageLabel": "2",
+      "position": {
+        "pageIndex": 1,
+        "rects": [
+          [
+            53.86,
+            471.29,
+            287.96,
+            503.08
+          ]
+        ]
+      },
+      "sectionPart": 1,
+      "sectionParts": 3,
+      "auxiliary": false
+    },
+    {
+      "text": "Passing over to the capability dimension, all the six considered gradations are underpinned with concrete examples to ensure the full compensability. Commencing with the undermost stage, the so-called incompleteness, it can be mentioned that every requisite for the implementation of Industry 4.0 measures are absent.\nThe first proper level, named performance, symbolises the willingness of the enterprise to transit to an Industry 4.0 conform entity. Genuine digital or manufacturing technologies such as Cyber-Physical Systems or Internet of Things can be found in the introductory phase. The performance stage is followed by the management level, which according to the authors is linked with the digitalisation of the company.\nOperations go hand in hand with predefined data sets and physical items are also epitomized in the virtual world through digital twins. The digitalisation acts as a predecessor of the establishment. In practice, the vertical integration throughout the enterprise, as well as the standardization, are successfully employed. Climbing up the hierarchy ladder, the predictability, which relies on horizontal integration and control, arises. The uppermost floor of the dimension is occupied by the optimization stage. Consisting of integration towards product lifecycle, innovation and self-optimization, it is the most severe level to reach. Through the first analysis, it stands to reason that the assessment model aims to provide first aid to a company in the Industry 4.0 movement.\nThe second identified work is titled \"Multi-Criteria Evaluation of Manufacturing Systems 4.0 under Uncertainty\" [3]. Briefly after presenting a literature overview of existing evaluation models, this work deepens model-related aspects commencing with the evaluation method.\nThe objective of possessing an optimised manufacturing system 4.0 can only be ensured with the support of an effective evaluation process.\nBased on five steps, which encompass definition and scope of the evaluation, criteria selection and data collection, model definition, model execution as well as result analysis, the authors follow the goal to deliver a proper functioning assessment model. First, among the concerns, the evaluation object should be established. To clarify the assessment object, the time span, as well as additional alternative possibilities, are taken into consideration.",
+      "embedText": "A. Existing Assessment Models for Industry 4.0\n\nPassing over to the capability dimension, all the six considered gradations are underpinned with concrete examples to ensure the full compensability. Commencing with the undermost stage, the so-called incompleteness, it can be mentioned that every requisite for the implementation of Industry 4.0 measures are absent.\nThe first proper level, named performance, symbolises the willingness of the enterprise to transit to an Industry 4.0 conform entity. Genuine digital or manufacturing technologies such as Cyber-Physical Systems or Internet of Things can be found in the introductory phase. The performance stage is followed by the management level, which according to the authors is linked with the digitalisation of the company.\nOperations go hand in hand with predefined data sets and physical items are also epitomized in the virtual world through digital twins. The digitalisation acts as a predecessor of the establishment. In practice, the vertical integration throughout the enterprise, as well as the standardization, are successfully employed. Climbing up the hierarchy ladder, the predictability, which relies on horizontal integration and control, arises. The uppermost floor of the dimension is occupied by the optimization stage. Consisting of integration towards product lifecycle, innovation and self-optimization, it is the most severe level to reach. Through the first analysis, it stands to reason that the assessment model aims to provide first aid to a company in the Industry 4.0 movement.\nThe second identified work is titled \"Multi-Criteria Evaluation of Manufacturing Systems 4.0 under Uncertainty\" [3]. Briefly after presenting a literature overview of existing evaluation models, this work deepens model-related aspects commencing with the evaluation method.\nThe objective of possessing an optimised manufacturing system 4.0 can only be ensured with the support of an effective evaluation process.\nBased on five steps, which encompass definition and scope of the evaluation, criteria selection and data collection, model definition, model execution as well as result analysis, the authors follow the goal to deliver a proper functioning assessment model. First, among the concerns, the evaluation object should be established. To clarify the assessment object, the time span, as well as additional alternative possibilities, are taken into consideration.",
+      "size": 2434,
+      "outlinePath": "A. Existing Assessment Models for Industry 4.0",
+      "startBlock": 26,
+      "endBlock": 35,
+      "startOffset": 0,
+      "endOffset": 456,
+      "pageIndex": 1,
+      "pageLabel": "2",
+      "position": {
+        "pageIndex": 1,
+        "rects": [
+          [
+            307.34,
+            574.64,
+            541.5,
+            640.87
+          ]
+        ]
+      },
+      "sectionPart": 2,
+      "sectionParts": 3,
+      "auxiliary": false
+    },
+    {
+      "text": "The named pre-requisites set the boundaries, which enable the definition of criteria according to the company strategy. Fundamentally, two typologies can be distinguished, namely monetary criteria, such as profitability or manufacturing system investments and quantitative, or qualitative non-monetary criteria, such as the transformability and responsiveness of manufacturing systems. In order to execute the analysis, the essential data related to the established criteria have to be collected. In other words, a unique and accurate data pool is needed. At this point, the model definition comes into play. Perceived as the most challenging step, the model establishment can be subdivided into three elements, which are respectively the modelling of uncertainty, monetarization and the aggregation combined with the display.\nConcerning the monetary and the quantitative nonmonetary criteria, two modelling approaches, namely the direct modelling or the stochastic modelling, can be taken into consideration. In contrast, qualitative non-monetary criteria require according to their state a different approach that is constituted by the fuzzy set theory.\nDue to the self-evident financial impact related to monetary criteria, the monetarization steps are executed only for the non-monetary criteria. In this case, the uppermost objective is represented by the analysis of the financial impact grounded on several causals.\nThe last stage constituted by the aggregation requires the implementation of the Monte Carlo Simulation of the net present value (NPV). In order to facilitate the comprehension, it is important to mention that the Monte Carlo Simulation is a compendium of computational algorithms, which exploits re-enacted random sampling to generate a numerical result [4].\nIn addition to that, the concept of NPV is explained. Strictly speaking can be stated that the NPV is a profit calculation, which subtracts the cash outflows from the cash inflows belonging to the present value [5]. To conclude the results are presented in the form of histograms or evaluation portfolios. The completion of the model definition allows passing to its execution. In this\ncase, the authors suggest utilising suitable software such as MATLAB for the execution of the calculation. In addition, a sensitivity analysis is performed in order to establish the impact of several changes in the input. After the accomplishment of all the listed steps, the results are displayed in a preferred manner.",
+      "embedText": "A. Existing Assessment Models for Industry 4.0\n\nThe named pre-requisites set the boundaries, which enable the definition of criteria according to the company strategy. Fundamentally, two typologies can be distinguished, namely monetary criteria, such as profitability or manufacturing system investments and quantitative, or qualitative non-monetary criteria, such as the transformability and responsiveness of manufacturing systems. In order to execute the analysis, the essential data related to the established criteria have to be collected. In other words, a unique and accurate data pool is needed. At this point, the model definition comes into play. Perceived as the most challenging step, the model establishment can be subdivided into three elements, which are respectively the modelling of uncertainty, monetarization and the aggregation combined with the display.\nConcerning the monetary and the quantitative nonmonetary criteria, two modelling approaches, namely the direct modelling or the stochastic modelling, can be taken into consideration. In contrast, qualitative non-monetary criteria require according to their state a different approach that is constituted by the fuzzy set theory.\nDue to the self-evident financial impact related to monetary criteria, the monetarization steps are executed only for the non-monetary criteria. In this case, the uppermost objective is represented by the analysis of the financial impact grounded on several causals.\nThe last stage constituted by the aggregation requires the implementation of the Monte Carlo Simulation of the net present value (NPV). In order to facilitate the comprehension, it is important to mention that the Monte Carlo Simulation is a compendium of computational algorithms, which exploits re-enacted random sampling to generate a numerical result [4].\nIn addition to that, the concept of NPV is explained. Strictly speaking can be stated that the NPV is a profit calculation, which subtracts the cash outflows from the cash inflows belonging to the present value [5]. To conclude the results are presented in the form of histograms or evaluation portfolios. The completion of the model definition allows passing to its execution. In this\ncase, the authors suggest utilising suitable software such as MATLAB for the execution of the calculation. In addition, a sensitivity analysis is performed in order to establish the impact of several changes in the input. After the accomplishment of all the listed steps, the results are displayed in a preferred manner.",
+      "size": 2542,
+      "outlinePath": "A. Existing Assessment Models for Industry 4.0",
+      "startBlock": 36,
+      "endBlock": 41,
+      "startOffset": 0,
+      "endOffset": 320,
+      "pageIndex": 2,
+      "pageLabel": "3",
+      "position": {
+        "pageIndex": 2,
+        "rects": [
+          [
+            53.86,
+            379.37,
+            288.1,
+            560.56
+          ]
+        ]
+      },
+      "sectionPart": 3,
+      "sectionParts": 3,
+      "auxiliary": false
+    },
+    {
+      "text": "This section summarises findings on the state of the art of maturity models. In this light, the two works \"A maturity model for assessing Industry 4.0 readiness and maturity of manufacturing enterprises\" [6] and \"Construction of cyber-physical system-integrated smart manufacturing workshops: A case study in automobile industry\" [7] were identified as most relevant.\nSimilarly to the previously treated models, the first maturity stage model considers a broader view, entailing the entirety of the enterprise, whereas the second listed model possesses a focal point that is portrayed by the manufacturing workshop perspective.\nIn this regard, the extension of the thematic area earmarks the sequence of model treatment.\nThe research work published by Schumacher, Erol and Sihn [6] illustrates, after a concise introductory phase, an overview of existing maturity and readiness models. A total of five exemplars are scrutinised qualitatively. The performance of the rough assay does not target the realisation of a ranking among the existing model but follows the purpose to demonstrate the persisting fundaments on which the novel maturity stage model is grounded.\nConcerning the methodology, this work exploits the Becker-procedure, which relies on a multi-methodological development approach, for the composition of the model. The elaboration is subdivided into three diverse phases, which imply the comprehension of the Industry 4.0 domain through the systematic literature review and expert interviews, the structuring of the model including the determination of maturity items and conclusively the realisation of an applicable tool. The execution of the\ninitial phase allowed to determine a total of 62 maturity items, which are clustered into nine enterprise dimensions. The last mentioned are specified as strategy, leadership, customers, products, operations, cultures, people, governance, and technology.\nA few examples are quoted to clarify the announced dimensions. Each item is recordable through a five-tier evolution, in which the lowest stage or the first level symbolises a complete absence of entities supporting Industry 4.0 and the uppermost stage or the fifth level stands for the benchmark attributes.",
+      "embedText": "B. Existing Maturity Stage Models for Industry 4.0\n\nThis section summarises findings on the state of the art of maturity models. In this light, the two works \"A maturity model for assessing Industry 4.0 readiness and maturity of manufacturing enterprises\" [6] and \"Construction of cyber-physical system-integrated smart manufacturing workshops: A case study in automobile industry\" [7] were identified as most relevant.\nSimilarly to the previously treated models, the first maturity stage model considers a broader view, entailing the entirety of the enterprise, whereas the second listed model possesses a focal point that is portrayed by the manufacturing workshop perspective.\nIn this regard, the extension of the thematic area earmarks the sequence of model treatment.\nThe research work published by Schumacher, Erol and Sihn [6] illustrates, after a concise introductory phase, an overview of existing maturity and readiness models. A total of five exemplars are scrutinised qualitatively. The performance of the rough assay does not target the realisation of a ranking among the existing model but follows the purpose to demonstrate the persisting fundaments on which the novel maturity stage model is grounded.\nConcerning the methodology, this work exploits the Becker-procedure, which relies on a multi-methodological development approach, for the composition of the model. The elaboration is subdivided into three diverse phases, which imply the comprehension of the Industry 4.0 domain through the systematic literature review and expert interviews, the structuring of the model including the determination of maturity items and conclusively the realisation of an applicable tool. The execution of the\ninitial phase allowed to determine a total of 62 maturity items, which are clustered into nine enterprise dimensions. The last mentioned are specified as strategy, leadership, customers, products, operations, cultures, people, governance, and technology.\nA few examples are quoted to clarify the announced dimensions. Each item is recordable through a five-tier evolution, in which the lowest stage or the first level symbolises a complete absence of entities supporting Industry 4.0 and the uppermost stage or the fifth level stands for the benchmark attributes.",
+      "size": 2281,
+      "outlinePath": "B. Existing Maturity Stage Models for Industry 4.0",
+      "startBlock": 45,
+      "endBlock": 53,
+      "startOffset": 0,
+      "endOffset": 308,
+      "pageIndex": 2,
+      "pageLabel": "3",
+      "position": {
+        "pageIndex": 2,
+        "rects": [
+          [
+            307.34,
+            387.26,
+            541.48,
+            465.01
+          ]
+        ]
+      },
+      "sectionPart": 1,
+      "sectionParts": 3,
+      "auxiliary": false
+    },
+    {
+      "text": "To accomplish the measurement, the determination, as well as visualisation of the Industry 4.0 maturity of a company, a user-friendly software instrument based on a three-step procedure logic, has been designed. In order to supply analysable data to the software tool, an evaluation that is applicable in industrial environments has been executed through a standardised questionnaire. In this regard, the maturity item is presented in the form of a question, whereas the five maturity stages are eligible using five checkmarks.\nDuring the completion of the questionnaire, experts claimed that the maturity items are not equipped with equal relevance grades. Thus, an additional rating has been included in the final evaluation procedure. The filled questionnaires are scrutinised, and the overall maturity level is established through a formula that implies the division between the sum of the weighted maturity item score and the sum of the weights.\nIn order to prove the validity of the developed maturity stage determination tool, the implementation in a real industrial environment has been executed and presented in the form of a case study\nAlso, the second research work, which deals with manufacturing workshop, comprises a case study that describes the testing phase in a real industrial environment. The authors Zheng and Ming [7] of \"Construction of cyber-physical system-integrated smart manufacturing workshops: A case study in automobile industry\" emphasise significantly the relevance of the applicability of the maturity model, which is elucidated by the structure of the research work.\nAlmost two-thirds of the publication is devoted to the illustration of the case study.\nHowever, the focus of the performed analysis is still devoted to the development and structure of the model. In contrast to all the other scrutinised works, Zheng and Ming do not opt for the performance of a systematic literature review. After a few considerations concerning the fourth industrial wave, the framework of smart manufacturing workshops is immediately illustrated. Through intensive collaboration with entities operating in the most diverse industrial sections, a universal framework for smart manufacturing workshops, which is based on a five-layer structure, has been determined.\nThe primal plane is represented by supporting technologies. Several examples are cited such as sensing technologies or precision manufacturing technologies. Climbing up the hierarchy ladder of the presented framework, the layer \"basic components\" appears.",
+      "embedText": "B. Existing Maturity Stage Models for Industry 4.0\n\nTo accomplish the measurement, the determination, as well as visualisation of the Industry 4.0 maturity of a company, a user-friendly software instrument based on a three-step procedure logic, has been designed. In order to supply analysable data to the software tool, an evaluation that is applicable in industrial environments has been executed through a standardised questionnaire. In this regard, the maturity item is presented in the form of a question, whereas the five maturity stages are eligible using five checkmarks.\nDuring the completion of the questionnaire, experts claimed that the maturity items are not equipped with equal relevance grades. Thus, an additional rating has been included in the final evaluation procedure. The filled questionnaires are scrutinised, and the overall maturity level is established through a formula that implies the division between the sum of the weighted maturity item score and the sum of the weights.\nIn order to prove the validity of the developed maturity stage determination tool, the implementation in a real industrial environment has been executed and presented in the form of a case study\nAlso, the second research work, which deals with manufacturing workshop, comprises a case study that describes the testing phase in a real industrial environment. The authors Zheng and Ming [7] of \"Construction of cyber-physical system-integrated smart manufacturing workshops: A case study in automobile industry\" emphasise significantly the relevance of the applicability of the maturity model, which is elucidated by the structure of the research work.\nAlmost two-thirds of the publication is devoted to the illustration of the case study.\nHowever, the focus of the performed analysis is still devoted to the development and structure of the model. In contrast to all the other scrutinised works, Zheng and Ming do not opt for the performance of a systematic literature review. After a few considerations concerning the fourth industrial wave, the framework of smart manufacturing workshops is immediately illustrated. Through intensive collaboration with entities operating in the most diverse industrial sections, a universal framework for smart manufacturing workshops, which is based on a five-layer structure, has been determined.\nThe primal plane is represented by supporting technologies. Several examples are cited such as sensing technologies or precision manufacturing technologies. Climbing up the hierarchy ladder of the presented framework, the layer \"basic components\" appears.",
+      "size": 2598,
+      "outlinePath": "B. Existing Maturity Stage Models for Industry 4.0",
+      "startBlock": 54,
+      "endBlock": 62,
+      "startOffset": 0,
+      "endOffset": 255,
+      "pageIndex": 3,
+      "pageLabel": "4",
+      "position": {
+        "pageIndex": 3,
+        "rects": [
+          [
+            53.86,
+            528.77,
+            287.96,
+            641.08
+          ]
+        ]
+      },
+      "sectionPart": 2,
+      "sectionParts": 3,
+      "auxiliary": false
+    },
+    {
+      "text": "The named layer is composed of software or hardware that can be classified into automatic equipment, flexible fixtures, smart software, sensing and communication networks. Such essential components are followed by function modules; whose objective consists in the execution of specific tasks.\nA total of eight modules including automatic loading and unloading systems (ALU), leveled and balanced mixed flow production (LBM), parameters optimization system (POS), real-time monitoring system of production process (RMP), digital logistic tracking system (DLT), highprecision online testing and inspection system (HPD), automatic fault diagnosis and warning (AFD), and integrated information systems (IIS) have been identified.\nAfter the function models, the operational layer comes into play, in which digitalisation, flexibility, reconfigurability, leanness as well as agility of processes are considered. The business layer constitutes the conclusive plane of the framework. The main purpose is to define the business objective that can be epitomised by mass customisation, personalised production and individualised customer service.\nThe illustrated layers allow the composition of a smart manufacturing workshop. However, two essential elements, which are the collaborative work mode and the transmission, and sharing rules as well as mechanisms of information and data, have to be integrated into the system. The first element follows the objective of harmonising two adjacent layers, whereas the second one offers support in data interface problems.\nHaving created a common knowledge base that has been enriched through executed expert interviews, allows passing to the actual creation of the maturity model. The presented five-level maturity model is grounded on eight dimensions. Every dimension is evaluated according to a specifically designed five-tier scale. So that the maturity degree can be determined.\nDepending on the typology of the considered industrial entity, dimensions are weighted according to the sectorspecific relevance. By means of the analytic hierarchy process (AHP), which is a mathematical methodology\nimplemented for structuring and examining particular decisions, a significant score associated with each dimension is calculable.\nThe final maturity level is represented by the sum of the single score values. The last step consists of the visualisation of the result with the support of a spider diagram. Subsequently, great importance is provided to the application of the tool in a real industrial environment.",
+      "embedText": "B. Existing Maturity Stage Models for Industry 4.0\n\nThe named layer is composed of software or hardware that can be classified into automatic equipment, flexible fixtures, smart software, sensing and communication networks. Such essential components are followed by function modules; whose objective consists in the execution of specific tasks.\nA total of eight modules including automatic loading and unloading systems (ALU), leveled and balanced mixed flow production (LBM), parameters optimization system (POS), real-time monitoring system of production process (RMP), digital logistic tracking system (DLT), highprecision online testing and inspection system (HPD), automatic fault diagnosis and warning (AFD), and integrated information systems (IIS) have been identified.\nAfter the function models, the operational layer comes into play, in which digitalisation, flexibility, reconfigurability, leanness as well as agility of processes are considered. The business layer constitutes the conclusive plane of the framework. The main purpose is to define the business objective that can be epitomised by mass customisation, personalised production and individualised customer service.\nThe illustrated layers allow the composition of a smart manufacturing workshop. However, two essential elements, which are the collaborative work mode and the transmission, and sharing rules as well as mechanisms of information and data, have to be integrated into the system. The first element follows the objective of harmonising two adjacent layers, whereas the second one offers support in data interface problems.\nHaving created a common knowledge base that has been enriched through executed expert interviews, allows passing to the actual creation of the maturity model. The presented five-level maturity model is grounded on eight dimensions. Every dimension is evaluated according to a specifically designed five-tier scale. So that the maturity degree can be determined.\nDepending on the typology of the considered industrial entity, dimensions are weighted according to the sectorspecific relevance. By means of the analytic hierarchy process (AHP), which is a mathematical methodology\nimplemented for structuring and examining particular decisions, a significant score associated with each dimension is calculable.\nThe final maturity level is represented by the sum of the single score values. The last step consists of the visualisation of the result with the support of a spider diagram. Subsequently, great importance is provided to the application of the tool in a real industrial environment.",
+      "size": 2604,
+      "outlinePath": "B. Existing Maturity Stage Models for Industry 4.0",
+      "startBlock": 63,
+      "endBlock": 72,
+      "startOffset": 0,
+      "endOffset": 282,
+      "pageIndex": 3,
+      "pageLabel": "4",
+      "position": {
+        "pageIndex": 3,
+        "rects": [
+          [
+            307.34,
+            494.3,
+            541.42,
+            560.53
+          ]
+        ]
+      },
+      "sectionPart": 3,
+      "sectionParts": 3,
+      "auxiliary": false
+    },
+    {
+      "text": "The analytical results of existing assessment and maturity stage models are perceived as a substantial requisite for the identification of strengths and weakness, which in a second step could influence vehemently the realisation of a novel Industry 4.0 assessment or maturity stage model.\nCommencing with the general models, the identified approaches are headed in the correct direction by means of the determination of various business segments and the identification of a limited number of levels that epitomise a particular advancement or maturity stage. However, the scattered nature exerts an adverse impact on the applicability in a real industrial environment. The elevated degree of theory condemns the general models to remain merely in the academic sphere.\nPassing over to the focused models, distinct considerations have to proceed. Initiating with the assessment model, even if the consideration of the monetary aspects undoubtedly plays an essential role in an Industry 4.0 perspective, the authors contemplate paltry the elements that have to be supported with financial means. Passing over to the maturity stage model a clear and clean structure has to be emphasized.\nThe single possibility of amelioration consists in the further detailing of the maturity stages that are not always comprehendible through a unique adjective.",
+      "embedText": "IV. DISCUSSION\n\nThe analytical results of existing assessment and maturity stage models are perceived as a substantial requisite for the identification of strengths and weakness, which in a second step could influence vehemently the realisation of a novel Industry 4.0 assessment or maturity stage model.\nCommencing with the general models, the identified approaches are headed in the correct direction by means of the determination of various business segments and the identification of a limited number of levels that epitomise a particular advancement or maturity stage. However, the scattered nature exerts an adverse impact on the applicability in a real industrial environment. The elevated degree of theory condemns the general models to remain merely in the academic sphere.\nPassing over to the focused models, distinct considerations have to proceed. Initiating with the assessment model, even if the consideration of the monetary aspects undoubtedly plays an essential role in an Industry 4.0 perspective, the authors contemplate paltry the elements that have to be supported with financial means. Passing over to the maturity stage model a clear and clean structure has to be emphasized.\nThe single possibility of amelioration consists in the further detailing of the maturity stages that are not always comprehendible through a unique adjective.",
+      "size": 1360,
+      "outlinePath": "IV. DISCUSSION",
+      "startBlock": 76,
+      "endBlock": 79,
+      "startOffset": 0,
+      "endOffset": 158,
+      "pageIndex": 4,
+      "pageLabel": "5",
+      "position": {
+        "pageIndex": 4,
+        "rects": [
+          [
+            53.86,
+            406.46,
+            287.97,
+            472.69
+          ]
+        ]
+      },
+      "sectionPart": 1,
+      "sectionParts": 1,
+      "auxiliary": false
+    },
+    {
+      "text": "The last 20 years in production research were determined by topics like Lean Management [8]. Nowadays the trend towards Industry 4.0 request appropriate instruments. After identifying relevant papers\nregarding assessment models and maturity stage models for Industry 4.0, this work conducted a bipartite literature review following a quantitative and qualitative approach. Especially the quantitative analysis centered on five predefined criteria allows to crystallize four prime examples.\nSubsequently, the scrutinisation of the identified models is executed with the intent of gaining an in-depth comprehension of the structure as well as the functioning of Industry 4.0 evaluation models.\nThe findings of this study constitute the fundament for the development of an entirely new (self-) assessment tool for small and medium-sized enterprises implementing Industry 4.0 in their organization. The assessment tool should support them in understanding their current status as well as to define a target which level of Industry 4.0 seems to be most suitable for them.\n\nThis project has received funding from the European Union’s Horizon 2020 research and innovation program under the Marie Sk odowska-Curie grant agreement No 734713.",
+      "embedText": "V. CONCLUSION AND OUTLOOK\n\nThe last 20 years in production research were determined by topics like Lean Management [8]. Nowadays the trend towards Industry 4.0 request appropriate instruments. After identifying relevant papers\nregarding assessment models and maturity stage models for Industry 4.0, this work conducted a bipartite literature review following a quantitative and qualitative approach. Especially the quantitative analysis centered on five predefined criteria allows to crystallize four prime examples.\nSubsequently, the scrutinisation of the identified models is executed with the intent of gaining an in-depth comprehension of the structure as well as the functioning of Industry 4.0 evaluation models.\nThe findings of this study constitute the fundament for the development of an entirely new (self-) assessment tool for small and medium-sized enterprises implementing Industry 4.0 in their organization. The assessment tool should support them in understanding their current status as well as to define a target which level of Industry 4.0 seems to be most suitable for them.\n\nACKNOWLEDGMENT\n\nThis project has received funding from the European Union’s Horizon 2020 research and innovation program under the Marie Sk odowska-Curie grant agreement No 734713.",
+      "size": 1278,
+      "outlinePath": "V. CONCLUSION AND OUTLOOK",
+      "startBlock": 81,
+      "endBlock": 86,
+      "startOffset": 0,
+      "endOffset": 164,
+      "pageIndex": 4,
+      "pageLabel": "5",
+      "position": {
+        "pageIndex": 4,
+        "rects": [
+          [
+            53.86,
+            96.03,
+            287.93,
+            139.22
+          ]
+        ]
+      },
+      "sectionPart": 1,
+      "sectionParts": 1,
+      "auxiliary": false
+    }
+  ]
+}
