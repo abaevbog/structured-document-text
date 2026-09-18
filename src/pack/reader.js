@@ -180,6 +180,29 @@ class StructuredDocumentTextPackReader {
 		};
 	}
 
+	// The structure materialize() gives, with content filled only from
+	// startBlock to endBlock inclusive and empty elsewhere, at the cost of the
+	// chunks holding those blocks. Its content has the document's full length,
+	// so block indices and the catalog's references into them hold.
+	async materializeBlocks(startBlock, endBlock) {
+		let [metadata, catalog, blocks] = await Promise.all([
+			this.getMetadata(),
+			this.getCatalog(),
+			this.getBlocks(startBlock, endBlock),
+		]);
+		let content = new Array(this.getTopLevelBlockCount());
+		let first = Math.max(0, startBlock);
+		for (let i = 0; i < blocks.length; i++) {
+			content[first + i] = blocks[i];
+		}
+		return {
+			schemaVersion: this.header.schemaVersion,
+			metadata,
+			catalog,
+			content,
+		};
+	}
+
 	async _getTopLevelBlock(blockIndex) {
 		let chunkIndex = findChunkIndex(this.index.chunkBlockStarts, blockIndex);
 		if (chunkIndex === -1) {

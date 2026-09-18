@@ -5,6 +5,7 @@
       "text": "曾新颖, 王黎君, 殷鹏, 刘韫宁, 刘江美, 由金玲, 周脉耕*\n中国疾病预防控制中心慢性非传染性疾病预防控制中心, 北京 100050\n* 联系人, E-mail: maigengzhou@126.com\n2018-01-04 收稿, 2018-04-10 修回, 2018-04-10 接受, 2018-06-08 网络版发表\n摘要 医疗可及性和质量(healthcare access and quality index, HAQ)是反映医疗系统及时、有效地发现、管理、 治疗从而避免疾病死亡能力的重要指标. 本研究利用2015年全球疾病负担研究结果, 比较2015年中国与全球主要 国家的HAQ指数差异, 同时分析1990~2015年期间中国疾病间、省级行政区间HAQ指数及其变化幅度的差异. 2015 年中国HAQ指数为74.2分, 高出全球平均水平20.5分; 中国HAQ指数与其期望值仅相差1.2分, 此差距远低于全球 平均水平(20.1分). 1990~2015年中国在呼吸系统疾病(上呼吸道感染、慢性呼吸系统疾病)、计划免疫性疾病(白喉、 百日咳、破伤风和麻疹)、通过常规手术治愈的疾病(阑尾炎和腹股沟、股骨和腹部疝)、孕产妇疾病、缺血性心脏 病和医疗副作用表现出较高的HAQ. 2015年北京、澳门、上海等9个省级行政区的HAQ指数达到80分以上; 西藏、 青海、贵州、新疆和云南的HAQ指数最低; 且处于高和中高社会人口发展水平的大部分省级行政区, 其HAQ指数 均高于其相应的期望值. 1990~2015年中国HAQ指数增长49.30%, 其中长幅最大的省级行政区为新疆、江西、云南 和陕西, 均超过55%; 长幅最小的省级行政区为西藏、香港和澳门. 研究表明, 1990~2015年间, 中国医疗可及性和 质量有较大程度的提高, 但在不同疾病领域、不同省级行政区表现出的医疗可及性和质量及其改善程度差异较大.",
       "embedText": "1990~2015 年中国省级行政区医疗可及性和质量分析\n\n曾新颖, 王黎君, 殷鹏, 刘韫宁, 刘江美, 由金玲, 周脉耕*\n中国疾病预防控制中心慢性非传染性疾病预防控制中心, 北京 100050\n* 联系人, E-mail: maigengzhou@126.com\n2018-01-04 收稿, 2018-04-10 修回, 2018-04-10 接受, 2018-06-08 网络版发表\n摘要 医疗可及性和质量(healthcare access and quality index, HAQ)是反映医疗系统及时、有效地发现、管理、 治疗从而避免疾病死亡能力的重要指标. 本研究利用2015年全球疾病负担研究结果, 比较2015年中国与全球主要 国家的HAQ指数差异, 同时分析1990~2015年期间中国疾病间、省级行政区间HAQ指数及其变化幅度的差异. 2015 年中国HAQ指数为74.2分, 高出全球平均水平20.5分; 中国HAQ指数与其期望值仅相差1.2分, 此差距远低于全球 平均水平(20.1分). 1990~2015年中国在呼吸系统疾病(上呼吸道感染、慢性呼吸系统疾病)、计划免疫性疾病(白喉、 百日咳、破伤风和麻疹)、通过常规手术治愈的疾病(阑尾炎和腹股沟、股骨和腹部疝)、孕产妇疾病、缺血性心脏 病和医疗副作用表现出较高的HAQ. 2015年北京、澳门、上海等9个省级行政区的HAQ指数达到80分以上; 西藏、 青海、贵州、新疆和云南的HAQ指数最低; 且处于高和中高社会人口发展水平的大部分省级行政区, 其HAQ指数 均高于其相应的期望值. 1990~2015年中国HAQ指数增长49.30%, 其中长幅最大的省级行政区为新疆、江西、云南 和陕西, 均超过55%; 长幅最小的省级行政区为西藏、香港和澳门. 研究表明, 1990~2015年间, 中国医疗可及性和 质量有较大程度的提高, 但在不同疾病领域、不同省级行政区表现出的医疗可及性和质量及其改善程度差异较大.",
       "size": 852,
+      "tokens": 559,
       "outlinePath": "1990~2015 年中国省级行政区医疗可及性和质量分析",
       "startBlock": 7,
       "endBlock": 11,
@@ -12,17 +13,6 @@
       "endOffset": 651,
       "pageIndex": 0,
       "pageLabel": "1",
-      "position": {
-        "pageIndex": 0,
-        "rects": [
-          [
-            53.88,
-            622.78,
-            351.87,
-            638.25
-          ]
-        ]
-      },
       "sectionPart": 1,
       "sectionParts": 2,
       "auxiliary": false
@@ -31,6 +21,7 @@
       "text": "关键词 医疗可及性和质量指数, 社会人口学指数, 可避免的死亡, 中国省级行政区\n2015年9月联合国通过的2030全球可持续发展目 标(sustainable development goals, SDGs), 将改善医疗 可及性和质量作为一个重要的优先领域[1]. 响应和承 诺SDGs, 2016年10月中共中央、国务院正式印发了《“健 康中国2030”规划纲要》, 其中突出强调了调整优化健 康服务体系, 强化早诊断、早治疗、早康复的重点内容. 目前, 中国及各省级行政区针对卫生系统绩效评价指 标体系开展了较多的研究[2~5], 其中均将医疗可及性和 质量作为重要的评价部分, 其下包括很多具体的衡量 指标, 如每千人医护人员数、基本医疗保险覆盖率、两 周患病未就诊比例、危急重症抢救成功率、三级以上 医疗事故发生数、婴儿死亡率、孕产妇死亡率等, 但尚 未形成一个评价医疗可及性和质量的综合指标.\n改善医疗可及性和质量的最终目的是降低病死\n率. 全球疾病负担研究2015(Global Burden of Disease Study 2015, GBD 2015)从可通过及时、有效治疗而避 免死亡的疾病着手, 提出了一个全新的医疗可及性 和质量指数(healthcare access and quality index, HAQ Index), 用于反映医疗系统及时、有效地发现、管理、 治疗疾病的能力[6]. 本研究利用GBD 2015中关于中 国省级行政区的研究结果, 对中国及各省级行政区 HAQ指数的现状和变化趋势进行分析, 为国家及各 省级行政区评价医疗服务能力提供参考.",
       "embedText": "1990~2015 年中国省级行政区医疗可及性和质量分析\n\n关键词 医疗可及性和质量指数, 社会人口学指数, 可避免的死亡, 中国省级行政区\n2015年9月联合国通过的2030全球可持续发展目 标(sustainable development goals, SDGs), 将改善医疗 可及性和质量作为一个重要的优先领域[1]. 响应和承 诺SDGs, 2016年10月中共中央、国务院正式印发了《“健 康中国2030”规划纲要》, 其中突出强调了调整优化健 康服务体系, 强化早诊断、早治疗、早康复的重点内容. 目前, 中国及各省级行政区针对卫生系统绩效评价指 标体系开展了较多的研究[2~5], 其中均将医疗可及性和 质量作为重要的评价部分, 其下包括很多具体的衡量 指标, 如每千人医护人员数、基本医疗保险覆盖率、两 周患病未就诊比例、危急重症抢救成功率、三级以上 医疗事故发生数、婴儿死亡率、孕产妇死亡率等, 但尚 未形成一个评价医疗可及性和质量的综合指标.\n改善医疗可及性和质量的最终目的是降低病死\n率. 全球疾病负担研究2015(Global Burden of Disease Study 2015, GBD 2015)从可通过及时、有效治疗而避 免死亡的疾病着手, 提出了一个全新的医疗可及性 和质量指数(healthcare access and quality index, HAQ Index), 用于反映医疗系统及时、有效地发现、管理、 治疗疾病的能力[6]. 本研究利用GBD 2015中关于中 国省级行政区的研究结果, 对中国及各省级行政区 HAQ指数的现状和变化趋势进行分析, 为国家及各 省级行政区评价医疗服务能力提供参考.",
       "size": 731,
+      "tokens": 480,
       "outlinePath": "1990~2015 年中国省级行政区医疗可及性和质量分析",
       "startBlock": 12,
       "endBlock": 15,
@@ -38,17 +29,6 @@
       "endOffset": 273,
       "pageIndex": 0,
       "pageLabel": "1",
-      "position": {
-        "pageIndex": 0,
-        "rects": [
-          [
-            53.88,
-            357.6,
-            426.36,
-            369.63
-          ]
-        ]
-      },
       "sectionPart": 2,
       "sectionParts": 2,
       "auxiliary": false
@@ -57,6 +37,7 @@
       "text": "本研究利用1990~2015年中国省级行政区疾病负\n担研究的数据, 中国省级行政区疾病负担研究是GBD 2015的一部分. GBD 2015利用统一、可比的方法全面 分析和估计了1990~2015年195个国家或地区以及其 中部分国家的省或县级单位, 分年龄、性别的303种 疾病/伤害的死亡情况, 行为、环境和代谢类共79种危 险因素导致各相关疾病的归因死亡. 在此基础上, GBD2015计算了32种可通过及时、有效治疗而避免 死亡的疾病的危险标化死亡率和HAQ指数. 同时, GBD2015生成了一个衡量各地区社会人口发展水平 的综合指标——社会人口学指数 (socio-demographic index, SDI). 上 述 研 究 的 背 景 和 概 况 介 绍 见 文 献[6~8].\nGBD 2015对中国(不包括中国台湾)的死亡估计 利用了多个数据来源, 主要包括: 1990年以来中国疾 病监测点系统死因监测, 中国妇幼卫生监测网, 中国 疾病预防控制中心死因登记报告信息系统, 肿瘤登 记数据, 中国澳门和香港死因数据, 以及其他已发表 和未发表的研究和报告等, 并采用贝叶斯Meta回归、 时空高斯过程回归、模型寿命表等方法估计和填补不 同时间、省级行政区、性别、和年龄别的死亡数据[7]. GDP、人均受教育年限、总和生育率等协变量数据来 自历次人口普查、统计年鉴等[6~8].",
       "embedText": "1 资料与方法 > 1.1 数据来源\n\n本研究利用1990~2015年中国省级行政区疾病负\n担研究的数据, 中国省级行政区疾病负担研究是GBD 2015的一部分. GBD 2015利用统一、可比的方法全面 分析和估计了1990~2015年195个国家或地区以及其 中部分国家的省或县级单位, 分年龄、性别的303种 疾病/伤害的死亡情况, 行为、环境和代谢类共79种危 险因素导致各相关疾病的归因死亡. 在此基础上, GBD2015计算了32种可通过及时、有效治疗而避免 死亡的疾病的危险标化死亡率和HAQ指数. 同时, GBD2015生成了一个衡量各地区社会人口发展水平 的综合指标——社会人口学指数 (socio-demographic index, SDI). 上 述 研 究 的 背 景 和 概 况 介 绍 见 文 献[6~8].\nGBD 2015对中国(不包括中国台湾)的死亡估计 利用了多个数据来源, 主要包括: 1990年以来中国疾 病监测点系统死因监测, 中国妇幼卫生监测网, 中国 疾病预防控制中心死因登记报告信息系统, 肿瘤登 记数据, 中国澳门和香港死因数据, 以及其他已发表 和未发表的研究和报告等, 并采用贝叶斯Meta回归、 时空高斯过程回归、模型寿命表等方法估计和填补不 同时间、省级行政区、性别、和年龄别的死亡数据[7]. GDP、人均受教育年限、总和生育率等协变量数据来 自历次人口普查、统计年鉴等[6~8].",
       "size": 624,
+      "tokens": 414,
       "outlinePath": "1 资料与方法 > 1.1 数据来源",
       "startBlock": 18,
       "endBlock": 22,
@@ -64,17 +45,6 @@
       "endOffset": 252,
       "pageIndex": 0,
       "pageLabel": "1",
-      "position": {
-        "pageIndex": 0,
-        "rects": [
-          [
-            327.42,
-            116.44,
-            541.38,
-            128.43
-          ]
-        ]
-      },
       "sectionPart": 1,
       "sectionParts": 1,
       "auxiliary": false
@@ -83,6 +53,7 @@
       "text": "根据已有的临床治疗证据表明, 通过及时、有效 的临床干预, 一些疾病的过早死亡将不会发生, 那么 这些疾病被界定为“可通过及时、有效治疗而避免死 亡的疾病”[9,10]. 由于“可通过及时、有效治疗而避免 死亡的疾病”的界定与临床治疗技术密切相关, 所以 其包含的疾病种类应随着医疗技术的不断提高而发 生变化.\n目前, 研究人员在2008年提出的“可通过及时、有 效治疗而避免死亡的疾病”被广泛应用, 共包括32种 疾病[6,9,10]. 各地区32种疾病在相应年龄组的死亡情 况可反映该地区医疗可及性和质量. 32种疾病及其对 应的年龄组见表1.",
       "embedText": "1 资料与方法 > 1.2 32种可通过及时、有效治疗而避免死亡的 疾病\n\n根据已有的临床治疗证据表明, 通过及时、有效 的临床干预, 一些疾病的过早死亡将不会发生, 那么 这些疾病被界定为“可通过及时、有效治疗而避免死 亡的疾病”[9,10]. 由于“可通过及时、有效治疗而避免 死亡的疾病”的界定与临床治疗技术密切相关, 所以 其包含的疾病种类应随着医疗技术的不断提高而发 生变化.\n目前, 研究人员在2008年提出的“可通过及时、有 效治疗而避免死亡的疾病”被广泛应用, 共包括32种 疾病[6,9,10]. 各地区32种疾病在相应年龄组的死亡情 况可反映该地区医疗可及性和质量. 32种疾病及其对 应的年龄组见表1.",
       "size": 313,
+      "tokens": 222,
       "outlinePath": "1 资料与方法 > 1.2 32种可通过及时、有效治疗而避免死亡的 疾病",
       "startBlock": 24,
       "endBlock": 25,
@@ -90,17 +61,6 @@
       "endOffset": 118,
       "pageIndex": 1,
       "pageLabel": "2",
-      "position": {
-        "pageIndex": 1,
-        "rects": [
-          [
-            53.86,
-            221.8,
-            288.47,
-            325.17
-          ]
-        ]
-      },
       "sectionPart": 1,
       "sectionParts": 1,
       "auxiliary": false
@@ -109,6 +69,7 @@
       "text": "依据滞后分布人均收入(lag distributed income per capita, LDI)、15岁及以上人口的平均受教育年限\n和总和生育率(total fertility rate, TFR)3个基础指标, 采用人类发展指数(human development index, HDI)的 计算方法[11], 得到的一个衡量各地区社会人口发展 水平的综合指标——SDI. SDI的取值范围为0~1, 当 取值为0时代表最低的LDI, 最低的平均受教育年限 和最高的总和生育率; 当取值为1时代表最高的LDI, 最高的平均受教育年限和最低的总和生育率. 具体 的计算公式参见文献[7,8]. 采用四分位数将SDI划分\n为高SDI, 中高SDI, SDI和低SDI水平.",
       "embedText": "1 资料与方法 > 1.3 社 会人口 学指数(socio-demographic index, SDI)\n\n依据滞后分布人均收入(lag distributed income per capita, LDI)、15岁及以上人口的平均受教育年限\n和总和生育率(total fertility rate, TFR)3个基础指标, 采用人类发展指数(human development index, HDI)的 计算方法[11], 得到的一个衡量各地区社会人口发展 水平的综合指标——SDI. SDI的取值范围为0~1, 当 取值为0时代表最低的LDI, 最低的平均受教育年限 和最高的总和生育率; 当取值为1时代表最高的LDI, 最高的平均受教育年限和最低的总和生育率. 具体 的计算公式参见文献[7,8]. 采用四分位数将SDI划分\n为高SDI, 中高SDI, SDI和低SDI水平.",
       "size": 394,
+      "tokens": 214,
       "outlinePath": "1 资料与方法 > 1.3 社 会人口 学指数(socio-demographic index, SDI)",
       "startBlock": 27,
       "endBlock": 34,
@@ -116,17 +77,6 @@
       "endOffset": 25,
       "pageIndex": 1,
       "pageLabel": "2",
-      "position": {
-        "pageIndex": 1,
-        "rects": [
-          [
-            53.88,
-            72.16,
-            288.64,
-            99.39
-          ]
-        ]
-      },
       "sectionPart": 1,
       "sectionParts": 1,
       "auxiliary": false
@@ -135,6 +85,7 @@
       "text": "(1) 危险标化死亡率. 在上述32种疾病的总死 亡中扣除归因于行为和环境危险因素的死亡, 然后 用全球的平均水平对各个地区进行标化. 计算公式[6] 如下:\nlocation,year,disease,age,sex location,year,disease,age,sex global,disease,age,sex 1 , 1 ×− =− 危险标化死亡率 死亡率 PAF\n其中, location为地区, year为年份, disease为疾病, age 为年龄组, sex为性别, global为全球所有年份的平均 水平, PAF为行为和环境危险因素的人群归因分值. PAF的计算方法和公式具体见文献[8]. 利用分性别 的32种疾病的危险标化死亡率推算出男女合计的危\n险标化死亡率.\n(2) 年龄标化危险标化死亡率. 以2000~2025 年世界人口的平均人口结构(来源于: WHO. http:// www.who.int/healthinfo/paper31.pdf)作为标准人口结 构, 对32种疾病的危险标化死亡率进行年龄标化, 获 得年龄标化危险标化死亡率.\n(3) HAQ指数. HAQ指数取值为0~100分, 其分 值越大, 表明医疗可及性和质量越好.\n首先, 将年龄标化危险标化死亡率重新赋值为 0~100, 1990~2015年期间全球所有地区(除人口数小 于100万的地区外, 其死亡率存在不稳定的波动)观 察 到 的 最 小 年 龄 标 化 危 险 标 化 死 亡 率 值 赋 值 为 100, 最大的赋值为0. 其中, 对于人口数小于100万的地 区, 如果其死亡率小于等于上述最小值, 则取100; 如果大于等于上述最大值, 则取0. 具体调整公式[7] 如下:\nlocation, year, disease all,?year,?disease\nall, year, disease all,?year,?disease\nlog min log , max log min log − = − 疾病别指数 年龄标化危险标化死亡率 年龄标化危险标化死亡率 年龄标化危险标化死亡率 年龄标化危险标化死亡率\n其中, all为全球所有地区.\n然 后 采 用 主 成 分 分 析 法 (principal component analysis, PCA), 为32种疾病的疾病别指数赋予权重, 计算出一个综合指数——HAQ指数. 公式[7]如下:",
       "embedText": "1 资料与方法 > 1.4 HAQ指数\n\n(1) 危险标化死亡率. 在上述32种疾病的总死 亡中扣除归因于行为和环境危险因素的死亡, 然后 用全球的平均水平对各个地区进行标化. 计算公式[6] 如下:\nlocation,year,disease,age,sex location,year,disease,age,sex global,disease,age,sex 1 , 1 ×− =− 危险标化死亡率 死亡率 PAF\n其中, location为地区, year为年份, disease为疾病, age 为年龄组, sex为性别, global为全球所有年份的平均 水平, PAF为行为和环境危险因素的人群归因分值. PAF的计算方法和公式具体见文献[8]. 利用分性别 的32种疾病的危险标化死亡率推算出男女合计的危\n险标化死亡率.\n(2) 年龄标化危险标化死亡率. 以2000~2025 年世界人口的平均人口结构(来源于: WHO. http:// www.who.int/healthinfo/paper31.pdf)作为标准人口结 构, 对32种疾病的危险标化死亡率进行年龄标化, 获 得年龄标化危险标化死亡率.\n(3) HAQ指数. HAQ指数取值为0~100分, 其分 值越大, 表明医疗可及性和质量越好.\n首先, 将年龄标化危险标化死亡率重新赋值为 0~100, 1990~2015年期间全球所有地区(除人口数小 于100万的地区外, 其死亡率存在不稳定的波动)观 察 到 的 最 小 年 龄 标 化 危 险 标 化 死 亡 率 值 赋 值 为 100, 最大的赋值为0. 其中, 对于人口数小于100万的地 区, 如果其死亡率小于等于上述最小值, 则取100; 如果大于等于上述最大值, 则取0. 具体调整公式[7] 如下:\nlocation, year, disease all,?year,?disease\nall, year, disease all,?year,?disease\nlog min log , max log min log − = − 疾病别指数 年龄标化危险标化死亡率 年龄标化危险标化死亡率 年龄标化危险标化死亡率 年龄标化危险标化死亡率\n其中, all为全球所有地区.\n然 后 采 用 主 成 分 分 析 法 (principal component analysis, PCA), 为32种疾病的疾病别指数赋予权重, 计算出一个综合指数——HAQ指数. 公式[7]如下:",
       "size": 1072,
+      "tokens": 592,
       "outlinePath": "1 资料与方法 > 1.4 HAQ指数",
       "startBlock": 36,
       "endBlock": 51,
@@ -142,17 +93,6 @@
       "endOffset": 101,
       "pageIndex": 2,
       "pageLabel": "3",
-      "position": {
-        "pageIndex": 2,
-        "rects": [
-          [
-            53.88,
-            604,
-            288.48,
-            661.65
-          ]
-        ]
-      },
       "sectionPart": 1,
       "sectionParts": 1,
       "auxiliary": false
@@ -161,6 +101,7 @@
       "text": "在给定SDI水平下, 所应获得的HAQ 指数的最大 值, 即表明若与目前的社会发展程度相匹配, HAQ指数 所应达到的水平. 那么, HAQ指数与其期望值的差距, 可反映出该地区医疗可及性和质量改善的潜能. GBD 2015采用数据包络法(data envelopment analysis, DEA) 结合测量误差衍生而来的自由处置壳法(free disposal hull analysis, FDH)[7]和局部回归, 估计给定SDI水平下 的HAQ指数期望值, 具体估算方法详见文献[6].",
       "embedText": "1 资料与方法 > 1.5 HAQ 指数期望值\n\n在给定SDI水平下, 所应获得的HAQ 指数的最大 值, 即表明若与目前的社会发展程度相匹配, HAQ指数 所应达到的水平. 那么, HAQ指数与其期望值的差距, 可反映出该地区医疗可及性和质量改善的潜能. GBD 2015采用数据包络法(data envelopment analysis, DEA) 结合测量误差衍生而来的自由处置壳法(free disposal hull analysis, FDH)[7]和局部回归, 估计给定SDI水平下 的HAQ指数期望值, 具体估算方法详见文献[6].",
       "size": 274,
+      "tokens": 149,
       "outlinePath": "1 资料与方法 > 1.5 HAQ 指数期望值",
       "startBlock": 55,
       "endBlock": 55,
@@ -168,17 +109,6 @@
       "endOffset": 249,
       "pageIndex": 2,
       "pageLabel": "3",
-      "position": {
-        "pageIndex": 2,
-        "rects": [
-          [
-            53.88,
-            69.82,
-            288.88,
-            191.49
-          ]
-        ]
-      },
       "sectionPart": 1,
       "sectionParts": 1,
       "auxiliary": false
@@ -187,6 +117,7 @@
       "text": "2015年中国HAQ指数为74.2分, 比全球平均水 平高20.5分, 且高于俄罗斯、巴西、印度等发展中国 家, 但较美国、加拿大、法国、英国、日本、新加坡 和韩国等发达国家尚有不小差距. 在SDI为0.68下, 中国HAQ指数期望值应为75.4分, 其实际值与期望 值仅相差1.2分, 远低于全球平均水平(20.1分), 且明 显低于俄罗斯、巴西、印度等发展中国家和美国、加 拿大、英国、德国、韩国及新加坡等发达国家. 中国 HAQ指数与其期望值的差距同澳大利亚和日本接近, 具体数据见表2.",
       "embedText": "2 结果 > 2.1 2015年全球部分国家HAQ指数及与其期望值 差距的比较\n\n2015年中国HAQ指数为74.2分, 比全球平均水 平高20.5分, 且高于俄罗斯、巴西、印度等发展中国 家, 但较美国、加拿大、法国、英国、日本、新加坡 和韩国等发达国家尚有不小差距. 在SDI为0.68下, 中国HAQ指数期望值应为75.4分, 其实际值与期望 值仅相差1.2分, 远低于全球平均水平(20.1分), 且明 显低于俄罗斯、巴西、印度等发展中国家和美国、加 拿大、英国、德国、韩国及新加坡等发达国家. 中国 HAQ指数与其期望值的差距同澳大利亚和日本接近, 具体数据见表2.",
       "size": 288,
+      "tokens": 203,
       "outlinePath": "2 结果 > 2.1 2015年全球部分国家HAQ指数及与其期望值 差距的比较",
       "startBlock": 58,
       "endBlock": 58,
@@ -194,17 +125,6 @@
       "endOffset": 247,
       "pageIndex": 2,
       "pageLabel": "3",
-      "position": {
-        "pageIndex": 2,
-        "rects": [
-          [
-            306.58,
-            159.95,
-            541.29,
-            306.21
-          ]
-        ]
-      },
       "sectionPart": 1,
       "sectionParts": 1,
       "auxiliary": false
@@ -213,6 +133,7 @@
       "text": "1990~2015年中国32种可通过及时、有效治疗而 避免死亡疾病的HAQ指数均呈上升趋势, 其中上呼 吸道感染、计划免疫性疾病(白喉、百日咳、破伤风\n和麻疹)、孕产妇疾病、慢性呼吸系统疾病、癫痫、 可以通过常规手术治愈的疾病(阑尾炎和腹股沟、股 骨和腹部疝)以及医疗副作用在过去25年期间的HAQ 指 数 均 明 显 高 于 其 他 疾 病 , 处 于 较 高 水 平 . 1990~ 2015年, 新生儿疾病、结直肠癌、白血病、风湿性心 脏病、脑血管病和先天性心脏异常的HAQ指数一直 处于较低水平, 其中新生儿疾病、白血病和风湿性心 脏病HAQ指数上升趋势明显, 超过了100%, 但结直 肠癌、脑血管病和先天性心脏异常HAQ指数的上升 幅度不大, 具体数据见表3.",
       "embedText": "2 结果 > 2.2 1990~2015年中国32种可通过及时、有效治疗 而避免死亡疾病的HAQ指数及其变化情况\n\n1990~2015年中国32种可通过及时、有效治疗而 避免死亡疾病的HAQ指数均呈上升趋势, 其中上呼 吸道感染、计划免疫性疾病(白喉、百日咳、破伤风\n和麻疹)、孕产妇疾病、慢性呼吸系统疾病、癫痫、 可以通过常规手术治愈的疾病(阑尾炎和腹股沟、股 骨和腹部疝)以及医疗副作用在过去25年期间的HAQ 指 数 均 明 显 高 于 其 他 疾 病 , 处 于 较 高 水 平 . 1990~ 2015年, 新生儿疾病、结直肠癌、白血病、风湿性心 脏病、脑血管病和先天性心脏异常的HAQ指数一直 处于较低水平, 其中新生儿疾病、白血病和风湿性心 脏病HAQ指数上升趋势明显, 超过了100%, 但结直 肠癌、脑血管病和先天性心脏异常HAQ指数的上升 幅度不大, 具体数据见表3.",
       "size": 395,
+      "tokens": 261,
       "outlinePath": "2 结果 > 2.2 1990~2015年中国32种可通过及时、有效治疗 而避免死亡疾病的HAQ指数及其变化情况",
       "startBlock": 60,
       "endBlock": 67,
@@ -220,17 +141,6 @@
       "endOffset": 260,
       "pageIndex": 2,
       "pageLabel": "3",
-      "position": {
-        "pageIndex": 2,
-        "rects": [
-          [
-            306.59,
-            70.06,
-            541.14,
-            112.77
-          ]
-        ]
-      },
       "sectionPart": 1,
       "sectionParts": 1,
       "auxiliary": false
@@ -239,6 +149,7 @@
       "text": "2015年中国HAQ指数达到90分以上的省级行政 区有3个, 分别为北京(90.73分)、澳门(90.37分)和上 海(90.17分), HAQ指数在80~90分间的省级行政区有 6个, 从高到低分别为香港、江苏、浙江、天津、辽 宁和山东, 上述省级行政区(除山东外)均集中在高 SDI水平地区; HAQ指数最低的5个省级行政区分别 为西藏、青海、贵州、新疆和云南. 根据HAQ指数期 望值的分析方法, HAQ指数期望值随着SDI的增加而 增加. 处于高SDI和中高SDI水平的大部分省级行政 区, 其HAQ指数均高于相应的HAQ指数期望值, 其 中江苏和浙江HAQ指数分别比其相应的HAQ指数期\n望值高7.19和5.49分; 处于中SDI和低SDI水平的大部 分省级行政区, 其HAQ指数与其相应的HAQ指数期 望值有一定的差距, 其中新疆、青海和广西的HAQ指 数分别比其相应的HAQ指数期望值低了110.73、7.4 和6.22分. 具体数据见表4.",
       "embedText": "2 结果 > 2.3 2015年中国省级行政区HAQ指数及与其期望 值差距的比较\n\n2015年中国HAQ指数达到90分以上的省级行政 区有3个, 分别为北京(90.73分)、澳门(90.37分)和上 海(90.17分), HAQ指数在80~90分间的省级行政区有 6个, 从高到低分别为香港、江苏、浙江、天津、辽 宁和山东, 上述省级行政区(除山东外)均集中在高 SDI水平地区; HAQ指数最低的5个省级行政区分别 为西藏、青海、贵州、新疆和云南. 根据HAQ指数期 望值的分析方法, HAQ指数期望值随着SDI的增加而 增加. 处于高SDI和中高SDI水平的大部分省级行政 区, 其HAQ指数均高于相应的HAQ指数期望值, 其 中江苏和浙江HAQ指数分别比其相应的HAQ指数期\n望值高7.19和5.49分; 处于中SDI和低SDI水平的大部 分省级行政区, 其HAQ指数与其相应的HAQ指数期 望值有一定的差距, 其中新疆、青海和广西的HAQ指 数分别比其相应的HAQ指数期望值低了110.73、7.4 和6.22分. 具体数据见表4.",
       "size": 471,
+      "tokens": 311,
       "outlinePath": "2 结果 > 2.3 2015年中国省级行政区HAQ指数及与其期望 值差距的比较",
       "startBlock": 69,
       "endBlock": 70,
@@ -246,17 +157,6 @@
       "endOffset": 129,
       "pageIndex": 3,
       "pageLabel": "4",
-      "position": {
-        "pageIndex": 3,
-        "rects": [
-          [
-            53.89,
-            73.96,
-            288.5,
-            238.03
-          ]
-        ]
-      },
       "sectionPart": 1,
       "sectionParts": 1,
       "auxiliary": false
@@ -265,6 +165,7 @@
       "text": "1990~2015 年 中 国 HAQ 指 数 增 长 49.30%( 由 1990 年 的 49.70 分 增 至 2015 年 的 74.20 分 ), SDI 增 长 58.14%(由1990年的0.43增至2015年的0.68). 从分省 级行政区来看, HAQ指数增长幅度最大的省级行政 区为新疆、江西、云南和陕西, 增长幅度均超过55%, 且这4个省级行政区的SDI增长幅度也处于较高水平, 云南和陕西增长幅度超过65%, 新疆和江西超过60%; HAQ 指 数 增 长 幅 度 最 小 的 省 级 行 政 区 为 西 藏 (18.52%)、香港(23.40%)和澳门(26.30%), 相应的香港 和 澳 门 的 SDI 指 数 增 长 幅 度 也 是 最 小 的 , 分 别 为 14.29%和22.22%, 但西藏SDI的增长度达到55.56%, 处于所有省级行政区中的中等水平. 详见图1.",
       "embedText": "2 结果 > 2.4 1990和2015年中国省级行政区HAQ指数和 SDI的变化情况\n\n1990~2015 年 中 国 HAQ 指 数 增 长 49.30%( 由 1990 年 的 49.70 分 增 至 2015 年 的 74.20 分 ), SDI 增 长 58.14%(由1990年的0.43增至2015年的0.68). 从分省 级行政区来看, HAQ指数增长幅度最大的省级行政 区为新疆、江西、云南和陕西, 增长幅度均超过55%, 且这4个省级行政区的SDI增长幅度也处于较高水平, 云南和陕西增长幅度超过65%, 新疆和江西超过60%; HAQ 指 数 增 长 幅 度 最 小 的 省 级 行 政 区 为 西 藏 (18.52%)、香港(23.40%)和澳门(26.30%), 相应的香港 和 澳 门 的 SDI 指 数 增 长 幅 度 也 是 最 小 的 , 分 别 为 14.29%和22.22%, 但西藏SDI的增长度达到55.56%, 处于所有省级行政区中的中等水平. 详见图1.",
       "size": 450,
+      "tokens": 289,
       "outlinePath": "2 结果 > 2.4 1990和2015年中国省级行政区HAQ指数和 SDI的变化情况",
       "startBlock": 72,
       "endBlock": 72,
@@ -272,17 +173,6 @@
       "endOffset": 405,
       "pageIndex": 3,
       "pageLabel": "4",
-      "position": {
-        "pageIndex": 3,
-        "rects": [
-          [
-            306.61,
-            134.86,
-            541.49,
-            314.43
-          ]
-        ]
-      },
       "sectionPart": 1,
       "sectionParts": 1,
       "auxiliary": false
@@ -291,6 +181,7 @@
       "text": "HAQ指数与社会发展水平密切相关. 在估计 HAQ指数时, GBD2015采用了统一、可比、标化的方\n\n法, 使HAQ指数在全球195个国家或地区以及其中部 分国家的省或县级单位间、不同时间具有可比性[6]. 本研究发现, 2015年中国的HAQ指数明显高于同为 金砖国家的俄罗斯、巴西和印度等国, 但与美国、加\n拿大、英国等发达国家尚有一些距离. HAQ指数与其 期望值的差距, 既反映出该地区医疗可及性和质量 改善的潜能, 又反映出目前该地区医疗可及性和质 量与其社会发展的匹配程度[6]. 本研究结果显示, 在\n砖国家, 且25年间增长了近50%, 展现出中国医疗事 业的蓬勃发展和较高的医疗质量. 世界银行指出, 2014年中国医疗卫生支出占GDP的5.5%, 在189个排\n名国家和地区中, 排名123位; 人均医疗卫生支出420 美元, 排名90位, 每千人医生数1.9人, 排名73位, 均远 远低于美国(9403美元, 2.6人)、澳大利亚(6031美元, 3.4 人)、加拿大(5292美元, 2.5人)、英国(3935美元, 2.8人) 和日本(3703美元, 2.3人)等国(来源于: World Bank. http://wdi.worldbank.org/table/2.12). 综上, 中国在较少 的医疗资源配置下, 获得了较高质量的医疗服务.\n本研究发现, 25年来, 中国在呼吸系统疾病(上 呼吸道感染、慢性呼吸系统疾病)、计划免疫性疾病 (白喉、百日咳、破伤风和麻疹)、通过常规手术治愈 的疾病(阑尾炎和腹股沟、股骨和腹部疝)、孕产妇疾 病和医疗副作用表现出较高的医疗可及性和质量, 明显高于其他疾病. 中国实施的计划免疫政策, 从 1978年的“四苗防六病”、2002年的“五苗防七病”、到 2007年的“扩大国家免疫规划”等[12], 让儿童享受到 更加完善的免疫预防服务, 使可预防的传染病(乙 肝、麻疹、白喉、百日咳、破伤风、流脑等)得到有 效控制. 住院分娩是影响孕产妇死亡的重要因素[13], 2009年中国实施的农村孕产妇住院分娩补助制度, 使农村孕产妇住院分娩率由1990年的36.4%提高到 2014年的99.6%(来源于: 2015年10月6日国家卫生计 生委例行新闻发布会文字实录. http://www.nhfpc.",
       "embedText": "3 讨论\n\nHAQ指数与社会发展水平密切相关. 在估计 HAQ指数时, GBD2015采用了统一、可比、标化的方\n\na) 本研究结果不包括台湾\n\n法, 使HAQ指数在全球195个国家或地区以及其中部 分国家的省或县级单位间、不同时间具有可比性[6]. 本研究发现, 2015年中国的HAQ指数明显高于同为 金砖国家的俄罗斯、巴西和印度等国, 但与美国、加\n拿大、英国等发达国家尚有一些距离. HAQ指数与其 期望值的差距, 既反映出该地区医疗可及性和质量 改善的潜能, 又反映出目前该地区医疗可及性和质 量与其社会发展的匹配程度[6]. 本研究结果显示, 在\n砖国家, 且25年间增长了近50%, 展现出中国医疗事 业的蓬勃发展和较高的医疗质量. 世界银行指出, 2014年中国医疗卫生支出占GDP的5.5%, 在189个排\n名国家和地区中, 排名123位; 人均医疗卫生支出420 美元, 排名90位, 每千人医生数1.9人, 排名73位, 均远 远低于美国(9403美元, 2.6人)、澳大利亚(6031美元, 3.4 人)、加拿大(5292美元, 2.5人)、英国(3935美元, 2.8人) 和日本(3703美元, 2.3人)等国(来源于: World Bank. http://wdi.worldbank.org/table/2.12). 综上, 中国在较少 的医疗资源配置下, 获得了较高质量的医疗服务.\n本研究发现, 25年来, 中国在呼吸系统疾病(上 呼吸道感染、慢性呼吸系统疾病)、计划免疫性疾病 (白喉、百日咳、破伤风和麻疹)、通过常规手术治愈 的疾病(阑尾炎和腹股沟、股骨和腹部疝)、孕产妇疾 病和医疗副作用表现出较高的医疗可及性和质量, 明显高于其他疾病. 中国实施的计划免疫政策, 从 1978年的“四苗防六病”、2002年的“五苗防七病”、到 2007年的“扩大国家免疫规划”等[12], 让儿童享受到 更加完善的免疫预防服务, 使可预防的传染病(乙 肝、麻疹、白喉、百日咳、破伤风、流脑等)得到有 效控制. 住院分娩是影响孕产妇死亡的重要因素[13], 2009年中国实施的农村孕产妇住院分娩补助制度, 使农村孕产妇住院分娩率由1990年的36.4%提高到 2014年的99.6%(来源于: 2015年10月6日国家卫生计 生委例行新闻发布会文字实录. http://www.nhfpc.",
       "size": 1013,
+      "tokens": 697,
       "outlinePath": "3 讨论",
       "startBlock": 74,
       "endBlock": 97,
@@ -298,17 +189,6 @@
       "endOffset": 400,
       "pageIndex": 3,
       "pageLabel": "4",
-      "position": {
-        "pageIndex": 3,
-        "rects": [
-          [
-            306.6,
-            73.9,
-            541.14,
-            101.13
-          ]
-        ]
-      },
       "sectionPart": 1,
       "sectionParts": 3,
       "auxiliary": false
@@ -317,6 +197,7 @@
       "text": "gov.cn/xcs/s3574/201506/aa391c09b0824e9e8f9a4100 832b3860.shtml), 且在“十三五”规划纲要和“健康中 国2030”规划纲要中提出要全面推行住院分娩补助制 度, 向孕产妇免费提供生育全过程的基本医疗保健 服务, 这必将使我国孕产妇死亡进一步降低. 医务人 员医疗行为和流程的规范化降低了医疗副作用的发 生, 提高了常规手术的成功率. 本研究还发现, 1990~2015年期间, 中国在脑血管病领域表现出的医 疗可及性和质量较差, 虽然HAQ指数一直在升高, 但改善幅度并不大, 至2015年, 中国依然与美国、加 拿 大 、 日 本 和 韩 国 等 发 达 国 家 有 较 大 的 差 距 [6]. 1990~2015年脑血管病一直是威胁中国人群健康(致 死、致残)的首位病因[8], 而目前中国对脑血管病防治 存在适宜干预人群不清、高危预警策略不明、循证治 疗手段贫乏、个体化治疗技术欠缺等壁垒[14], 为脑血 管病HAQ指数的提高提出巨大挑战. 缺血性心脏病 是导致中国人群健康损失的第二位病因[7], 但25年来 对其表现出的医疗能力与脑血管病相反, 一直处于 较高水平, 至2015年, 中国缺血性心脏病的HAQ指 数高于美国、加拿大、新加坡等国.《中国心血管病 报告2016》中指出, 过去10年间, 中国心血管病外科 手术量从8万例增至21万例, 能够开展手术的医疗中\n心从484家增至734家, 且主要心脏中心搭桥手术院 内死亡率降至2.2%[15], 与美国搭桥手术院内死亡率 不相上下[16], 这些一方面展现出中国高质量的心血 管病临床治疗技术, 但另一方面也提示出健康生活 方式干预对未来降低缺血性心脏病死亡的重要性.",
       "embedText": "a) 本研究结果不包括台湾\n\ngov.cn/xcs/s3574/201506/aa391c09b0824e9e8f9a4100 832b3860.shtml), 且在“十三五”规划纲要和“健康中 国2030”规划纲要中提出要全面推行住院分娩补助制 度, 向孕产妇免费提供生育全过程的基本医疗保健 服务, 这必将使我国孕产妇死亡进一步降低. 医务人 员医疗行为和流程的规范化降低了医疗副作用的发 生, 提高了常规手术的成功率. 本研究还发现, 1990~2015年期间, 中国在脑血管病领域表现出的医 疗可及性和质量较差, 虽然HAQ指数一直在升高, 但改善幅度并不大, 至2015年, 中国依然与美国、加 拿 大 、 日 本 和 韩 国 等 发 达 国 家 有 较 大 的 差 距 [6]. 1990~2015年脑血管病一直是威胁中国人群健康(致 死、致残)的首位病因[8], 而目前中国对脑血管病防治 存在适宜干预人群不清、高危预警策略不明、循证治 疗手段贫乏、个体化治疗技术欠缺等壁垒[14], 为脑血 管病HAQ指数的提高提出巨大挑战. 缺血性心脏病 是导致中国人群健康损失的第二位病因[7], 但25年来 对其表现出的医疗能力与脑血管病相反, 一直处于 较高水平, 至2015年, 中国缺血性心脏病的HAQ指 数高于美国、加拿大、新加坡等国.《中国心血管病 报告2016》中指出, 过去10年间, 中国心血管病外科 手术量从8万例增至21万例, 能够开展手术的医疗中\n心从484家增至734家, 且主要心脏中心搭桥手术院 内死亡率降至2.2%[15], 与美国搭桥手术院内死亡率 不相上下[16], 这些一方面展现出中国高质量的心血 管病临床治疗技术, 但另一方面也提示出健康生活 方式干预对未来降低缺血性心脏病死亡的重要性.",
       "size": 768,
+      "tokens": 528,
       "outlinePath": "a) 本研究结果不包括台湾",
       "startBlock": 98,
       "endBlock": 101,
@@ -324,17 +205,6 @@
       "endOffset": 129,
       "pageIndex": 6,
       "pageLabel": "7",
-      "position": {
-        "pageIndex": 6,
-        "rects": [
-          [
-            306.59,
-            67.96,
-            541.41,
-            400.29
-          ]
-        ]
-      },
       "sectionPart": 2,
       "sectionParts": 3,
       "auxiliary": false
@@ -343,6 +213,7 @@
       "text": "本研究发现, 2015年省级行政区间医疗可及性和 质量差异较大, 北京的HAQ指数(最高)比西藏的(最 低)高出了近36.5分, 其中北京、澳门和上海的HAQ指 数超过了90分, 而2015年全球仅有9个国家(安道尔、 冰岛、瑞士、挪威等)的HAQ指数达到90分及以上[7]; 西藏、青海、贵州、新疆、云南的HAQ指数不到65分, 处于全球中低水平[7], 但除西藏外的4个省级行政区 在过去25年间HAQ指数增长迅猛、医疗服务能力进步 幅度大, 西藏的提升速度不尽如人意. 本研究还发现, 2015年省级行政区间HAQ指数与其期望值的差距的 差异较大, 大部分社会发展水平较高的省级行政区所 表现出的医疗可及性和质量高于或与其社会发展水平 相匹配; 但新疆、青海和广西3个省级行政区在其社会 发展水平下, 医疗可及性和质量应当有较大的改善空\n间. 本研究结果还显示出, 即使省级行政区间SDI或 SDI增长速度相近, 其HAQ指数或HAQ指数增长速度 却存在差异, 如江苏和吉林的SDI均为0.73, 但江苏的 HAQ指数高出吉林近9分; 如山东和内蒙的SDI在过 去25年间均增长了57.78%, 但内蒙HAQ指数的增长速 度快于山东, 这说明, 除社会发展水平外, 还有很多 其他因素与医疗可及性和质量密切相关, 如卫生资源 投入, 卫生政策, 医疗保险, 医务人员的学历、诊断和 治疗能力, 公众的健康素养等.\n本研究第一次对中国省级行政区的医疗可及性 和质量指数进行分析, 其研究结果对于了解和评价 各地区的医疗服务能力具有重要的参考意义. 但是 本研究中的HAQ指数仅从避免疾病死亡的角度去衡 量医疗服务能力, 未考虑医疗对非致死性健康结局 (如疾病后遗症、并发症、机体功能恢复等)的改善能 力. 尽管医疗服务能力对致死性和非致死性健康结 局产生的效应是高度相关的, 但增加对非致死性健 康结局效应的评价, 会更加全面、客观地反映各地区 的医疗可及性和质量.\n致谢 本文图1涉及的地图经由国家测绘地理信息局审核, 审图号为GS(2018)1867号.",
       "embedText": "a) 本研究结果不包括台湾\n\n本研究发现, 2015年省级行政区间医疗可及性和 质量差异较大, 北京的HAQ指数(最高)比西藏的(最 低)高出了近36.5分, 其中北京、澳门和上海的HAQ指 数超过了90分, 而2015年全球仅有9个国家(安道尔、 冰岛、瑞士、挪威等)的HAQ指数达到90分及以上[7]; 西藏、青海、贵州、新疆、云南的HAQ指数不到65分, 处于全球中低水平[7], 但除西藏外的4个省级行政区 在过去25年间HAQ指数增长迅猛、医疗服务能力进步 幅度大, 西藏的提升速度不尽如人意. 本研究还发现, 2015年省级行政区间HAQ指数与其期望值的差距的 差异较大, 大部分社会发展水平较高的省级行政区所 表现出的医疗可及性和质量高于或与其社会发展水平 相匹配; 但新疆、青海和广西3个省级行政区在其社会 发展水平下, 医疗可及性和质量应当有较大的改善空\n间. 本研究结果还显示出, 即使省级行政区间SDI或 SDI增长速度相近, 其HAQ指数或HAQ指数增长速度 却存在差异, 如江苏和吉林的SDI均为0.73, 但江苏的 HAQ指数高出吉林近9分; 如山东和内蒙的SDI在过 去25年间均增长了57.78%, 但内蒙HAQ指数的增长速 度快于山东, 这说明, 除社会发展水平外, 还有很多 其他因素与医疗可及性和质量密切相关, 如卫生资源 投入, 卫生政策, 医疗保险, 医务人员的学历、诊断和 治疗能力, 公众的健康素养等.\n本研究第一次对中国省级行政区的医疗可及性 和质量指数进行分析, 其研究结果对于了解和评价 各地区的医疗服务能力具有重要的参考意义. 但是 本研究中的HAQ指数仅从避免疾病死亡的角度去衡 量医疗服务能力, 未考虑医疗对非致死性健康结局 (如疾病后遗症、并发症、机体功能恢复等)的改善能 力. 尽管医疗服务能力对致死性和非致死性健康结 局产生的效应是高度相关的, 但增加对非致死性健 康结局效应的评价, 会更加全面、客观地反映各地区 的医疗可及性和质量.\n致谢 本文图1涉及的地图经由国家测绘地理信息局审核, 审图号为GS(2018)1867号.",
       "size": 899,
+      "tokens": 619,
       "outlinePath": "a) 本研究结果不包括台湾",
       "startBlock": 102,
       "endBlock": 105,
@@ -350,17 +221,6 @@
       "endOffset": 45,
       "pageIndex": 7,
       "pageLabel": "8",
-      "position": {
-        "pageIndex": 7,
-        "rects": [
-          [
-            53.86,
-            421.36,
-            288.76,
-            631.35
-          ]
-        ]
-      },
       "sectionPart": 3,
       "sectionParts": 3,
       "auxiliary": false
@@ -369,6 +229,7 @@
       "text": "Xinying Zeng, Lijun Wang, Peng Yin, Yunning Liu, Jiangmei Liu, Jinling You & Maigeng Zhou*\nNational Center for Chronic and Noncommunicable Disease Control and Prevention, Chinese Center for Disease Control and Prevention, Beijing 100050, China\n* Corresponding author, E-mail: maigengzhou@126.com\nThe healthcare access and quality (HAQ) is an important index that reflects health system capacity for timely and effectively detecting, managing, curing and avoiding death from a range of diseases. The purpose of this study is to examine the current status and temporal trend of the healthcare access and quality in China at both national and provincial level. Using the results of global burden of disease study 2015, we compared the HAQ index between China and some other selected countries, at the same time analyzed the differences in HAQ and its temporal trend from 1990 to 2015 both by diseases and by provinces across China. In 2015, the HAQ index of China was 74.2, and 20.5 higher than the global average; the HAQ index was only 1.2 lower than its expectancy in China and this gap was far lower than the global average (20.1). From 1990 to 2015, in China, the HAQ was higher in respiratory diseases (upper respiratory infections, chronic respiratory disease), vaccine-preventable diseases (Diphtheria, Whooping cough, Tetanus, Measles), diseases for which routine surgeries can easily avert mortality (appendicitis, inguinal, femoral, and abdominal hernia), maternal disorders, Ischaemic heart disease, and adverse effects of medical treatment. In 2015, there were 9 provinces, such as Beijing, Macao, Shanghai and so on, with a HAQ index of 80 or more, whilst the lowest HAQ index was found in Tibet, Qinghai, Guizhou, Xinjiang and Yunnan. In most provinces with highest and relatively higher level of socio-demographic development, the HAQ index was higher than its expectancy. From 1990 to 2015, the HAQ index increased by 49.30%, among which the provinces with the largest increasing were Xinjiang, Jiangxi, Yunnan and Shaanxi and their growth rates were more than 55%. The provinces with the smallest increase in HAQ index were Tibet, Hong Kong and Macao. This study indicated that between 1990 and 2015, the healthcare access and quality in China have been improved markedly, but the gaps remained among diseases and among provinces.\nhealthcare access and quality index, socio-demographic index, amendable mortality, China provincial\ndoi: 10.1360/N972017-01159",
       "embedText": "Subnational analysis of healthcare access and quality in China during 1990−2015\n\nXinying Zeng, Lijun Wang, Peng Yin, Yunning Liu, Jiangmei Liu, Jinling You & Maigeng Zhou*\nNational Center for Chronic and Noncommunicable Disease Control and Prevention, Chinese Center for Disease Control and Prevention, Beijing 100050, China\n* Corresponding author, E-mail: maigengzhou@126.com\nThe healthcare access and quality (HAQ) is an important index that reflects health system capacity for timely and effectively detecting, managing, curing and avoiding death from a range of diseases. The purpose of this study is to examine the current status and temporal trend of the healthcare access and quality in China at both national and provincial level. Using the results of global burden of disease study 2015, we compared the HAQ index between China and some other selected countries, at the same time analyzed the differences in HAQ and its temporal trend from 1990 to 2015 both by diseases and by provinces across China. In 2015, the HAQ index of China was 74.2, and 20.5 higher than the global average; the HAQ index was only 1.2 lower than its expectancy in China and this gap was far lower than the global average (20.1). From 1990 to 2015, in China, the HAQ was higher in respiratory diseases (upper respiratory infections, chronic respiratory disease), vaccine-preventable diseases (Diphtheria, Whooping cough, Tetanus, Measles), diseases for which routine surgeries can easily avert mortality (appendicitis, inguinal, femoral, and abdominal hernia), maternal disorders, Ischaemic heart disease, and adverse effects of medical treatment. In 2015, there were 9 provinces, such as Beijing, Macao, Shanghai and so on, with a HAQ index of 80 or more, whilst the lowest HAQ index was found in Tibet, Qinghai, Guizhou, Xinjiang and Yunnan. In most provinces with highest and relatively higher level of socio-demographic development, the HAQ index was higher than its expectancy. From 1990 to 2015, the HAQ index increased by 49.30%, among which the provinces with the largest increasing were Xinjiang, Jiangxi, Yunnan and Shaanxi and their growth rates were more than 55%. The provinces with the smallest increase in HAQ index were Tibet, Hong Kong and Macao. This study indicated that between 1990 and 2015, the healthcare access and quality in China have been improved markedly, but the gaps remained among diseases and among provinces.\nhealthcare access and quality index, socio-demographic index, amendable mortality, China provincial\ndoi: 10.1360/N972017-01159",
       "size": 2558,
+      "tokens": 682,
       "outlinePath": "Subnational analysis of healthcare access and quality in China during 1990−2015",
       "startBlock": 115,
       "endBlock": 120,
@@ -376,17 +237,6 @@
       "endOffset": 26,
       "pageIndex": 9,
       "pageLabel": "10",
-      "position": {
-        "pageIndex": 9,
-        "rects": [
-          [
-            53.88,
-            616.6,
-            507.03,
-            632.07
-          ]
-        ]
-      },
       "sectionPart": 1,
       "sectionParts": 1,
       "auxiliary": false

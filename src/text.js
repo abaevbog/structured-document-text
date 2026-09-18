@@ -198,3 +198,58 @@ export function getNestedBlockPlainText(node) {
 	}
 	return parts.join('\n');
 }
+
+/**
+ * The same text as getNestedBlockPlainText(), with a run per text node saying
+ * which characters of it that node contributed. The newlines a nested block
+ * is joined by come from no node, so no run covers them.
+ *
+ * @param {Object} node - A block or text node
+ * @returns {{ text: string, runs: Array<{ start, end, ref }> }} - `ref` is the
+ *     node's path of child indices relative to `node`
+ */
+export function getNestedBlockTextRuns(node) {
+	let runs = [];
+	let text = collectTextRuns(node, [], runs, '');
+	return { text, runs };
+}
+
+// Appends `node`'s text to `text`, pushing a run for each text node passed.
+// Mirrors getNestedBlockPlainText(): a block of text nodes concatenates them,
+// a block of blocks joins those with newlines and ignores its own text nodes,
+// and a child contributing nothing gets no separator either.
+function collectTextRuns(node, ref, runs, text) {
+	if (node.text !== undefined) {
+		if (node.text) runs.push({ start: text.length, end: text.length + node.text.length, ref });
+		return text + node.text;
+	}
+	if (!node.content) return text;
+
+	let hasChildBlock = node.content.some(child => child.text === undefined);
+
+	if (!hasChildBlock) {
+		for (let i = 0; i < node.content.length; i++) {
+			let child = node.content[i];
+			if (child.text === undefined || !child.text) continue;
+			runs.push({ start: text.length, end: text.length + child.text.length, ref: [...ref, i] });
+			text += child.text;
+		}
+		return text;
+	}
+
+	let first = true;
+	for (let i = 0; i < node.content.length; i++) {
+		let child = node.content[i];
+		if (child.text !== undefined) continue;
+		let childRuns = [];
+		let childText = collectTextRuns(child, [...ref, i], childRuns, '');
+		if (!childText) continue;
+		if (!first) text += '\n';
+		first = false;
+		for (let run of childRuns) {
+			runs.push({ start: run.start + text.length, end: run.end + text.length, ref: run.ref });
+		}
+		text += childText;
+	}
+	return text;
+}

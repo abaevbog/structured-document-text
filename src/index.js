@@ -7,10 +7,14 @@ export {
 	splitSentences,
 	getStructureSections,
 	getPassages,
+	getPositionText,
 	getTextPassages,
 	getPassageDigest,
 	getNextPassage,
 } from './chunker.js';
+
+export { createPositionMapper } from './position.js';
+export { getTextNodeSpans } from './range.js';
 
 // EPUB selectorMap decode
 export {

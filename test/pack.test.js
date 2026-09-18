@@ -63,6 +63,21 @@ describe('SDTPack', () => {
 					assert.deepEqual(await reader.getPageBlocks(pageIndex), getExpectedPageBlocks(structure, pageIndex));
 				}
 			});
+
+			it('materializes a block range into a sparse structure', async () => {
+				let structure = packableFixture(data);
+				let buffer = packQuiet(structure);
+				let reader = await openPack(buffer);
+				let indexes = sampleIndexes(structure.content.length);
+				for (let i = 0; i + 1 < indexes.length; i += 2) {
+					let [start, end] = [indexes[i], indexes[i + 1]].sort((a, b) => a - b);
+					let expected = { ...structure, content: new Array(structure.content.length) };
+					for (let j = start; j <= end; j++) {
+						expected.content[j] = structure.content[j];
+					}
+					assert.deepEqual(await reader.materializeBlocks(start, end), expected);
+				}
+			});
 		});
 	}
 

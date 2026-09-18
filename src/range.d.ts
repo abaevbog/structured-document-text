@@ -1,4 +1,4 @@
-import type { ContentBlockNode, PageContentRange, RefPath } from '../schema';
+import type { ContentBlockNode, PageContentRange, RefPath, TextNode } from '../schema';
 
 export interface PageBlockSpan {
 	startIndex: number;
@@ -51,3 +51,14 @@ export function walkContentRangeLeafBlocks(
 		};
 	}) => void
 ): void;
+export function getTextNodeSpans(
+	structure: { content: ContentBlockNode[] },
+	position: { start: number[]; end: number[] }
+): {
+	block: ContentBlockNode;
+	blockRef: number[];
+	node: TextNode;
+	ref: number[];
+	start: number;
+	end: number;
+}[];

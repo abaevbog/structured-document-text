@@ -75,6 +75,35 @@ export function nfcToOriginalLocal(deltaMap, entryStartNFC, localNFCPos) {
 }
 
 /**
+ * Invert nfcToOriginalLocal(): the NFC offset within an entry that maps to a
+ * local original-space offset. The mapping is monotonic, so binary search
+ * finds it.
+ *
+ * Ported from the reader's src/common/sdt/deltamap-invert.ts
+ *
+ * @param {string | undefined} deltaMap
+ * @param {number} entryStartNFC
+ * @param {number} localOrig
+ * @param {number} maxNFC
+ * @returns {number}
+ */
+export function localOriginalToNFC(deltaMap, entryStartNFC, localOrig, maxNFC) {
+	if (!deltaMap) return Math.max(0, Math.min(localOrig, maxNFC));
+	let lo = 0;
+	let hi = maxNFC;
+	while (lo < hi) {
+		let mid = (lo + hi) >> 1;
+		if (nfcToOriginalLocal(deltaMap, entryStartNFC, mid) < localOrig) {
+			lo = mid + 1;
+		}
+		else {
+			hi = mid;
+		}
+	}
+	return lo;
+}
+
+/**
  * Compose two deltaMaps applied in sequence: `outer` maps positions in the
  * final text to an intermediate text, `inner` maps the intermediate text to
  * the original. Returns a deltaMap from final positions straight to original

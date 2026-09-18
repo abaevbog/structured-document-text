@@ -9,6 +9,7 @@ import {
 	splitSentences,
 	getStructureSections,
 	getPassages,
+	getPassagePosition,
 	getTextPassages,
 	getPassageDigest,
 	getNextPassage,
@@ -451,7 +452,7 @@ describe('getPassages', () => {
 			assert.equal(passage.endBlock, at[0][0]);
 			// A PDF without labels is labelled by ordinal
 			assert.equal(passage.pageLabel, '5');
-			assert.deepEqual(passage.position, position);
+			assert.deepEqual(getPassagePosition(structure, passage), position);
 			assert.equal(passage.sectionPart, i + 1);
 			assert.equal(passage.sectionParts, passages.length);
 			assert.equal(passage.text, block.slice(passage.startOffset, passage.endOffset));
@@ -475,10 +476,17 @@ describe('getPassages', () => {
 			const passage = passages[i];
 			assert.ok(passage.endBlock >= passage.startBlock);
 			if (i) assert.ok(passage.startBlock > passages[i - 1].startBlock);
-			// Located at its own first block
+			// Labelled by its own first block, and positioned from there to
+			// its last: a block per page here, so the position ends on the
+			// last block's page
 			const pageIndex = passage.startBlock - at[0][0];
+			const endPageIndex = passage.endBlock - at[0][0];
 			assert.equal(passage.pageLabel, String(pageIndex + 1));
-			assert.deepEqual(passage.position, { pageIndex, rects: [[10, 20, 300, 40]] });
+			const position = getPassagePosition(structure, passage);
+			assert.equal(position.pageIndex, pageIndex);
+			assert.deepEqual(position.rects, [[10, 20, 300, 40]]);
+			assert.deepEqual(position.nextPageRects, [[10, 20, 300, 40]]);
+			assert.equal(position.nextPageIndex, endPageIndex > pageIndex + 1 ? endPageIndex : undefined);
 		}
 		assert.ok(passages[passages.length - 1].startBlock > at[0][0]);
 	});
@@ -490,7 +498,19 @@ describe('getPassages', () => {
 		assert.equal(passages[0].sectionPart, 1);
 		assert.equal(passages[0].sectionParts, 1);
 		assert.equal(passages[0].pageLabel, null);
-		assert.equal(passages[0].position, null);
+		assert.equal(getPassagePosition(structure, passages[0]), null);
+	});
+
+	it('estimates each passage in tokens at its scale, beside its size in characters', () => {
+		// One section, so its scale is the whole text's
+		const text = words('alpha', 250);
+		const scale = getCharacterMetrics(text).budget / BUDGET_TOKENS;
+		const { structure } = structureOf([{ path: 'Body', blocks: [text] }]);
+		const [passage] = getPassages(structure);
+		assert.equal(passage.size, passage.embedText.length);
+		assert.equal(passage.tokens, Math.round(passage.size / scale));
+		const [piece] = getTextPassages(text);
+		assert.equal(piece.tokens, Math.round(piece.size / scale));
 	});
 
 	it('returns nothing when there is no indexable text', () => {

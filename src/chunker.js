@@ -1,4 +1,6 @@
-import { getNestedBlockPlainText } from './text.js';
+import { getNestedBlockPlainText, getNestedBlockTextRuns } from './text.js';
+import { createPositionMapper } from './position.js';
+import { getTextNodeSpans } from './range.js';
 
 // Passage geometry in estimated tokens: the most a passage holds, the least
 // worth standing alone, and how much of a split passage's tail is carried
@@ -14,6 +16,8 @@ const JOIN_SIZE = 2;
 
 let sentenceSegmenter = null;
 const passageCache = new WeakMap();
+const mapperCache = new WeakMap();
+const locatedCache = new WeakMap();
 
 
 // ---------------------------------------------------------------------------
@@ -29,15 +33,127 @@ const passageCache = new WeakMap();
  * real matches. Auxiliary blocks mix captions with equations, axis labels
  * and index entries.
  *
+ *
  * @param {Object} structure - A materialized structure
- * @returns {Array<{ text, embedText, size, outlinePath, startBlock,
- *     endBlock, startOffset, endOffset, pageIndex, pageLabel, position,
- *     sectionPart, sectionParts, auxiliary }>} - in document order
+ * @returns {Array<{ text, embedText, size, tokens, outlinePath, startBlock,
+ *     endBlock, startOffset, endOffset, pageIndex, pageLabel, sectionPart,
+ *     sectionParts, auxiliary }>} - in document order; `size` is the embed
+ *     text's characters, `tokens` its estimate at its section run's scale
  */
 export function getPassages(structure) {
 	const sections = getStructureSections(structure, { onlyIndexable: true });
 	if (!sections.length) return [];
 	return buildPassages(sections);
+}
+
+/**
+ * A passage's extent in the source document's own coordinates, so it
+ * survives a re-extraction that divides the document into different blocks.
+ * The geometry it is built from is decoded once per structure and kept for
+ * the structure's life.
+ *
+ * @param {Object} structure - The materialized structure the passage is of
+ * @param {Object} passage - A passage from getPassages()
+ * @returns {Object|string|Array|null} - null for a document with no anchors
+ *     to build one from
+ */
+export function getPassagePosition(structure, passage) {
+	const mapper = getPositionMapper(structure);
+	if (!mapper) return null;
+	let first = structure.content[passage.startBlock];
+	let last = structure.content[passage.endBlock];
+	if (!first || !last) return null;
+	let start = contentPointAt(first, passage.startBlock, passage.startOffset, false);
+	let end = contentPointAt(last, passage.endBlock, passage.endOffset, true);
+	if (!start || !end) return null;
+	return mapper.compactPosition(mapper.sdtToSourcePosition({ start, end }));
+}
+
+/**
+ * The text a stored passage position covers in a structure -- the inverse of
+ * getPassagePosition(), and usable on a different extraction of the same
+ * document. Only indexable blocks count, as in a passage, and they are joined
+ * by newlines. The block range it covers is in a passage's terms: offsets
+ * into the first and last block's trimmed text.
+ *
+ * @param {Object} structure - A materialized structure
+ * @param {Object|string|Array} position - From getPassagePosition()
+ * @returns {{ text, startBlock, endBlock, startOffset, endOffset } | null} -
+ *     null when the position falls on nothing this structure indexes
+ */
+export function getPositionText(structure, position) {
+	const mapper = getPositionMapper(structure);
+	if (!mapper || !position) return null;
+	const sdtPosition = mapper.sourceToSDTPosition(mapper.expandPosition(position));
+	if (!sdtPosition) return null;
+	const located = getLocatedBlocks(structure);
+	const spans = getTextNodeSpans(structure, sdtPosition)
+		.filter(span => located.has(span.ref[0]));
+	if (!spans.length) return null;
+	// Spans of one leaf block run together; a new leaf block starts a line
+	let text = '';
+	let lastBlock = null;
+	for (const span of spans) {
+		if (lastBlock && span.block !== lastBlock) text += '\n';
+		text += span.node.text.slice(span.start, span.end);
+		lastBlock = span.block;
+	}
+	const first = spans[0];
+	const last = spans[spans.length - 1];
+	const startBlock = first.ref[0];
+	const endBlock = last.ref[0];
+	return {
+		text: text.trim(),
+		startBlock,
+		endBlock,
+		startOffset: blockOffset(structure.content[startBlock], first.ref, first.start),
+		endOffset: blockOffset(structure.content[endBlock], last.ref, last.end),
+	};
+}
+
+/**
+ * The text of a block range in a passage's terms: the indexable blocks from
+ * startBlock to endBlock joined by newlines, cut to the offsets into the
+ * first and last, and located like a passage by its first block. A
+ * passage's own range gives its text again; so does the range
+ * getPositionText() reports. The structure need hold only the range's
+ * blocks, as a reader's materializeBlocks() gives it. null when the range
+ * doesn't start and end on indexable blocks, as after a re-extraction.
+ *
+ * @param {Object} structure - A materialized structure, whole or in part
+ * @param {{ startBlock, endBlock, startOffset, endOffset }} range
+ * @returns {{ text, startBlock, endBlock, outlinePath, pageIndex, pageLabel }
+ *     | null}
+ */
+export function getBlockRangeText(structure, range) {
+	const { startBlock, endBlock, startOffset, endOffset } = range || {};
+	if (!Number.isInteger(startBlock) || !Number.isInteger(endBlock) || startBlock > endBlock
+			|| !Number.isInteger(startOffset) || !Number.isInteger(endOffset)) {
+		return null;
+	}
+	const located = getLocatedBlocks(structure);
+	const blocks = [];
+	for (let i = startBlock; i <= endBlock; i++) {
+		const entry = located.get(i);
+		if (entry) blocks.push(entry);
+	}
+	if (!blocks.length || blocks[0].block.index !== startBlock
+			|| blocks[blocks.length - 1].block.index !== endBlock) {
+		return null;
+	}
+	const joined = blocks.map(entry => entry.block.text).join('\n');
+	const last = blocks[blocks.length - 1].block;
+	const text = joined.slice(startOffset, joined.length - last.text.length + endOffset).trim();
+	if (!text) return null;
+	const { section, block } = blocks[0];
+	return {
+		text,
+		startBlock,
+		endBlock,
+		outlinePath: section.outlinePath || '',
+		pageIndex: block.pageIndex ?? null,
+		pageLabel: block.pageLabel ?? null,
+	};
 }
 
 /**
@@ -48,12 +164,15 @@ export function getPassages(structure) {
  * @param {string} text
  * @param {Object} [geometry] - budget, minSize and overlap in characters;
  *     the text's own scale when omitted
- * @returns {Array<{ text, size, start, end }>}
+ * @returns {Array<{ text, size, tokens, start, end }>} - `size` in
+ *     characters, `tokens` estimated at the geometry's scale
  */
 export function getTextPassages(text, geometry) {
 	if (!text || !text.trim()) return [];
 	geometry = geometry || getCharacterMetrics(text);
-	return splitParagraphs(text, measureParagraphs(text), geometry);
+	const scale = geometry.budget / BUDGET_TOKENS;
+	return splitParagraphs(text, measureParagraphs(text), geometry)
+		.map(piece => ({ ...piece, tokens: Math.round(piece.size / scale) }));
 }
 
 /**
@@ -305,7 +424,8 @@ function buildPassages(sections) {
 		// The group's characters over its sections' tokens
 		const chars = group.entries.reduce((sum, entry) => sum + entry.chars, 0);
 		const tokens = group.entries.reduce((sum, entry) => sum + entry.tokens, 0);
-		const geometry = geometryFor(chars / tokens);
+		source.scale = chars / tokens;
+		const geometry = geometryFor(source.scale);
 		const { headings, headingSize } = pickHeadings(source, geometry.budget);
 		const pieces = splitParagraphs(source.text, source.paragraphs,
 			{ ...geometry, budget: geometry.budget - headingSize });
@@ -397,7 +517,6 @@ function assembleGroup(group) {
 				end: blockStart + block.text.length,
 				pageIndex: block.pageIndex ?? null,
 				pageLabel: block.pageLabel ?? null,
-				position: block.position ?? null,
 			});
 			blockStart += block.text.length + 1;
 		}
@@ -457,6 +576,7 @@ function describePiece(source, headings, piece, part) {
 		text: piece.text,
 		embedText,
 		size: embedSize,
+		tokens: Math.round(embedSize / source.scale),
 		outlinePath: headings.find(
 			heading => heading.end > piece.start && heading.start < piece.end
 		)?.path || '',
@@ -466,9 +586,81 @@ function describePiece(source, headings, piece, part) {
 		endOffset: last ? piece.end - last.start : null,
 		pageIndex: first ? first.pageIndex : null,
 		pageLabel: first ? first.pageLabel : null,
-		position: first ? first.position : null,
 		...part,
 	};
+}
+
+
+// ---------------------------------------------------------------------------
+// Passage positions
+// ---------------------------------------------------------------------------
+
+// The structure's position mapper, or null for a processor with no mapper or
+// a structure too sparse to index
+function getPositionMapper(structure) {
+	if (mapperCache.has(structure)) return mapperCache.get(structure);
+	let mapper = null;
+	try {
+		mapper = createPositionMapper(structure);
+	}
+	catch (e) {
+		// Left null
+	}
+	mapperCache.set(structure, mapper);
+	return mapper;
+}
+
+// Indexable block index -> the block as its section reports it, with the
+// section; built once per structure and kept for the structure's life
+function getLocatedBlocks(structure) {
+	let located = locatedCache.get(structure);
+	if (!located) {
+		located = new Map();
+		for (const section of getStructureSections(structure, { onlyIndexable: true })) {
+			for (const block of section.blocks) located.set(block.index, { section, block });
+		}
+		locatedCache.set(structure, located);
+	}
+	return located;
+}
+
+// The content point for an offset into a block's trimmed plain text, which is
+// what a section's text is built from. An offset inside a newline joining two
+// nested blocks belongs to no text node, so a start moves forward to the next
+// one and an end back to the previous.
+function contentPointAt(block, blockIndex, offset, isEnd) {
+	let { text, runs } = getNestedBlockTextRuns(block);
+	if (!runs.length) return null;
+	let at = offset + (text.length - text.trimStart().length);
+	let run = isEnd ? lastRunStartingBefore(runs, at) : firstRunEndingAfter(runs, at);
+	return [blockIndex, ...run.ref, Math.max(run.start, Math.min(at, run.end)) - run.start];
+}
+
+// The inverse: an offset in a text node as an offset into its top-level
+// block's trimmed plain text
+function blockOffset(block, nodeRef, offset) {
+	const { text, runs } = getNestedBlockTextRuns(block);
+	const inner = nodeRef.slice(1);
+	const run = runs.find(r => r.ref.length === inner.length && r.ref.every((v, i) => v === inner[i]));
+	if (!run) return null;
+	const leading = text.length - text.trimStart().length;
+	return Math.max(0, Math.min(run.start + offset - leading, text.trim().length));
+}
+
+function firstRunEndingAfter(runs, at) {
+	for (let run of runs) {
+		if (run.end > at) return run;
+	}
+	return runs[runs.length - 1];
+}
+
+function lastRunStartingBefore(runs, at) {
+	let found = null;
+	for (let run of runs) {
+		if (run.start >= at) break;
+		found = run;
+	}
+	return found || runs[0];
 }
 
 

@@ -1,0 +1,22 @@
+{
+  "blocks": {
+    "total": 2205,
+    "roundTripped": 2163,
+    "widened": 0,
+    "truncated": 29,
+    "drifted": 0,
+    "noSource": 0,
+    "noPosition": 0,
+    "blank": 13
+  },
+  "passages": {
+    "total": 245,
+    "roundTripped": 245,
+    "widened": 0,
+    "truncated": 0,
+    "drifted": 0,
+    "noSource": 0,
+    "noPosition": 0,
+    "blank": 0
+  }
+}

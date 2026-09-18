@@ -164,6 +164,53 @@ export function walkContentRangeLeafBlocks(content, range, callback) {
 	}
 }
 
+/**
+ * The text nodes a position covers, in document order, each with the
+ * character range [start, end) of it that falls inside the position.
+ *
+ * Ported from the reader's src/common/sdt/position-mapper.ts
+ *
+ * @param {Object} structure - A materialized structure
+ * @param {{ start: number[], end: number[] }} position - Content points
+ * @returns {Array<{ block, blockRef, node, ref, start, end }>}
+ */
+export function getTextNodeSpans(structure, position) {
+	let spans = [];
+	walkContentRangeLeafBlocks(
+		structure.content,
+		[position.start, position.end],
+		({ block, ref, startPoint, endPoint }) => {
+			let content = block.content;
+			if (!content) return;
+			for (let i = 0; i < content.length; i++) {
+				let node = content[i];
+				if (!node || typeof node.text !== 'string') continue;
+				let nodeRef = [...ref, i];
+				let start = 0;
+				let end = node.text.length;
+				if (startPoint.ref) {
+					let cmp = compareRefs(nodeRef, startPoint.ref);
+					if (cmp < 0) continue;
+					if (cmp === 0 && Number.isInteger(startPoint.offset)) {
+						start = startPoint.offset;
+					}
+				}
+				if (endPoint.ref) {
+					let cmp = compareRefs(nodeRef, endPoint.ref);
+					if (cmp > 0) continue;
+					if (cmp === 0) {
+						if (!Number.isInteger(endPoint.offset)) continue;
+						end = endPoint.offset;
+					}
+				}
+				if (end <= start) continue;
+				spans.push({ block, blockRef: ref, node, ref: nodeRef, start, end });
+			}
+		}
+	);
+	return spans;
+}
+
 function walkLeafBlocks(node, ref, range, parts, callback) {
 	if (!node || typeof node.text === 'string') {
 		return;
