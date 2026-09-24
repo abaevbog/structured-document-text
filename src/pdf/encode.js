@@ -369,6 +369,8 @@ export function charsToPreformattedTextNodes(pageIndex, chars) {
 	let currentStyle = undefined;
 	let currentStyleRef = null;
 	let textParts = [];
+	let runs = [];
+	let completeGeometry = true;
 
 	const flushNode = () => {
 		if (textParts.length === 0) return;
@@ -376,8 +378,11 @@ export function charsToPreformattedTextNodes(pageIndex, chars) {
 		if (!text) return;
 		const out = { text };
 		if (currentStyle) out.style = currentStyle;
+		if (completeGeometry && runs.length) out.anchor = { textMap: stringifyTextMap(runs) };
 		nodes.push(out);
 		textParts = [];
+		runs = [];
+		completeGeometry = true;
 	};
 
 	for (let li = 0; li < lines.length; li++) {
@@ -434,6 +439,21 @@ export function charsToPreformattedTextNodes(pageIndex, chars) {
 			}
 
 			textParts.push(ch.c);
+			// Text maps count non-whitespace UTF-16 units, including zero-width
+			// continuations of a multi-unit glyph. Layout spaces have no geometry.
+			const length = ch.c.replace(/[ \n\t]/g, '').length;
+			if (length) {
+				if (!ch.rect) completeGeometry = false;
+				else {
+					const header = ((ch.axisDir & 0b11) << HEADER_AXIS_DIR_SHIFT) | (ch.rtl ? HEADER_DIR_RTL : 0);
+					const run = [header, pageIndex, ...ch.rect];
+					if (length > 1) {
+						const extent = isVertical(ch.axisDir) ? ch.rect[3] - ch.rect[1] : ch.rect[2] - ch.rect[0];
+						run.push(extent, ...new Array(length - 1).fill(0));
+					}
+					runs.push(run);
+				}
+			}
 
 			if (ch.rect) {
 				prevEnd = ch.rect[2]; // right edge
