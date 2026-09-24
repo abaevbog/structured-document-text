@@ -2,12 +2,61 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { charsToPreformattedTextNodes } from '../src/pdf/encode.js';
 import { buildRunData, parseTextMap } from '../src/pdf/decode.js';
+import { optimizeTextMapRun } from '../src/pdf/text-map.js';
 
 const char = (c, x, y = 0, extra = {}) => ({ c, rect: [x, y, x + 5, y + 10], axisDir: 0, monospace: true, ...extra });
 const geometry = node => buildRunData(parseTextMap(node.anchor?.textMap));
 const text = nodes => nodes.map(node => node.text).join('');
 
 describe('preformatted PDF text geometry', () => {
+	it('compacts long lines without changing glyph geometry or direction', () => {
+		for (let axisDir of [0, 1, 2, 3]) {
+			let vertical = !!(axisDir % 2);
+			let chars = Array.from({ length: 200 }, (_, i) => ({
+				c: 'x', axisDir, rtl: true, monospace: true,
+				rect: vertical ? [0, i * 6, 10, i * 6 + 5] : [i * 6, 0, i * 6 + 5, 10],
+			}));
+			let nodes = charsToPreformattedTextNodes(2, chars);
+			assert.deepEqual(nodes.flatMap(geometry), chars.map(ch => ({ pageIndex: 2, rect: ch.rect, vertical })));
+			let maps = nodes.map(node => node.anchor.textMap).join('');
+			let separateRuns = JSON.stringify(chars.map(ch => [(axisDir << 1) | 8, 2, ...ch.rect]));
+			assert.ok(maps.length < separateRuns.length / 2, 'Repeated glyph metadata should be compacted');
+		}
+	});
+
+	it('keeps overlaps, backwards runs and changing baselines at their original coordinates', () => {
+		let chars = [char('a', 10), char('b', 13), char('c', 3), char('d', 8, 1),
+			char('e', 13, 1, { rtl: true }), char('f', 18, 1, { rtl: true })];
+		let nodes = charsToPreformattedTextNodes(1, chars);
+		assert.deepEqual(nodes.flatMap(geometry), chars.map(ch => ({ pageIndex: 1, rect: ch.rect, vertical: false })));
+	});
+
+	it('compacts fractional coordinates without arithmetic noise or geometry drift', () => {
+		for (let axisDir of [0, 1, 2, 3]) {
+			let vertical = !!(axisDir % 2);
+			let chars = Array.from({ length: 2000 }, (_, i) => {
+				let start = 40.3 + i * 5.1;
+				return { c: 'x', axisDir, monospace: true,
+					rect: vertical ? [20.3, start, 30.3, start + 4.7] : [start, 20.3, start + 4.7, 30.3] };
+			});
+			let separateRuns = chars.map(ch => optimizeTextMapRun([axisDir << 1, 2, ...ch.rect]));
+			let expected = buildRunData(separateRuns);
+			let nodes = charsToPreformattedTextNodes(2, chars);
+			let actual = nodes.flatMap(geometry);
+			assert.equal(actual.length, expected.length);
+			for (let [i, glyph] of actual.entries()) {
+				assert.equal(glyph.pageIndex, expected[i].pageIndex);
+				assert.equal(glyph.vertical, expected[i].vertical);
+				for (let j = 0; j < 4; j++) {
+					assert.ok(Math.abs(glyph.rect[j] - expected[i].rect[j]) < 1e-6, 'Preserve quantized glyph boundaries');
+				}
+			}
+			let maps = nodes.map(node => node.anchor.textMap).join('');
+			assert.doesNotMatch(maps, /\.\d{7}/u, 'Do not serialize floating-point subtraction noise');
+			assert.ok(maps.length < JSON.stringify(separateRuns).length / 2, 'Keep fractional maps compact');
+		}
+	});
+
 	it('preserves source rectangles through indentation, column gaps and style changes', () => {
 		const chars = [char('a', 0, 0, { lineBreakAfter: true }),
 			char('b', 10, 20, { bold: true }), char('c', 20, 20, { bold: true })];

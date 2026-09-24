@@ -74,15 +74,11 @@ export function parseSelectorMapEntries(selectorMap) {
  */
 /**
  * @param {string} selectorMap - absolute CFI path or multi-entry selectorMap
- * @param {number | null} start - start character index (inclusive, NFC space);
- * 		null with a null end addresses the element at the path itself
- * @param {number | null} [end] - end character index (exclusive, NFC space)
+ * @param {number} start - start character index (inclusive, NFC space)
+ * @param {number} [end] - end character index (exclusive, NFC space)
  * @param {string} [deltaMap] - optional NFC deltaMap for position translation
  */
 export function resolveSelectorMap(selectorMap, start, end, deltaMap) {
-	if (start === null && end == null) {
-		return expandBlockAnchor(selectorMap);
-	}
 	let entries = parseSelectorMapEntries(selectorMap);
 	if (entries) {
 		return resolveMultiEntry(entries, start, end !== undefined ? end : start + 1, deltaMap);
@@ -175,13 +171,11 @@ export function findCommonCFIPath(a, b) {
  * Each side accepts either an absolute CFI path or a multi-entry selectorMap;
  * multi-entry inputs are resolved to a specific sub-entry based on the offset.
  * If deltaMaps are supplied, offsets are translated from NFC to original space.
- * A null offset makes that side a point at the element the path addresses,
- * with no character offset.
  *
  * @param {string} startSelectorMap - absolute CFI path or multi-entry selectorMap
- * @param {number | null} startOffset - character offset in start node (NFC space if startDeltaMap provided)
+ * @param {number} startOffset - character offset in start node (NFC space if startDeltaMap provided)
  * @param {string} endSelectorMap - absolute CFI path or multi-entry selectorMap
- * @param {number | null} endOffset - character offset in end node (NFC space if endDeltaMap provided)
+ * @param {number} endOffset - character offset in end node (NFC space if endDeltaMap provided)
  * @param {string} [startDeltaMap]
  * @param {string} [endDeltaMap]
  */
@@ -195,13 +189,12 @@ export function resolveSelectorMapRange(
 
 	let start = resolveOnePoint(startSelectorMap, startOffset, startDeltaMap);
 	let end = resolveOnePoint(endSelectorMap, endOffset, endDeltaMap);
-	let at = point => (point.offset === null ? '' : `:${point.offset}`);
 
 	if (start.path === end.path) {
 		return {
 			type: 'FragmentSelector',
 			conformsTo: CONFORMSTO,
-			value: `epubcfi(${start.path},${at(start)},${at(end)})`,
+			value: `epubcfi(${start.path},:${start.offset},:${end.offset})`,
 		};
 	}
 
@@ -210,14 +203,11 @@ export function resolveSelectorMapRange(
 	return {
 		type: 'FragmentSelector',
 		conformsTo: CONFORMSTO,
-		value: `epubcfi(${common},${remainderA}${at(start)},${remainderB}${at(end)})`,
+		value: `epubcfi(${common},${remainderA}:${start.offset},${remainderB}:${end.offset})`,
 	};
 }
 
 function resolveOnePoint(selectorMap, offset, deltaMap) {
-	if (offset === null) {
-		return { path: selectorMap, offset: null };
-	}
 	let entries = parseSelectorMapEntries(selectorMap);
 	if (entries) {
 		let { path, local, cumulative } = findEntryAtWithCumulative(entries, offset);

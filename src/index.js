@@ -1,20 +1,6 @@
 // Generic utilities (work with any structured text)
 export { getFulltextFromStructuredText } from './fulltext.js';
 export { exportOutline } from './outline.js';
-export {
-	getCharacterMetrics,
-	estimateTokens,
-	splitSentences,
-	getStructureSections,
-	getPassages,
-	getPositionText,
-	getTextPassages,
-	getPassageDigest,
-	getNextPassage,
-} from './chunker.js';
-
-export { createPositionMapper } from './position.js';
-export { getTextNodeSpans } from './range.js';
 
 // EPUB selectorMap decode
 export {
