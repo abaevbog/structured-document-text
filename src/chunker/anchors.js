@@ -2,7 +2,7 @@ import { PDFPositionMapper } from './pdf.js';
 import { EPUBPositionMapper } from './epub.js';
 import { SnapshotPositionMapper } from './snapshot.js';
 import { getDocument, mergeSpans, spansText } from './document.js';
-import { iterateChunks } from './chunks.js';
+import { iterateChunks, outlinePathAt, pageLabel } from './chunks.js';
 
 const formats = { pdf: PDFPositionMapper, epub: EPUBPositionMapper, snapshot: SnapshotPositionMapper };
 const mappers = new WeakMap();
@@ -31,21 +31,25 @@ export function getChunks(structure, options) {
 }
 
 /**
- * Recover covered text without rerunning the chunker or inclusion policy.
+ * Recover covered text without rerunning the chunker or inclusion policy:
+ * the text with the section and page at its first recovered text.
  * @param {import('../../schema').StructuredDocumentText} structure
  * @param {import('./anchors').ChunkAnchor | null} anchor
- * @returns {string | null}
+ * @returns {import('./text').ChunkContent | null}
  */
-export function getAnchorText(structure, anchor) {
+export function getAnchorContent(structure, anchor) {
 	let positions = readAnchor(structure, anchor);
 	if (!positions) return null;
 	let spans = getMapper(structure)?.toSpans(positions);
-	return spans?.length ? spansText(mergeSpans(spans)) : null;
+	if (!spans?.length) return null;
+	spans = mergeSpans(spans);
+	let { entry, start } = spans[0];
+	return { text: spansText(spans), outlinePath: outlinePathAt(structure, entry.ref), pageLabel: pageLabel(structure, entry, start) };
 }
 
 /**
  * Convert an anchor to ordinary Reader positions. DOM conversion does not
- * certify text recovery; callers must handle getAnchorText() failure separately.
+ * certify text recovery; callers must handle getAnchorContent() failure separately.
  * @param {import('../../schema').StructuredDocumentText} structure
  * @param {import('./anchors').ChunkAnchor | null} anchor
  * @returns {import('./anchors').Position[] | null}

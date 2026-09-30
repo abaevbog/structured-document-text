@@ -147,9 +147,19 @@ function sections(document, includeAuxiliary) {
 		.sort((a, b) => a.spans[0].entry.index - b.spans[0].entry.index);
 }
 
+// The path of the last outline entry at or before a ref: the section it sits in.
+export function outlinePathAt(structure, ref) {
+	let path = '';
+	for (let item of flattenOutline(structure.catalog?.outline ?? []).sort((a, b) => compareRefs(a.ref, b.ref))) {
+		if (compareRefs(item.ref, ref) > 0) break;
+		path = item.outlinePath;
+	}
+	return path;
+}
+
 // Labels are display metadata, never SDT addresses. Catalog boundaries resolve
 // starts inside multi-page blocks without loading or decoding text geometry.
-function pageLabel(structure, entry, offset) {
+export function pageLabel(structure, entry, offset) {
 	let { catalog, metadata } = structure;
 	if (catalog?.pageMappingType === 'locations') return null;
 	let pages = catalog?.pages ?? [];

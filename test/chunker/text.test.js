@@ -1,11 +1,11 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { getChunks, getAnchorText } from '../../src/chunker/index.js';
+import { getChunks } from '../../src/chunker/index.js';
 import { getTextChunks, getChunkCount } from '../../src/chunker/text.js';
 import { splitText } from '../../src/chunker/split.js';
 import { estimateTokens } from '../../src/chunker/chunks.js';
 import { discoverFixtures } from '../helpers.js';
-import { noOverlap, paragraph, document, textDocument, pdf, pdfBlock, dom, roundTrip, restore } from './helpers.js';
+import { noOverlap, paragraph, document, textDocument, pdf, pdfBlock, dom, roundTrip, restore, recoveredText } from './helpers.js';
 
 describe('chunk splitting', () => {
 	it('skips unusable outline entries and retains valid descendants', () => {
@@ -157,7 +157,7 @@ describe('chunk splitting', () => {
 				for (let [i, chunk] of chunks.entries()) {
 					assert.ok(/\S/u.test(chunk.text) && chunk.text.length <= options.maxSize);
 					assert.ok(chunk.anchor);
-					let recovered = getAnchorText(structure, restore(chunk.anchor));
+					let recovered = recoveredText(structure, restore(chunk.anchor));
 					assert.equal(isPDF ? recovered.trim() : recovered, isPDF ? chunk.text.trim() : chunk.text);
 					assert.equal(chunk.sectionPart, i + 1);
 					assert.equal(chunk.sectionParts, chunks.length);
@@ -191,7 +191,7 @@ describe('chunk splitting', () => {
 					assert.ok(chunk.text.length <= maxSize);
 					assert.ok(/\S/u.test(chunk.text), 'Do not embed a whitespace-only slice');
 					assert.ok(chunk.anchor);
-					let recovered = getAnchorText(structure, restore(chunk.anchor));
+					let recovered = recoveredText(structure, restore(chunk.anchor));
 					assert.equal(typeof recovered, 'string');
 					assert.ok(code.includes(recovered));
 					assert.equal(type === 'pdf' ? recovered.trim() : recovered,

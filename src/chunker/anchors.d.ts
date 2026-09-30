@@ -1,5 +1,5 @@
 import type { StructuredDocumentText } from '../../schema.js';
-import type { ChunkingOptions, TextChunk } from './text.js';
+import type { ChunkingOptions, ChunkContent, TextChunk } from './text.js';
 
 export interface PDFPosition {
 	pageIndex: number;
@@ -42,9 +42,10 @@ export interface Chunk extends TextChunk {
  * Text without source anchors is omitted before chunking. Unresolvable mappings yield anchor: null.
  * Unsupported formats and unexpected programming errors still throw. */
 export function getChunks(structure: StructuredDocumentText, options?: ChunkingOptions): Chunk[];
-/** Reads covered text in document order; it may differ from the chunk text or be empty after trimming.
+/** Reads covered text in document order, with the section and page at the first recovered text.
+ * The text may differ from the chunk text or be empty after trimming.
  * Returns null for invalid anchors or unresolved pages/selectors. Individual empty PDF rectangles are tolerated. */
-export function getAnchorText(structure: StructuredDocumentText, anchor: ChunkAnchor | null): string | null;
+export function getAnchorContent(structure: StructuredDocumentText, anchor: ChunkAnchor | null): ChunkContent | null;
 /** Restores ordinary PDF line positions, one per page, or copies DOM selectors.
  * DOM conversion does not verify text recovery or Reader resolution. */
 export function getAnchorPositions(structure: StructuredDocumentText, anchor: ChunkAnchor | null): Position[] | null;

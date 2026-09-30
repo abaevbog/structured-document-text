@@ -1,7 +1,8 @@
 import { it } from 'node:test';
 import assert from 'node:assert/strict';
-import { getChunks, getAnchorText, getAnchorPositions } from '../../src/chunker/index.js';
+import { getChunks, getAnchorPositions } from '../../src/chunker/index.js';
 import { getTextChunks } from '../../src/chunker/text.js';
+import { recoveredText } from './helpers.js';
 
 const options = { maxSize: 200, minSize: 0, overlap: 0 };
 
@@ -32,7 +33,7 @@ function roundTrip(structure, settings = options) {
 	let chunks = getChunks(structure, settings);
 	assert.deepEqual(chunks.map(({ anchor, ...chunk }) => chunk), getTextChunks(structure, settings));
 	for (let chunk of chunks) {
-		assert.equal(getAnchorText(JSON.parse(JSON.stringify(structure)), JSON.parse(JSON.stringify(chunk.anchor))), chunk.text);
+		assert.equal(recoveredText(JSON.parse(JSON.stringify(structure)), JSON.parse(JSON.stringify(chunk.anchor))), chunk.text);
 	}
 	return chunks;
 }
@@ -132,11 +133,11 @@ it('keeps paragraph separation when a recovered selection omits text at either l
 		let positions = [{ type: 'TextPositionSelector', start: 0, end: 5 },
 			{ type: 'TextPositionSelector', start: texts[0].length + (omittedAtEnd ? 0 : 8),
 				end: texts[0].length + texts[1].length }];
-		assert.equal(getAnchorText(structure, { selectors: positions }), 'First\n\nSecond');
+		assert.equal(recoveredText(structure, { selectors: positions }), 'First\n\nSecond');
 	}
 	let structure = document(['First OMITTED', 'Second']);
 	structure.content[0].content = [{ text: 'First', anchor: { stream: 0 } }, { text: ' OMITTED', anchor: { stream: 5 } }];
 	link(structure, 0, 1);
-	assert.equal(getAnchorText(structure, { selectors: [{ type: 'TextPositionSelector', start: 0, end: 5 },
+	assert.equal(recoveredText(structure, { selectors: [{ type: 'TextPositionSelector', start: 0, end: 5 },
 		{ type: 'TextPositionSelector', start: 13, end: 19 }] }), 'First\n\nSecond');
 });

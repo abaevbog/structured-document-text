@@ -24,14 +24,14 @@ For a saved result, recover covered text for its preview. Request Reader positio
 only when navigating or highlighting that result:
 
 ```js
-import { getAnchorText, getAnchorPositions } from 'structured-document-text/src/chunker/index.js';
+import { getAnchorContent, getAnchorPositions } from 'structured-document-text/src/chunker/index.js';
 
 const anchor = JSON.parse(savedAnchorJSON);
-const coveredText = getAnchorText(structure, anchor);
-if (coveredText === null) {
+const recovered = getAnchorContent(structure, anchor);
+if (recovered === null) {
     throw new Error(`Cannot recover chunk anchor: ${savedAnchorJSON}`);
 }
-// coveredText can differ from the original excerpt.
+// recovered is { text, outlinePath, pageLabel }; its text can differ from the original excerpt.
 const positions = getAnchorPositions(structure, anchor);
 if (positions === null) {
     throw new Error(`Cannot resolve Reader positions: ${savedAnchorJSON}`);
@@ -160,9 +160,11 @@ If a present anchor cannot be mapped, `getChunks()` keeps the text with
 `anchor: null`. Unsupported processors and unexpected programming errors throw. Synthetic text may select an
 entire element even when the chunk contains only part of its description.
 
-`getAnchorText(structure, anchor)` resolves saved anchors against the
+`getAnchorContent(structure, anchor)` resolves saved anchors against the
 supplied SDT, orders and deduplicates the covered text, and applies the whitespace
-rules above. It does not rerun chunking or exclusion policy. Empty, malformed or
+rules above. It returns `{ text, outlinePath, pageLabel }`, the section and page
+being those at the first recovered text, as the chunker names them at its first
+selected text. It does not rerun chunking or exclusion policy. Empty, malformed or
 mixed-format anchors return `null`. Every represented PDF page must resolve some
 text, though individual rectangles on a surviving page may become empty. Every
 DOM selector must resolve; one failed selector returns `null` for the whole anchor.
@@ -174,7 +176,7 @@ one `{ pageIndex, rects }` position per selected page, or returns copies of DOM
 selectors. It preserves disjoint selections and supports any number of pages.
 DOM conversion validates selector shape and format, but does not verify text
 recovery or Reader resolution: usable navigation selectors can coexist with
-`getAnchorText() === null`. Treat failed recovery as a failure, never as empty
+`getAnchorContent() === null`. Treat failed recovery as a failure, never as empty
 text or a reason to silently substitute the original excerpt.
 
 Store the anchor as plain JSON and derive Reader positions when needed; storing

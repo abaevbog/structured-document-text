@@ -1,9 +1,9 @@
 import { it } from 'node:test';
 import assert from 'node:assert/strict';
 import { getTextChunks } from '../../src/chunker/text.js';
-import { getChunks, getAnchorText } from '../../src/chunker/index.js';
+import { getChunks } from '../../src/chunker/index.js';
 import { estimateTokens } from '../../src/chunker/chunks.js';
-import { dom } from './helpers.js';
+import { dom, recoveredText } from './helpers.js';
 
 const paragraph = text => ({ type: 'paragraph', content: [{ text }] });
 const document = (texts, title = '') => ({
@@ -96,7 +96,7 @@ it('makes progress when token density leaves less room than the requested overla
 		assert.ok(end > previousEnd);
 		assert.ok(!text.slice(previousEnd, start).trim(), 'Do not skip source text');
 		assert.ok(estimateTokens(chunk.embedText) <= 40 + 1e-7);
-		assert.equal(getAnchorText(structure, chunk.anchor), chunk.text);
+		assert.equal(recoveredText(structure, chunk.anchor), chunk.text);
 		previousEnd = end;
 	}
 	assert.equal(previousEnd, text.length);
@@ -178,7 +178,7 @@ it('preserves source positions and default output with explicit token budgets', 
 		assert.deepEqual(chunks.map(({ anchor, ...chunk }) => chunk), getTextChunks(structure, { maxTokens: 459 }));
 		for (let chunk of chunks) {
 			assert.ok(estimateTokens(chunk.embedText) <= 459 + 1e-7);
-			assert.equal(getAnchorText(structure, JSON.parse(JSON.stringify(chunk.anchor))), chunk.text);
+			assert.equal(recoveredText(structure, JSON.parse(JSON.stringify(chunk.anchor))), chunk.text);
 		}
 	}
 });

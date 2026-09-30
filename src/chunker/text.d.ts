@@ -16,17 +16,22 @@ export interface ChunkingOptions {
 	overlap?: number;
 }
 
-export interface TextChunk {
+/** What a chunk has: its text, and the section and page at the first of it */
+export interface ChunkContent {
 	/** Selected source text, excluding headings safely replaced by embedding context. */
 	text: string;
-	/** Embedding input with selected outline paths inserted at section boundaries. */
-	embedText: string;
-	/** Rounded script-based estimate for embedText; not an exact model token count. */
-	tokens: number;
 	/** Path at the first selected text; a chunk can contain several short sections. */
 	outlinePath: string;
 	/** First selected page's label, or PDF page ordinal when unlabeled. Null without a label or for synthetic EPUB locations. */
 	pageLabel: string | null;
+}
+
+/** A chunk as cut, with what is derived for embedding. */
+export interface TextChunk extends ChunkContent {
+	/** Embedding input with selected outline paths inserted at section boundaries. */
+	embedText: string;
+	/** Rounded script-based estimate for embedText; not an exact model token count. */
+	tokens: number;
 	/** One-based passage number within this split group, which may combine short sections. */
 	sectionPart: number;
 	/** Total passages in this split group; 1 when unsplit. */

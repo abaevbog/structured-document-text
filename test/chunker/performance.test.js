@@ -1,9 +1,9 @@
 import { it } from 'node:test';
 import assert from 'node:assert/strict';
-import { getChunks, getAnchorText } from '../../src/chunker/index.js';
+import { getChunks } from '../../src/chunker/index.js';
 import { getDocument } from '../../src/chunker/document.js';
 import { PDFPositionMapper } from '../../src/chunker/pdf.js';
-import { pdf, pdfBlock, pdfAnchor, dom } from './helpers.js';
+import { pdf, pdfBlock, pdfAnchor, dom, recoveredText } from './helpers.js';
 
 for (let valid of [true, false]) it(`decodes an oversized ${valid ? 'valid' : 'invalid'} PDF node once across all its chunks`, t => {
 	let count = 100001;
@@ -19,7 +19,7 @@ for (let valid of [true, false]) it(`decodes an oversized ${valid ? 'valid' : 'i
 	assert.ok(chunks.length > 30);
 	assert.equal(decodes, 1);
 	for (let chunk of chunks) {
-		assert.equal(getAnchorText(structure, chunk.anchor), valid ? chunk.text : null);
+		assert.equal(recoveredText(structure, chunk.anchor), valid ? chunk.text : null);
 		if (!valid) assert.equal(chunk.anchor, null);
 	}
 	getChunks(structure);
@@ -55,11 +55,11 @@ it('recovers a selection containing 150,000 DOM text nodes', () => {
 	let count = 150000;
 	let structure = dom([''], 'snapshot');
 	structure.content[0].content = Array.from({ length: count }, (_, stream) => ({ text: 'a', anchor: { stream } }));
-	assert.equal(getAnchorText(structure, { selectors: [{ type: 'TextPositionSelector', start: 0, end: count }] }), 'a'.repeat(count));
+	assert.equal(recoveredText(structure, { selectors: [{ type: 'TextPositionSelector', start: 0, end: count }] }), 'a'.repeat(count));
 });
 
 it('recovers a PDF selection with 200,000 overlapping rectangles', () => {
 	let structure = pdf([pdfBlock('A')]);
 	let rects = Array.from({ length: 200000 }, () => [0, 0, 1, 1]);
-	assert.equal(getAnchorText(structure, pdfAnchor([{ pageIndex: 0, rects }])), 'A');
+	assert.equal(recoveredText(structure, pdfAnchor([{ pageIndex: 0, rects }])), 'A');
 });

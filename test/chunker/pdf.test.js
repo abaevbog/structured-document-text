@@ -1,10 +1,10 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { getChunks, getAnchorText, getAnchorPositions } from '../../src/chunker/index.js';
+import { getChunks, getAnchorPositions } from '../../src/chunker/index.js';
 import { getTextChunks } from '../../src/chunker/text.js';
 import { PDFPositionMapper } from '../../src/chunker/pdf.js';
 import { getDocument } from '../../src/chunker/document.js';
-import { noOverlap, paragraph, document, pdf, pdfBlock, pdfAnchor, roundTrip, restore } from './helpers.js';
+import { noOverlap, paragraph, document, pdf, pdfBlock, pdfAnchor, roundTrip, restore, recoveredText } from './helpers.js';
 
 describe('complete PDF positions', () => {
 	it('preserves three pages while excluding running headers and footers', () => {
@@ -23,7 +23,7 @@ describe('complete PDF positions', () => {
 		// Recovery deliberately ignores newly changed indexability flags.
 		let changed = restore(structure);
 		for (let block of changed.content) block.flowClass = 'excluded';
-		assert.equal(getAnchorText(changed, pdfAnchor(restore(positions))), chunk.text);
+		assert.equal(recoveredText(changed, pdfAnchor(restore(positions))), chunk.text);
 	});
 
 	it('merges a continuous line across inline formatting and whitespace', () => {
@@ -50,7 +50,7 @@ describe('complete PDF positions', () => {
 				: [{ entry: doc.entries[0], start: 0, end: 2 }, { entry: doc.entries[0], start: 3, end: 5 }];
 			let positions = new PDFPositionMapper(doc).toPositions(spans);
 			assert.deepEqual(positions, [{ pageIndex: 0, rects: [[0, 0, 2, 1], [3, 0, 5, 1]] }]);
-			assert.equal(getAnchorText(structure, pdfAnchor(positions)), 'AB CD');
+			assert.equal(recoveredText(structure, pdfAnchor(positions)), 'AB CD');
 		}
 	});
 
@@ -178,24 +178,24 @@ describe('complete PDF positions', () => {
 	it('preserves a gap inside a text node and deduplicates overlapping source coverage', () => {
 		let structure = pdf([pdfBlock('abc OMIT xyz')]);
 		let positions = [{ pageIndex: 0, rects: [[0, 0, 3, 1], [9, 0, 12, 1]] }];
-		assert.equal(getAnchorText(structure, pdfAnchor(positions)), 'abc xyz');
-		assert.equal(getAnchorText(structure, pdfAnchor([...positions, ...positions])), 'abc xyz');
+		assert.equal(recoveredText(structure, pdfAnchor(positions)), 'abc xyz');
+		assert.equal(recoveredText(structure, pdfAnchor([...positions, ...positions])), 'abc xyz');
 	});
 
 	it('handles partial blocks and repeats at different source locations', () => {
 		let structure = pdf([pdfBlock('Repeat Repeat Repeat Repeat')]);
 		let chunks = roundTrip(structure, { maxSize: 13, minSize: 0, overlap: 0 });
 		assert.ok(chunks.length > 1);
-		assert.equal(getAnchorText(structure, pdfAnchor(chunks.flatMap(p => p.positions))), 'Repeat Repeat Repeat Repeat');
+		assert.equal(recoveredText(structure, pdfAnchor(chunks.flatMap(p => p.positions))), 'Repeat Repeat Repeat Repeat');
 	});
 
 	it('rejects legacy position fields, missing pages and invalid anchor geometry', () => {
 		let structure = pdf([pdfBlock('First', 0), pdfBlock('Second', 1)]);
 		let [{ anchor }] = roundTrip(structure);
-		assert.equal(getAnchorText(structure, { ...anchor, nextPageRects: [[0, 0, 1, 1]] }), null);
-		assert.equal(getAnchorText(structure, { ...anchor, nextPageIndex: 7 }), null);
-		assert.equal(getAnchorText(structure, { pageRects: [...anchor.pageRects, [2, 0, 0, 1, 1]] }), null);
-		assert.equal(getAnchorText(structure, { pageRects: [[0, 0, 0, NaN, 1]] }), null);
+		assert.equal(recoveredText(structure, { ...anchor, nextPageRects: [[0, 0, 1, 1]] }), null);
+		assert.equal(recoveredText(structure, { ...anchor, nextPageIndex: 7 }), null);
+		assert.equal(recoveredText(structure, { pageRects: [...anchor.pageRects, [2, 0, 0, 1, 1]] }), null);
+		assert.equal(recoveredText(structure, { pageRects: [[0, 0, 0, NaN, 1]] }), null);
 	});
 
 	it('omits PDF text without text-node maps instead of borrowing rectangles', () => {
@@ -239,9 +239,9 @@ describe('complete PDF positions', () => {
 			let chunks = getChunks(structure, noOverlap);
 			assert.deepEqual(chunks.map(({ anchor, ...chunk }) => chunk), getTextChunks(structure, noOverlap));
 			assert.equal(chunks.length, 3);
-			assert.equal(getAnchorText(structure, chunks[0].anchor), 'Before');
+			assert.equal(recoveredText(structure, chunks[0].anchor), 'Before');
 			assert.equal(chunks[1].anchor, null);
-			assert.equal(getAnchorText(structure, chunks[2].anchor), 'After');
+			assert.equal(recoveredText(structure, chunks[2].anchor), 'After');
 		}
 	});
 
@@ -275,8 +275,8 @@ describe('complete PDF positions', () => {
 		let original = pdf([pdfBlock('First Second')]);
 		let [{ positions }] = roundTrip(original);
 		let changed = pdf([pdfBlock('First', 0, 0), pdfBlock('Second', 0, 6)]);
-		assert.equal(getAnchorText(changed, pdfAnchor(positions)), 'First\n\nSecond');
-		assert.equal(getAnchorText(pdf([paragraph('First Second')]), pdfAnchor(positions)), null);
+		assert.equal(recoveredText(changed, pdfAnchor(positions)), 'First\n\nSecond');
+		assert.equal(recoveredText(pdf([paragraph('First Second')]), pdfAnchor(positions)), null);
 	});
 });
 
@@ -300,7 +300,7 @@ it('does not recover text from whole-block PDF boxes without character geometry'
 	let block = paragraph('Whole block', { anchor: { pageRects: [[0, 0, 0, 10, 1], [1, 0, 0, 10, 1]] } });
 	let structure = pdf([block]);
 	let positions = block.anchor.pageRects.map(([pageIndex, ...rect]) => ({ pageIndex, rects: [rect] }));
-	assert.equal(getAnchorText(structure, pdfAnchor(positions)), null);
+	assert.equal(recoveredText(structure, pdfAnchor(positions)), null);
 });
 
 it('keeps large gaps separate without claiming exact recovery of overlaid text', () => {
@@ -315,7 +315,7 @@ it('keeps large gaps separate without claiming exact recovery of overlaid text',
 	let structure = pdf([block, overlaid]);
 	let anchor = getChunks(structure)[0].anchor;
 	assert.deepEqual(anchor.pageRects, [[0, 0, 0, 1, 10], [0, 9, 0, 10, 10]]);
-	assert.equal(getAnchorText(structure, anchor), 'AB\n\nX');
+	assert.equal(recoveredText(structure, anchor), 'AB\n\nX');
 });
 
 it('merges RTL and uneven-height PDF glyphs into a single line rectangle', () => {
@@ -351,7 +351,7 @@ it('does not decode the following PDF block at an exclusive page boundary', () =
 	structure.catalog.pages = [{ contentRange: [[0], [1]] }, { contentRange: [[1], [2]] }];
 	let anchor = structure.content[1].content[0].anchor;
 	Object.defineProperty(anchor, 'textMap', { get() { throw Error('Decoded another page'); } });
-	assert.equal(getAnchorText(structure, pdfAnchor([{ pageIndex: 0, rects: [[0, 0, 1, 1]] }])), 'A');
+	assert.equal(recoveredText(structure, pdfAnchor([{ pageIndex: 0, rects: [[0, 0, 1, 1]] }])), 'A');
 });
 
 it('maps PDF text offsets across omitted spaces and mapped NBSP and CR glyphs', () => {
@@ -359,6 +359,6 @@ it('maps PDF text offsets across omitted spaces and mapped NBSP and CR glyphs', 
 	block.content[0].anchor.textMap = '[[0,0,0,0,6,1,1,1,1,1,1,1]]';
 	let structure = pdf([block]);
 	assert.deepEqual(roundTrip(structure)[0].positions, [{ pageIndex: 0, rects: [[0, 0, 6, 1]] }]);
-	assert.equal(getAnchorText(structure, pdfAnchor([{ pageIndex: 0, rects: [[3, 0, 4, 1]] }])), 'C');
-	assert.equal(getAnchorText(structure, pdfAnchor([{ pageIndex: 0, rects: [[5, 0, 6, 1]] }])), 'D');
+	assert.equal(recoveredText(structure, pdfAnchor([{ pageIndex: 0, rects: [[3, 0, 4, 1]] }])), 'C');
+	assert.equal(recoveredText(structure, pdfAnchor([{ pageIndex: 0, rects: [[5, 0, 6, 1]] }])), 'D');
 });

@@ -1,8 +1,8 @@
 import { it } from 'node:test';
 import assert from 'node:assert/strict';
-import { getChunks, getAnchorText, getAnchorPositions } from '../../src/chunker/index.js';
+import { getChunks, getAnchorPositions } from '../../src/chunker/index.js';
 import { stringifyTextMap } from '../../src/pdf/text-map.js';
-import { pdf, pdfBlock, dom, restore } from './helpers.js';
+import { pdf, pdfBlock, dom, restore, recoveredText } from './helpers.js';
 
 // One glyph per supplied rectangle; spaces between glyphs have no geometry.
 function paragraph(rects, text = rects.map((_, i) => String.fromCharCode(65 + i)).join(' ')) {
@@ -20,7 +20,7 @@ it('stores a paragraph region and restores its individual Reader lines', () => {
 	let { anchor, text } = getChunks(structure)[0];
 	assert.deepEqual(anchor, { pageRects: [[0, 0, 0, 10, 30]] });
 	let saved = restore(anchor);
-	assert.equal(getAnchorText(restore(structure), saved), text);
+	assert.equal(recoveredText(restore(structure), saved), text);
 	assert.deepEqual(getAnchorPositions(structure, saved), [{ pageIndex: 0, rects: [[0, 20, 10, 30], [0, 0, 10, 10]] }]);
 });
 
@@ -32,7 +32,7 @@ it('removes decimal accumulation tails from saved anchors while retaining Reader
 	let { anchor, text } = getChunks(structure)[0];
 	assert.deepEqual(anchor, { pageRects: [[7, 0.1, -0.3, 0.6, 10.3]] });
 	let saved = restore(anchor);
-	assert.equal(getAnchorText(structure, saved), text);
+	assert.equal(recoveredText(structure, saved), text);
 	assert.deepEqual(getAnchorPositions(structure, saved), [
 		{ pageIndex: 7, rects: [[0.1, bottom, 0.1 + 0.2 + 0.3, top]] },
 	]);
@@ -43,7 +43,7 @@ it('retains precise coordinates that are not decimal accumulation noise', () => 
 	let structure = pdf([paragraph([rect], 'A')]);
 	let { anchor, text } = getChunks(structure)[0];
 	assert.deepEqual(anchor.pageRects, [[0, ...rect]]);
-	assert.equal(getAnchorText(structure, restore(anchor)), text);
+	assert.equal(recoveredText(structure, restore(anchor)), text);
 	assert.deepEqual(getAnchorPositions(structure, anchor), [{ pageIndex: 0, rects: [rect] }]);
 });
 
@@ -64,7 +64,7 @@ it('checks excluded lines and recovery tolerance before merging', () => {
 		let structure = pdf([twoLines(), omitted]);
 		let { anchor, text } = getChunks(structure)[0];
 		assert.equal(anchor.pageRects.length, 2, `Obstacle ${rect}`);
-		assert.equal(getAnchorText(structure, anchor), text);
+		assert.equal(recoveredText(structure, anchor), text);
 	}
 });
 
@@ -83,7 +83,7 @@ it('checks decoded line edges that extend beyond the source block bounds', () =>
 		let structure = pdf([selected, omitted]);
 		let { anchor, text } = getChunks(structure)[0];
 		assert.equal(anchor.pageRects.length, 2);
-		assert.equal(getAnchorText(structure, anchor), text);
+		assert.equal(recoveredText(structure, anchor), text);
 	}
 });
 
@@ -93,7 +93,7 @@ it('consolidates a multiline list item and restores its Reader lines', () => {
 	let structure = pdf([item]);
 	let { anchor, text } = getChunks(structure)[0];
 	assert.deepEqual(anchor.pageRects, [[0, 0, 0, 10, 30]]);
-	assert.equal(getAnchorText(structure, anchor), text);
+	assert.equal(recoveredText(structure, anchor), text);
 	assert.deepEqual(getAnchorPositions(structure, anchor), [{ pageIndex: 0, rects: [[0, 20, 10, 30], [0, 0, 10, 10]] }]);
 });
 
@@ -102,14 +102,14 @@ it('consolidates nearby raised fragments only when the combined region is clear'
 	let structure = pdf([selected]);
 	let { anchor, text } = getChunks(structure)[0];
 	assert.deepEqual(anchor.pageRects, [[0, 0, 0, 13, 12]]);
-	assert.equal(getAnchorText(structure, anchor), text);
+	assert.equal(recoveredText(structure, anchor), text);
 	assert.deepEqual(getAnchorPositions(structure, anchor), [{ pageIndex: 0, rects: [[0, 0, 10, 10], [11, 8, 13, 12]] }]);
 	let omitted = paragraph([[12, 0, 13, 1]], 'X');
 	omitted.flowClass = 'excluded';
 	structure = pdf([selected, omitted]);
 	anchor = getChunks(structure)[0].anchor;
 	assert.equal(anchor.pageRects.length, 2);
-	assert.equal(getAnchorText(structure, anchor), text);
+	assert.equal(recoveredText(structure, anchor), text);
 });
 
 it('consolidates text after a raised marker and the line below the entire row', () => {
@@ -117,7 +117,7 @@ it('consolidates text after a raised marker and the line below the entire row', 
 	let structure = pdf([paragraph(rects)]);
 	let { anchor, text } = getChunks(structure)[0];
 	assert.deepEqual(anchor.pageRects, [[0, 0, 0, 26.5, 32]]);
-	assert.equal(getAnchorText(structure, anchor), text);
+	assert.equal(recoveredText(structure, anchor), text);
 	assert.deepEqual(getAnchorPositions(structure, anchor), [{ pageIndex: 0, rects }]);
 	// A wider same-line gap, or a next line outside the row, stays separate.
 	for (let [index, rect, regions] of [[2, [18.5, 20, 28.5, 30], 3], [3, [30, 0, 40, 10], 2]]) {
@@ -133,7 +133,7 @@ it('keeps a paragraph crossing pages separate even when its lines otherwise foll
 	let structure = pdf([block]);
 	let { anchor, text } = getChunks(structure)[0];
 	assert.deepEqual(anchor.pageRects, block.anchor.pageRects);
-	assert.equal(getAnchorText(structure, anchor), text);
+	assert.equal(recoveredText(structure, anchor), text);
 	assert.deepEqual(getAnchorPositions(structure, anchor), [
 		{ pageIndex: 0, rects: [[0, 20, 10, 30]] }, { pageIndex: 1, rects: [[0, 0, 10, 10]] },
 	]);
@@ -145,7 +145,7 @@ it('reports newly extracted text inside a saved paragraph region', () => {
 	newlyRecognized.flowClass = 'excluded';
 	let changed = pdf([twoLines(), newlyRecognized]);
 	// Recovery reflects the supplied extraction, not the old chunk's text/policy.
-	assert.equal(getAnchorText(changed, anchor), 'A B\n\nX');
+	assert.equal(recoveredText(changed, anchor), 'A B\n\nX');
 });
 
 it('treats an unselected part of the same line as an obstacle', () => {
@@ -153,7 +153,7 @@ it('treats an unselected part of the same line as an obstacle', () => {
 	let chunk = getChunks(structure, { maxSize: 2, minSize: 0, overlap: 0 })[0];
 	assert.equal(chunk.text, 'AB');
 	assert.equal(chunk.anchor.pageRects.length, 2);
-	assert.equal(getAnchorText(structure, chunk.anchor), 'AB');
+	assert.equal(recoveredText(structure, chunk.anchor), 'AB');
 });
 
 it('checks the entire growing region and continues after a rejected merge', () => {
@@ -163,7 +163,7 @@ it('checks the entire growing region and continues after a rejected merge', () =
 	let structure = pdf([selected, omitted]);
 	let { anchor, text } = getChunks(structure)[0];
 	assert.deepEqual(anchor.pageRects, [[0, 0, 40, 10.3, 70], [0, 0, 0, 4, 30]]);
-	assert.equal(getAnchorText(structure, anchor), text);
+	assert.equal(recoveredText(structure, anchor), text);
 });
 
 it('keeps uncertain geometry separate, using block bounds when available', () => {
@@ -196,7 +196,7 @@ it('copies DOM selectors without claiming successful text recovery', () => {
 		refinedBy: { type: 'TextPositionSelector', start: 1, end: 3 } }] };
 	let positions = getAnchorPositions(structure, anchor);
 	assert.deepEqual(positions, anchor.selectors);
-	assert.equal(getAnchorText(structure, anchor), null);
+	assert.equal(recoveredText(structure, anchor), null);
 	positions[0].refinedBy.start = 2;
 	positions[0].value = '#changed';
 	assert.equal(anchor.selectors[0].refinedBy.start, 1);
@@ -209,17 +209,17 @@ it('rejects invalid anchor components without returning a partial result', () =>
 	for (let anchor of [null, { pageRects: [] }, { ...good, selectors: [] },
 		{ pageRects: [...good.pageRects, [0, NaN, 0, 1, 1]] },
 		{ pageRects: [...good.pageRects, [2, 0, 0, 1, 1]] }]) {
-		assert.equal(getAnchorText(structure, anchor), null);
+		assert.equal(recoveredText(structure, anchor), null);
 		assert.equal(getAnchorPositions(structure, anchor), null);
 	}
 	structure = dom(['Body'], 'snapshot');
 	good = getChunks(structure)[0].anchor;
 	let missing = { type: 'TextPositionSelector', start: 100, end: 104 };
-	assert.equal(getAnchorText(structure, { selectors: [...good.selectors, missing] }), null);
+	assert.equal(recoveredText(structure, { selectors: [...good.selectors, missing] }), null);
 	for (let selector of [null, { type: 'FragmentSelector', value: 'epubcfi(/6/2!/4/2)' },
 		{ type: 'TextPositionSelector', start: -1, end: 4 }]) {
 		let anchor = { selectors: [...good.selectors, selector] };
-		assert.equal(getAnchorText(structure, anchor), null);
+		assert.equal(recoveredText(structure, anchor), null);
 		assert.equal(getAnchorPositions(structure, anchor), null);
 	}
 });

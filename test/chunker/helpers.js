@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { getChunks, getAnchorText, getAnchorPositions } from '../../src/chunker/index.js';
+import { getChunks, getAnchorContent, getAnchorPositions } from '../../src/chunker/index.js';
 
 export const noOverlap = { maxSize: 100, minSize: 0, overlap: 0 };
 export const paragraph = (text, extra = {}) => ({ type: 'paragraph', content: [{ text }], ...extra });
@@ -8,6 +8,8 @@ export const document = (content, type = 'pdf', catalog = {}) => ({
 });
 export const restore = value => JSON.parse(JSON.stringify(value));
 export const pdfAnchor = positions => ({ pageRects: positions.flatMap(({ pageIndex, rects }) => rects.map(rect => [pageIndex, ...rect])) });
+// The recovered text alone, for tests of what an anchor covers.
+export const recoveredText = (structure, anchor) => getAnchorContent(structure, anchor)?.text ?? null;
 
 // Text-focused tests still use anchored SDT, without manufacturing PDF geometry.
 export function textDocument(content, catalog = {}) {
@@ -57,7 +59,8 @@ export function roundTrip(structure, options) {
 		let { anchor } = chunk;
 		let positions = getAnchorPositions(structure, restore(anchor));
 		assert.ok(positions?.length, `No positions for ${JSON.stringify(chunk.text)}`);
-		assert.equal(getAnchorText(structure, restore(anchor)), chunk.text);
+		assert.deepEqual(getAnchorContent(structure, restore(anchor)),
+			{ text: chunk.text, outlinePath: chunk.outlinePath, pageLabel: chunk.pageLabel });
 		return { chunk, anchor, positions };
 	});
 }

@@ -1,15 +1,15 @@
 import { it } from 'node:test';
 import assert from 'node:assert/strict';
-import { getChunks, getAnchorText } from '../../src/chunker/index.js';
+import { getChunks } from '../../src/chunker/index.js';
 import { getTextChunks } from '../../src/chunker/text.js';
 import { spawnSync } from 'node:child_process';
-import { noOverlap, paragraph, textDocument, pdf, pdfBlock, dom, restore } from './helpers.js';
+import { noOverlap, paragraph, textDocument, pdf, pdfBlock, dom, restore, recoveredText } from './helpers.js';
 
 it('has minimal text-only exports and a stable chunk shape', async () => {
 	assert.deepEqual(getTextChunks(textDocument([paragraph('Body')])), [{ text: 'Body', embedText: 'Body', tokens: 1,
 		outlinePath: '', pageLabel: null, sectionPart: 1, sectionParts: 1, auxiliary: false }]);
 	assert.deepEqual(Object.keys(await import('../../src/chunker/text.js')).sort(), ['CHUNKER_VERSION', 'getChunkCount', 'getPlainTextChunks', 'getTextChunks']);
-	assert.deepEqual(Object.keys(await import('../../src/chunker/index.js')).sort(), ['CHUNKER_VERSION', 'getAnchorPositions', 'getAnchorText', 'getChunkCount', 'getChunks', 'getPlainTextChunks']);
+	assert.deepEqual(Object.keys(await import('../../src/chunker/index.js')).sort(), ['CHUNKER_VERSION', 'getAnchorContent', 'getAnchorPositions', 'getChunkCount', 'getChunks', 'getPlainTextChunks']);
 	assert.ok(!('getChunks' in await import('../../src/read.js')));
 	assert.ok(!('getChunks' in await import('../../src/index.js')));
 	assert.ok(!('getTextChunks' in await import('../../src/read.js')));
@@ -63,7 +63,7 @@ it('returns self-contained chunks that survive serialization', () => {
 			assert.deepEqual(Object.keys(chunk).sort(), ['anchor', 'auxiliary', 'embedText', 'outlinePath', 'pageLabel',
 				'sectionPart', 'sectionParts', 'text', 'tokens']);
 			let saved = restore(chunk);
-			assert.equal(getAnchorText(restore(structure), saved.anchor), saved.text);
+			assert.equal(recoveredText(restore(structure), saved.anchor), saved.text);
 		}
 	}
 });

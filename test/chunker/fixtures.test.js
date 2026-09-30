@@ -1,10 +1,10 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { getChunks, getAnchorText } from '../../src/chunker/index.js';
+import { getChunks } from '../../src/chunker/index.js';
 import { getTextChunks } from '../../src/chunker/text.js';
 import { estimateTokens } from '../../src/chunker/chunks.js';
 import { discoverFixtures, isUpdateMode, readExpected, writeExpected } from '../helpers.js';
-import { restore } from './helpers.js';
+import { restore, recoveredText } from './helpers.js';
 
 const fixtures = discoverFixtures();
 
@@ -20,7 +20,7 @@ describe('real document fixtures', () => {
 				assert.ok(estimateTokens(chunk.embedText) <= 768 + 1e-7, 'Complete embedding input exceeds estimated token budget');
 				let { anchor } = chunk;
 				assert.ok(anchor);
-				let text = getAnchorText(data, restore(anchor));
+				let text = recoveredText(data, restore(anchor));
 				assert.equal(text, chunk.text);
 			}
 			assert.ok(getTextChunks(data, { maxSize: 2400, includeAuxiliary: true }).every(chunk => chunk.embedText.length <= 2400));
@@ -49,7 +49,7 @@ for (const { format, name, data } of fixtures) {
 				'#content', '#bodyContent', '#mw-content-text',
 				'#mw-content-text > div:first-child', '#mwAQ', '#mwCXs',
 			]) {
-				let text = getAnchorText(data, { selectors: [{ type: 'CssSelector', value }] });
+				let text = recoveredText(data, { selectors: [{ type: 'CssSelector', value }] });
 				let prefix = value === '#mwCXs' ? 'EPIC Pacific Ocean' : 'Pacific Ocean';
 				assert.ok(text?.startsWith(prefix), `${value}: missing selected article text`);
 			}
@@ -62,7 +62,7 @@ for (const { format, name, data } of fixtures) {
 		for (let [i, chunk] of chunks.entries()) {
 			let where = `${format}/${name} chunk ${i}: ${JSON.stringify(chunk.text)}`;
 			assert.ok(chunk.embedText.length <= 60, `${where}: embedding input exceeds character budget`);
-			let recovered = getAnchorText(data, restore(chunk.anchor));
+			let recovered = recoveredText(data, restore(chunk.anchor));
 			assert.equal(typeof recovered, 'string', `${where}: anchor does not resolve`);
 			// Whole-element anchors and overlapping glyphs can recover more text;
 			// their exact behavior is covered by focused DOM/PDF recovery tests.

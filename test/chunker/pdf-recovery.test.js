@@ -1,7 +1,7 @@
 import { it } from 'node:test';
 import assert from 'node:assert/strict';
-import { getChunks, getAnchorText } from '../../src/chunker/index.js';
-import { pdfAnchor } from './helpers.js';
+import { getChunks } from '../../src/chunker/index.js';
+import { pdfAnchor, recoveredText } from './helpers.js';
 
 const pdf = (text, rects) => ({
 	metadata: { processor: { type: 'pdf' } },
@@ -14,7 +14,7 @@ it('recovers a saved PDF position after a boundary glyph shifts slightly', () =>
 	let original = pdf('AB', [[0, 0, 10, 1], [10, 0, 10, 1]]);
 	let anchor = JSON.parse(JSON.stringify(getChunks(original)[0].anchor));
 	let changed = pdf('AB', [[0, 0, 10, 1], [10.005, 0, 10.005, 1]]);
-	assert.equal(getAnchorText(changed, anchor), 'AB');
+	assert.equal(recoveredText(changed, anchor), 'AB');
 	assert.deepEqual(anchor, { pageRects: [[0, 0, 0, 10, 1]] });
 	assert.deepEqual(getChunks(original)[0].anchor, anchor);
 });
@@ -28,7 +28,7 @@ for (let [name, rect, expected] of [
 		let structure = pdf('ABC', [[0, 0, 1, 1], [1, 0, 2, 1], rect]);
 		let [chunk] = getChunks(structure, { maxSize: 2, minSize: 0, overlap: 0 });
 		assert.equal(chunk.text, 'AB');
-		assert.equal(getAnchorText(structure, JSON.parse(JSON.stringify(chunk.anchor))), expected);
+		assert.equal(recoveredText(structure, JSON.parse(JSON.stringify(chunk.anchor))), expected);
 	});
 }
 
@@ -44,7 +44,7 @@ for (let [edge, glyph] of [
 		let distant = Array.from({ length: 32 }, (_, i) => [20 + i, 20, 21 + i, 21]);
 		for (let [shift, expected] of [[0.005, 'A'], [0.02, null]]) {
 			let structure = pdf('A' + 'B'.repeat(distant.length), [glyph(shift), ...distant]);
-			assert.equal(getAnchorText(structure, pdfAnchor(positions)), expected);
+			assert.equal(recoveredText(structure, pdfAnchor(positions)), expected);
 		}
 		assert.deepEqual(positions, [{ pageIndex: 0, rects: [[0, 0, 1, 1]] }]);
 	});
@@ -56,17 +56,17 @@ it('recovers surviving PDF text when separate saved rectangles become empty', ()
 	assert.deepEqual(anchor, { pageRects: rects.map(rect => [0, ...rect]) });
 	for (let text of ['AC', 'A', 'C', '']) {
 		let changed = pdf(text, [...text].map(char => rects['ABC'.indexOf(char)]));
-		assert.equal(getAnchorText(changed, anchor), text || null);
+		assert.equal(recoveredText(changed, anchor), text || null);
 	}
 });
 
 it('requires surviving text per page rather than per rectangle', () => {
 	let a = [0, 0, 1, 1], b = [20, 0, 21, 1];
 	let positions = [{ pageIndex: 0, rects: [a] }, { pageIndex: 0, rects: [b] }];
-	assert.equal(getAnchorText(pdf('AB', [a, b]), pdfAnchor(positions)), 'AB');
-	assert.equal(getAnchorText(pdf('A', [a]), pdfAnchor(positions)), 'A');
-	assert.equal(getAnchorText(pdf('B', [b]), pdfAnchor(positions)), 'B');
-	assert.equal(getAnchorText(pdf('A', [a]), pdfAnchor([positions[0], positions[0]])), 'A');
+	assert.equal(recoveredText(pdf('AB', [a, b]), pdfAnchor(positions)), 'AB');
+	assert.equal(recoveredText(pdf('A', [a]), pdfAnchor(positions)), 'A');
+	assert.equal(recoveredText(pdf('B', [b]), pdfAnchor(positions)), 'B');
+	assert.equal(recoveredText(pdf('A', [a]), pdfAnchor([positions[0], positions[0]])), 'A');
 });
 
 it('rejects a partly unresolved multi-page selection instead of returning one page', () => {
@@ -74,9 +74,9 @@ it('rejects a partly unresolved multi-page selection instead of returning one pa
 	structure.content.push({ type: 'paragraph', content: [{ text: 'B', anchor: { textMap: '[[0,1,0,0,1,1]]' } }] });
 	structure.catalog.pages = [{ contentRange: [[0], [1]] }, { contentRange: [[1], [2]] }];
 	let positions = [{ pageIndex: 0, rects: [[0, 0, 1, 1]] }, { pageIndex: 1, rects: [[20, 0, 21, 1]] }];
-	assert.equal(getAnchorText(structure, pdfAnchor(positions)), null);
+	assert.equal(recoveredText(structure, pdfAnchor(positions)), null);
 	positions[1].rects = [[0, 0, 1, 1]];
-	assert.equal(getAnchorText(structure, pdfAnchor(positions)), 'A\n\nB');
+	assert.equal(recoveredText(structure, pdfAnchor(positions)), 'A\n\nB');
 });
 
 it('recovers reordered pages within one text node in source order', () => {
@@ -87,6 +87,6 @@ it('recovers reordered pages within one text node in source order', () => {
 	structure.catalog.pages = Array.from({ length: 3 }, () => ({ contentRange: [[0], [1]] }));
 	let pageRects = [1, 2].map(page => [page, 0, 0, 20, 1]);
 	let expected = 'A'.repeat(20) + ' ' + 'C'.repeat(20) + 'D'.repeat(20);
-	assert.equal(getAnchorText(structure, { pageRects }), expected);
-	assert.equal(getAnchorText(structure, { pageRects: [...pageRects].reverse() }), expected);
+	assert.equal(recoveredText(structure, { pageRects }), expected);
+	assert.equal(recoveredText(structure, { pageRects: [...pageRects].reverse() }), expected);
 });

@@ -1,6 +1,6 @@
 import { it } from 'node:test';
 import assert from 'node:assert/strict';
-import { getAnchorText } from '../../src/chunker/index.js';
+import { recoveredText } from './helpers.js';
 
 // Saved Reader selections must resolve independently of chunk generation.
 const cfi = value => ({ type: 'FragmentSelector',
@@ -26,7 +26,7 @@ for (let [type, name, position, expected] of cases) {
 					anchor: type === 'epub' ? { selectorMap: '/1' } : { stream: 10 } }],
 			}],
 		};
-		assert.equal(getAnchorText(structure, { selectors: JSON.parse(JSON.stringify([position])) }), expected);
+		assert.equal(recoveredText(structure, { selectors: JSON.parse(JSON.stringify([position])) }), expected);
 	});
 }
 
@@ -59,7 +59,7 @@ it('snapshot: recovers container overlap independently of surrounding extracted 
 				[{ ...container, refinedBy: textRange(0, 19) }, null],
 				[{ type: 'CssSelector', value: '#missing' }, null],
 			]) {
-				assert.equal(getAnchorText(structure, { selectors: [position] }), expected,
+				assert.equal(recoveredText(structure, { selectors: [position] }), expected,
 					`header=${header}, footer=${footer}, ${JSON.stringify(position)}`);
 			}
 		}
