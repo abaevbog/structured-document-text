@@ -179,8 +179,8 @@ recovery or Reader resolution: usable navigation selectors can coexist with
 `getAnchorContent() === null`. Treat failed recovery as a failure, never as empty
 text or a reason to silently substitute the original excerpt.
 
-Store the anchor as plain JSON and derive Reader positions when needed; storing
-expanded line positions too loses the storage benefit. This replaces the PR's
+Store the anchor as plain JSON or in its compact form below, and derive Reader
+positions when needed; storing expanded line positions too loses the storage benefit. This replaces the PR's
 `chunk.positions` and `getPositionsText()` API. Ordinary Reader Position shapes
 are unchanged; `nextPageRects` and `nextPageIndex` are not anchor fields.
 
@@ -190,6 +190,19 @@ are translated through `deltaMap` and clamped within the resolved text-node part
 if it becomes shorter. Snapshot recovery accepts selections extending beyond
 extracted coverage. Anchors alone do not preserve the exact original excerpt
 or embedding input.
+
+### Compact storage
+
+`compactAnchor(anchor)` returns a `Uint8Array` for storing many anchors, and
+`expandAnchor(bytes)` reads it back. PDF rectangles become a delta-coded varint
+stream in tenths of a point, about a quarter of their JSON size. Coordinates
+round outward to that grid, so an expanded rectangle can be up to 0.1 pt larger
+on each side and never smaller; recovery selects only glyphs wholly inside a
+rectangle, so it changes only for a glyph that fits entirely within that margin.
+Expanded rectangles come back grouped by page, in order of first appearance.
+Any other anchor, including `null`, is kept as JSON and round-trips exactly.
+The first byte names the form, so the format can change without invalidating
+stored bytes.
 
 ### Snapshot text positions and HTML parsing
 

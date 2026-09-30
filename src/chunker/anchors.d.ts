@@ -49,3 +49,9 @@ export function getAnchorContent(structure: StructuredDocumentText, anchor: Chun
 /** Restores ordinary PDF line positions, one per page, or copies DOM selectors.
  * DOM conversion does not verify text recovery or Reader resolution. */
 export function getAnchorPositions(structure: StructuredDocumentText, anchor: ChunkAnchor | null): Position[] | null;
+
+/** A compact byte form of an anchor for storage. PDF rectangles are kept in tenths of a point, rounded outward, so an expanded
+ * rectangle can be up to 0.1 pt larger per side and recovery selects the same glyphs; other anchors round-trip exactly. */
+export function compactAnchor(anchor: ChunkAnchor | null): Uint8Array;
+/** Decodes compactAnchor() output. PDF rectangles come back grouped by page, in order of first appearance. */
+export function expandAnchor(bytes: Uint8Array): ChunkAnchor | null;

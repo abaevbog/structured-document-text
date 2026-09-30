@@ -9,7 +9,8 @@ it('has minimal text-only exports and a stable chunk shape', async () => {
 	assert.deepEqual(getTextChunks(textDocument([paragraph('Body')])), [{ text: 'Body', embedText: 'Body', tokens: 1,
 		outlinePath: '', pageLabel: null, sectionPart: 1, sectionParts: 1, auxiliary: false }]);
 	assert.deepEqual(Object.keys(await import('../../src/chunker/text.js')).sort(), ['CHUNKER_VERSION', 'getChunkCount', 'getPlainTextChunks', 'getTextChunks']);
-	assert.deepEqual(Object.keys(await import('../../src/chunker/index.js')).sort(), ['CHUNKER_VERSION', 'getAnchorContent', 'getAnchorPositions', 'getChunkCount', 'getChunks', 'getPlainTextChunks']);
+	assert.deepEqual(Object.keys(await import('../../src/chunker/index.js')).sort(),
+		['CHUNKER_VERSION', 'compactAnchor', 'expandAnchor', 'getAnchorContent', 'getAnchorPositions', 'getChunkCount', 'getChunks', 'getPlainTextChunks']);
 	assert.ok(!('getChunks' in await import('../../src/read.js')));
 	assert.ok(!('getChunks' in await import('../../src/index.js')));
 	assert.ok(!('getTextChunks' in await import('../../src/read.js')));
