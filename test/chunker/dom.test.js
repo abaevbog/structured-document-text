@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { getChunks, getPositionsText } from '../../src/chunker/index.js';
+import { getChunks, getAnchorText, getAnchorPositions } from '../../src/chunker/index.js';
 import { getTextChunks } from '../../src/chunker/text.js';
 import { noOverlap, dom, roundTrip, restore } from './helpers.js';
 
@@ -12,11 +12,11 @@ for (let type of ['epub', 'snapshot']) {
 				structure.content[1].content[0].anchor.deltaMap = deltaMap;
 				structure.catalog.outline = structure.content.map((_, i) => ({ title: `Section ${i}`, ref: [i] }));
 				let chunks = getChunks(structure, noOverlap);
-				assert.deepEqual(chunks.map(({ positions, ...chunk }) => chunk), getTextChunks(structure, noOverlap));
+				assert.deepEqual(chunks.map(({ anchor, ...chunk }) => chunk), getTextChunks(structure, noOverlap));
 				assert.equal(chunks.length, 3);
-				assert.ok(chunks[0].positions.length);
-				assert.deepEqual(chunks[1].positions, []);
-				assert.ok(chunks[2].positions.length);
+				assert.ok(chunks[0].anchor.selectors.length);
+				assert.equal(chunks[1].anchor, null);
+				assert.ok(chunks[2].anchor.selectors.length);
 			}
 		});
 
@@ -28,23 +28,23 @@ for (let type of ['epub', 'snapshot']) {
 				stream += text.length;
 				return { text, anchor };
 			});
-			assert.equal(roundTrip(structure)[0].positions.length, 1);
+			assert.equal(roundTrip(structure)[0].anchor.selectors.length, 1);
 			// EPUB keeps a range across synthetic whitespace. Snapshot source
 			// offsets still expose a real gap when that whitespace loses its anchor.
 			let unanchored = restore(structure);
 			delete unanchored.content[0].content[1].anchor;
-			assert.equal(roundTrip(unanchored)[0].positions.length, type === 'epub' ? 1 : 2);
+			assert.equal(roundTrip(unanchored)[0].anchor.selectors.length, type === 'epub' ? 1 : 2);
 		});
 
 		it('uses one range for consecutive paragraphs and multiple for omitted content', () => {
 			let structure = dom(['First', 'Second', 'Third'], type);
-			assert.equal(roundTrip(structure)[0].positions.length, 1);
+			assert.equal(roundTrip(structure)[0].anchor.selectors.length, 1);
 			let excluded = restore(structure);
 			excluded.content[1].flowClass = 'excluded';
 			let filtered = roundTrip(excluded);
-			assert.equal(filtered[0].positions.length, 2);
+			assert.equal(filtered[0].anchor.selectors.length, 2);
 			assert.equal(filtered[0].chunk.text, 'First\n\nThird');
-			assert.equal(getPositionsText(restore(structure), restore(filtered[0].positions)), 'First\n\nThird');
+			assert.equal(getAnchorText(restore(structure), { selectors: restore(filtered[0].anchor.selectors) }), 'First\n\nThird');
 		});
 
 		it('recovers stored positions independently of new splitting options or exclusion flags', () => {
@@ -54,13 +54,13 @@ for (let type of ['epub', 'snapshot']) {
 			changed.content[0].flowClass = 'excluded';
 			delete changed.content[1].flowClass;
 			getTextChunks(changed, { maxSize: 3, minSize: 0, overlap: 0 });
-			assert.equal(getPositionsText(changed, positions), chunk.text);
+			assert.equal(getAnchorText(changed, { selectors: positions }), chunk.text);
 		});
 
 		it('supports partial nodes, serialized positions, duplicate positions, and repeated text', () => {
 			let structure = dom(['Word Word Word'], type);
 			for (let { chunk, positions } of roundTrip(structure, { maxSize: 5, minSize: 0, overlap: 0 })) {
-				assert.equal(getPositionsText(restore(structure), [...positions, ...positions]), chunk.text);
+				assert.equal(getAnchorText(restore(structure), { selectors: [...positions, ...positions] }), chunk.text);
 			}
 			roundTrip(dom(['X'], type));
 		});
@@ -70,12 +70,13 @@ for (let type of ['epub', 'snapshot']) {
 			delete structure.content[1].content[0].anchor;
 			delete structure.content[1].anchor;
 			let [{ chunk }] = roundTrip(structure);
-			let { positions, ...textChunk } = chunk;
+			let { anchor, ...textChunk } = chunk;
+			let positions = anchor.selectors;
 			assert.equal(chunk.text, 'First\n\nThird');
 			assert.equal(positions.length, 2);
 			assert.deepEqual(getTextChunks(structure), [textChunk]);
 			for (let positions of [null, [], [null], ['bad'], [{ type: 'Unknown' }]]) {
-				assert.equal(getPositionsText(structure, positions), null);
+				assert.equal(getAnchorText(structure, { selectors: positions }), null);
 			}
 		});
 
@@ -87,9 +88,9 @@ for (let type of ['epub', 'snapshot']) {
 			assert.equal(positions.length, 3);
 			assert.equal(positions[1].type, type === 'epub' ? 'FragmentSelector' : 'CssSelector');
 			assert.equal(positions[1].value, type === 'epub' ? 'epubcfi(/6/2!/4/4,,/3:12)' : '#p1');
-			assert.equal(getPositionsText(restore(structure), restore(positions)), chunk.text);
+			assert.equal(getAnchorText(restore(structure), { selectors: restore(positions) }), chunk.text);
 			if (type === 'snapshot') {
-				assert.equal(getPositionsText(structure, [{ ...positions[1], refinedBy: null }]), 'Image description linked text');
+				assert.equal(getAnchorText(structure, { selectors: [{ ...positions[1], refinedBy: null }] }), 'Image description linked text');
 			}
 		});
 
@@ -97,17 +98,17 @@ for (let type of ['epub', 'snapshot']) {
 			let structure = dom(['Long image description'], type);
 			delete structure.content[0].content[0].anchor;
 			let value = type === 'epub' ? 'epubcfi(/6/2!/4/2)' : '#p0';
-			for (let { positions } of getChunks(structure, { maxSize: 10, minSize: 0, overlap: 0 })) {
+			for (let { anchor: { selectors: positions } } of getChunks(structure, { maxSize: 10, minSize: 0, overlap: 0 })) {
 				assert.equal(positions.length, 1);
 				assert.equal(positions[0].value, value);
-				assert.equal(getPositionsText(structure, positions), 'Long image description');
+				assert.equal(getAnchorText(structure, { selectors: positions }), 'Long image description');
 			}
 			let duplicate = restore(structure);
 			duplicate.content.push(restore(duplicate.content[0]));
-			assert.deepEqual(getChunks(duplicate)[0].positions.map(position => position.value), [value, value]);
+			assert.deepEqual(getChunks(duplicate)[0].anchor.selectors.map(position => position.value), [value, value]);
 			let position = type === 'epub' ? { type: 'FragmentSelector', value: 'epubcfi(/6/2!/4/2)' }
 				: { type: 'CssSelector', value: '#p0' };
-			assert.equal(getPositionsText(duplicate, [position]), null);
+			assert.equal(getAnchorText(duplicate, { selectors: [position] }), null);
 		});
 	});
 }
@@ -129,28 +130,28 @@ it('keeps indexing around an unresolved EPUB selector map and ignores unusable e
 	structure.catalog.outline = structure.content.map((_, i) => ({ title: `Section ${i}`, ref: [i] }));
 	let chunks = getChunks(structure, noOverlap);
 	assert.equal(chunks.length, 3);
-	assert.ok(chunks[0].positions.length);
-	assert.deepEqual(chunks[1].positions, []);
-	assert.ok(chunks[2].positions.length);
+	assert.ok(chunks[0].anchor.selectors.length);
+	assert.equal(chunks[1].anchor, null);
+	assert.ok(chunks[2].anchor.selectors.length);
 });
 
 it('keeps generated snapshot gaps separate but resolves Reader ranges across them', () => {
 	let structure = dom(['First', 'Second'], 'snapshot');
 	structure.content[1].content[0].anchor.stream = 100;
-	assert.equal(roundTrip(structure)[0].positions.length, 2);
-	assert.equal(getPositionsText(structure, [{ type: 'TextPositionSelector', start: 10, end: 104 }]), 'Seco');
-	assert.equal(getPositionsText(structure, [{ type: 'TextPositionSelector', start: 0, end: 1000 }]), 'First\n\nSecond');
-	assert.equal(getPositionsText(structure, [
+	assert.equal(roundTrip(structure)[0].anchor.selectors.length, 2);
+	assert.equal(getAnchorText(structure, { selectors: [{ type: 'TextPositionSelector', start: 10, end: 104 }] }), 'Seco');
+	assert.equal(getAnchorText(structure, { selectors: [{ type: 'TextPositionSelector', start: 0, end: 1000 }] }), 'First\n\nSecond');
+	assert.equal(getAnchorText(structure, { selectors: [
 		{ type: 'TextPositionSelector', start: 0, end: 5 },
 		{ type: 'TextPositionSelector', start: 100, end: 106 },
-	]), 'First\n\nSecond');
+	] }), 'First\n\nSecond');
 });
 
 it('resolves partial source ranges inside nested blocks and excludes complete subtrees', () => {
 	let structure = dom(['ab', 'cd', 'ef'], 'snapshot');
 	structure.content = [{ type: 'list', content: structure.content.map(block => ({ type: 'listitem', content: [block] })) }];
-	assert.equal(getPositionsText(structure, [{ type: 'TextPositionSelector', start: 1, end: 5 }]), 'b\n\ncd\n\ne');
-	assert.equal(getPositionsText(structure, [{ type: 'TextPositionSelector', start: 0, end: 2 }]), 'ab');
+	assert.equal(getAnchorText(structure, { selectors: [{ type: 'TextPositionSelector', start: 1, end: 5 }] }), 'b\n\ncd\n\ne');
+	assert.equal(getAnchorText(structure, { selectors: [{ type: 'TextPositionSelector', start: 0, end: 2 }] }), 'ab');
 	let excluded = restore(structure);
 	excluded.content[0].content[1].reference = true;
 	let [{ chunk, positions }] = roundTrip(excluded);
@@ -172,8 +173,8 @@ it('keeps NFC and whitespace delta boundaries exact in EPUB and snapshot source 
 	let structure = dom(['aéx'], 'epub');
 	structure.content[0].content[0].anchor = { selectorMap: '2 /1\n1 /3', deltaMap: '2 -1' };
 	let parts = roundTrip(structure, { maxSize: 2, minSize: 0, overlap: 0 });
-	assert.equal(parts[0].positions[0].value, 'epubcfi(/6/2!/4/2/1,:0,:3)');
-	assert.equal(parts[1].positions[0].value, 'epubcfi(/6/2!/4/2/3,:0,:1)');
+	assert.equal(parts[0].anchor.selectors[0].value, 'epubcfi(/6/2!/4/2/1,:0,:3)');
+	assert.equal(parts[1].anchor.selectors[0].value, 'epubcfi(/6/2!/4/2/3,:0,:1)');
 });
 
 it('keeps snapshot CSS refinements within their anchor element', () => {
@@ -184,12 +185,12 @@ it('keeps snapshot CSS refinements within their anchor element', () => {
 	];
 	for (let refinedBy of [{ type: 'TextPositionSelector', start: 0, end: 11 },
 		{ type: 'TextPositionSelector', start: -1, end: 5 }, { type: 'Unknown' }]) {
-		assert.equal(getPositionsText(structure, [{ type: 'CssSelector', value: '#p0', refinedBy }]), null);
+		assert.equal(getAnchorText(structure, { selectors: [{ type: 'CssSelector', value: '#p0', refinedBy }] }), null);
 	}
-	assert.equal(getPositionsText(structure, [{ type: 'CssSelector', value: '#p0' }]), 'First');
+	assert.equal(getAnchorText(structure, { selectors: [{ type: 'CssSelector', value: '#p0' }] }), 'First');
 	let excluded = restore(structure);
 	excluded.content[1].flowClass = 'excluded';
-	assert.deepEqual(roundTrip(excluded)[0].positions,
+	assert.deepEqual(roundTrip(excluded)[0].anchor.selectors,
 		[{ type: 'TextPositionSelector', start: 0, end: 5 }]);
 });
 
@@ -216,7 +217,7 @@ it('recovers snapshot CSS through the DOM map when an element spans multiple blo
 	let structure = dom(['First', 'Second'], 'snapshot');
 	structure.content[1].anchor.selectorMap = '#p0';
 	structure.catalog.domMap = [{ tag: 'div', id: 'p0', index: 0, textStart: 0, textLength: 11 }];
-	assert.equal(getPositionsText(structure, [{ type: 'CssSelector', value: '#p0' }]), 'First\n\nSecond');
+	assert.equal(getAnchorText(structure, { selectors: [{ type: 'CssSelector', value: '#p0' }] }), 'First\n\nSecond');
 });
 
 it('uses the same whitespace serialization for inline chunks and restored positions', () => {
@@ -231,7 +232,7 @@ it('uses the same whitespace serialization for inline chunks and restored positi
 		assert.equal(roundTrip(structure)[0].chunk.text, 'A    B😀\n C');
 		for (let { chunk, positions } of roundTrip(structure, { maxSize: 5, minSize: 0, overlap: 1 })) {
 			assert.ok(chunk.text.length <= 5 && chunk.text.isWellFormed());
-			assert.equal(getPositionsText(restore(structure), restore(positions)), chunk.text);
+			assert.equal(getAnchorText(restore(structure), { selectors: restore(positions) }), chunk.text);
 		}
 	}
 });
@@ -239,8 +240,10 @@ it('uses the same whitespace serialization for inline chunks and restored positi
 it('retains an EPUB source location even when duplicate paths prevent text recovery', () => {
 	let structure = dom(['Repeat', 'Repeat'], 'epub');
 	structure.content[1].anchor.selectorMap = structure.content[0].anchor.selectorMap;
-	assert.equal(getChunks(structure)[0].positions.length, 1);
-	assert.equal(getPositionsText(structure, [{ type: 'FragmentSelector', value: 'epubcfi(/6/2!/4/2/1,:0,:6)' }]), null);
+	let { anchor } = getChunks(structure)[0];
+	assert.equal(anchor.selectors.length, 1);
+	assert.deepEqual(getAnchorPositions(structure, anchor), anchor.selectors);
+	assert.equal(getAnchorText(structure, anchor), null);
 });
 
 it('recovers EPUB CFIs with escaped assertions or assertions omitted', () => {
@@ -252,7 +255,7 @@ it('recovers EPUB CFIs with escaped assertions or assertions omitted', () => {
 		'epubcfi(/6/2[chapter^]one]!/4/2/1,:0,:5)',
 		'epubcfi(/6/2[chapter^]one]!/4/2/1,:0[hello^],world],:5)',
 		'epubcfi(/6/2!/4/2/1,:0[^^^[:99],:5[^^^],tail])',
-	]) assert.equal(getPositionsText(structure, [{ type: 'FragmentSelector', value }]), 'Hello');
+	]) assert.equal(getAnchorText(structure, { selectors: [{ type: 'FragmentSelector', value }] }), 'Hello');
 });
 
 const epubPosition = value => ({ type: 'FragmentSelector', value });
@@ -263,18 +266,18 @@ it('keeps navigable text endpoints around an EPUB image description', () => {
 	structure.content[0].content = [{ text: 'Hello ', anchor: { selectorMap: '/1' } },
 		{ text: 'diagram' }, { text: ' World', anchor: { selectorMap: '/3' } }];
 	let [chunk] = getChunks(structure);
-	assert.equal(chunk.positions.length, 1);
-	assert.equal(chunk.positions[0].value, 'epubcfi(/6/2!/4/2,/1:0,/3:6)');
-	assert.equal(getPositionsText(structure, chunk.positions), 'Hello diagram World');
+	assert.equal(chunk.anchor.selectors.length, 1);
+	assert.equal(chunk.anchor.selectors[0].value, 'epubcfi(/6/2!/4/2,/1:0,/3:6)');
+	assert.equal(getAnchorText(structure, chunk.anchor), 'Hello diagram World');
 });
 
 it('resolves EPUB element ranges and descendant paths through their containing block', () => {
 	let structure = whitespaceDocument('epub');
 	for (let block of structure.content) for (let node of block.content) delete node.anchor;
-	assert.equal(getPositionsText(structure, [epubPosition('epubcfi(/6/2!/4,/2,/6)')]),
+	assert.equal(getAnchorText(structure, { selectors: [epubPosition('epubcfi(/6/2!/4,/2,/6)')] }),
 		'First line\n\nsecond line');
-	assert.equal(getPositionsText(structure, [epubPosition('epubcfi(/6/2!/4/2/99,:0,:4)')]), 'First line');
-	assert.equal(getPositionsText(structure, [epubPosition('epubcfi(/6/2!/4/20/99,:0,:4)')]), null);
+	assert.equal(getAnchorText(structure, { selectors: [epubPosition('epubcfi(/6/2!/4/2/99,:0,:4)')] }), 'First line');
+	assert.equal(getAnchorText(structure, { selectors: [epubPosition('epubcfi(/6/2!/4/20/99,:0,:4)')] }), null);
 });
 
 it('still recovers saved snapshot CSS-relative positions after unrelated source text is inserted', () => {
@@ -286,13 +289,13 @@ it('still recovers saved snapshot CSS-relative positions after unrelated source 
 	let whole = [{ type: 'CssSelector', value: '#bodytext' }];
 	let partial = [{ type: 'CssSelector', value: '#bodytext',
 		refinedBy: { type: 'TextPositionSelector', start: 0, end: 4 } }];
-	assert.equal(getPositionsText(structure, whole), 'Main body.');
-	assert.equal(getPositionsText(structure, partial), 'Main');
+	assert.equal(getAnchorText(structure, { selectors: whole }), 'Main body.');
+	assert.equal(getAnchorText(structure, { selectors: partial }), 'Main');
 	let changed = structuredClone(structure);
 	changed.content[0].content[0].anchor.stream = 8;
 	changed.catalog.domMap[0].textStart = 8;
-	assert.equal(getPositionsText(changed, whole), 'Main body.');
-	assert.equal(getPositionsText(changed, partial), 'Main');
+	assert.equal(getAnchorText(changed, { selectors: whole }), 'Main body.');
+	assert.equal(getAnchorText(changed, { selectors: partial }), 'Main');
 });
 
 it('uses established normalization mapping for source offsets inside collapsed whitespace', () => {
@@ -304,7 +307,7 @@ it('uses established normalization mapping for source offsets inside collapsed w
 		} }];
 		let position = type === 'epub' ? epubPosition('epubcfi(/6/2!/4/2/1,:3,:5)')
 			: { type: 'TextPositionSelector', start: 3, end: 5 };
-		assert.equal(getPositionsText(structure, [position]), 'b');
+		assert.equal(getAnchorText(structure, { selectors: [position] }), 'b');
 	}
 });
 
@@ -329,14 +332,14 @@ for (let type of ['epub', 'snapshot']) {
 		last.content[0].anchor = type === 'epub' ? { selectorMap: '/3' } : { stream: 10 };
 		structure.content[0].content.push(...last.content);
 		let [chunk] = getChunks(structure);
-		assert.equal(chunk.positions.length, 1);
-		assert.equal(getPositionsText(structure, chunk.positions), 'First line\n second line');
+		assert.equal(chunk.anchor.selectors.length, 1);
+		assert.equal(getAnchorText(structure, chunk.anchor), 'First line\n second line');
 	});
 	it(`${type}: preserves omitted entries when joining positions`, () => {
 		let structure = whitespaceDocument(type, { excluded: true });
 		let [chunk] = getChunks(structure);
-		assert.equal(chunk.positions.length, 2);
-		assert.equal(getPositionsText(structure, chunk.positions), chunk.text);
+		assert.equal(chunk.anchor.selectors.length, 2);
+		assert.equal(getAnchorText(structure, chunk.anchor), chunk.text);
 		assert.ok(!chunk.text.includes('OMIT'));
 	});
 }
@@ -345,8 +348,8 @@ it('preserves snapshot stream gaps and EPUB content-file boundaries', () => {
 	for (let [type, options] of [['snapshot', { gap: 2 }], ['epub', { otherFile: true }]]) {
 		let structure = whitespaceDocument(type, options);
 		let [chunk] = getChunks(structure);
-		assert.equal(chunk.positions.length, 2);
-		assert.equal(getPositionsText(structure, chunk.positions), chunk.text);
+		assert.equal(chunk.anchor.selectors.length, 2);
+		assert.equal(getAnchorText(structure, chunk.anchor), chunk.text);
 	}
 });
 
@@ -360,8 +363,8 @@ it('preserves CSS selector ambiguity when narrowing recovery candidates', () => 
 		content: ['A', 'B'].map((text, stream) => ({ type: 'paragraph',
 			anchor: { selectorMap: `#block${stream}` }, content: [{ text, anchor: { stream } }] })),
 	};
-	let read = value => getPositionsText(structure, [{ type: 'CssSelector', value,
-		refinedBy: { type: 'TextPositionSelector', start: 0, end: 1 } }]);
+	let read = value => getAnchorText(structure, { selectors: [{ type: 'CssSelector', value,
+		refinedBy: { type: 'TextPositionSelector', start: 0, end: 1 } }] });
 	assert.equal(read('#same'), null);
 	assert.equal(read('p'), null);
 	assert.equal(read('body > p:first-child'), 'A');

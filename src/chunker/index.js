@@ -1,2 +1,2 @@
-export { CHUNKER_VERSION } from './text.js';
-export { getChunks, getPositionsText } from './positions.js';
+export { CHUNKER_VERSION, getChunkCount } from './text.js';
+export { getChunks, getAnchorText, getAnchorPositions } from './anchors.js';

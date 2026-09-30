@@ -1,6 +1,6 @@
 import { it } from 'node:test';
 import assert from 'node:assert/strict';
-import { getChunks, getPositionsText } from '../../src/chunker/index.js';
+import { getChunks, getAnchorText } from '../../src/chunker/index.js';
 import { getTextChunks } from '../../src/chunker/text.js';
 import { spawnSync } from 'node:child_process';
 import { noOverlap, paragraph, textDocument, pdf, pdfBlock, dom, restore } from './helpers.js';
@@ -8,8 +8,8 @@ import { noOverlap, paragraph, textDocument, pdf, pdfBlock, dom, restore } from 
 it('has minimal text-only exports and a stable chunk shape', async () => {
 	assert.deepEqual(getTextChunks(textDocument([paragraph('Body')])), [{ text: 'Body', embedText: 'Body', tokens: 1,
 		outlinePath: '', pageLabel: null, sectionPart: 1, sectionParts: 1, auxiliary: false }]);
-	assert.deepEqual(Object.keys(await import('../../src/chunker/text.js')).sort(), ['CHUNKER_VERSION', 'getTextChunks']);
-	assert.deepEqual(Object.keys(await import('../../src/chunker/index.js')).sort(), ['CHUNKER_VERSION', 'getChunks', 'getPositionsText']);
+	assert.deepEqual(Object.keys(await import('../../src/chunker/text.js')).sort(), ['CHUNKER_VERSION', 'getChunkCount', 'getTextChunks']);
+	assert.deepEqual(Object.keys(await import('../../src/chunker/index.js')).sort(), ['CHUNKER_VERSION', 'getAnchorPositions', 'getAnchorText', 'getChunkCount', 'getChunks']);
 	assert.ok(!('getChunks' in await import('../../src/read.js')));
 	assert.ok(!('getChunks' in await import('../../src/index.js')));
 	assert.ok(!('getTextChunks' in await import('../../src/read.js')));
@@ -40,7 +40,7 @@ it('loads only text chunking dependencies without decoding textMaps', t => {
 		await import('./src/chunker/text.js');
 		for (let url of modules) {
 			assert.ok(!url.includes('/src/pdf/') && !url.includes('/src/dom/'), url);
-			for (let name of ['index', 'positions', 'pdf', 'epub', 'snapshot', 'dom']) {
+			for (let name of ['index', 'anchors', 'pdf', 'epub', 'snapshot', 'dom']) {
 				assert.ok(!url.endsWith('/src/chunker/' + name + '.js'), url);
 			}
 		}
@@ -60,10 +60,10 @@ it('returns self-contained chunks that survive serialization', () => {
 	for (let structure of [pdf([pdfBlock('First', 0), pdfBlock('Second', 1)]),
 		dom(['First', 'Second'], 'epub'), dom(['First', 'Second'], 'snapshot')]) {
 		for (let chunk of getChunks(structure, noOverlap)) {
-			assert.deepEqual(Object.keys(chunk).sort(), ['auxiliary', 'embedText', 'outlinePath', 'pageLabel', 'positions',
+			assert.deepEqual(Object.keys(chunk).sort(), ['anchor', 'auxiliary', 'embedText', 'outlinePath', 'pageLabel',
 				'sectionPart', 'sectionParts', 'text', 'tokens']);
 			let saved = restore(chunk);
-			assert.equal(getPositionsText(restore(structure), saved.positions), saved.text);
+			assert.equal(getAnchorText(restore(structure), saved.anchor), saved.text);
 		}
 	}
 });

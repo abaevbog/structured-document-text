@@ -1,6 +1,7 @@
 import { it } from 'node:test';
 import assert from 'node:assert/strict';
-import { getChunks, getPositionsText } from '../../src/chunker/index.js';
+import { getChunks, getAnchorText } from '../../src/chunker/index.js';
+import { pdfAnchor } from './helpers.js';
 
 const pdf = (text, rects) => ({
 	metadata: { processor: { type: 'pdf' } },
@@ -11,22 +12,23 @@ const pdf = (text, rects) => ({
 
 it('recovers a saved PDF position after a boundary glyph shifts slightly', () => {
 	let original = pdf('AB', [[0, 0, 10, 1], [10, 0, 10, 1]]);
-	let positions = JSON.parse(JSON.stringify(getChunks(original)[0].positions));
+	let anchor = JSON.parse(JSON.stringify(getChunks(original)[0].anchor));
 	let changed = pdf('AB', [[0, 0, 10, 1], [10.005, 0, 10.005, 1]]);
-	assert.equal(getPositionsText(changed, positions), 'AB');
-	assert.deepEqual(positions, [{ pageIndex: 0, rects: [[0, 0, 10, 1]] }]);
-	assert.deepEqual(getChunks(original)[0].positions, positions);
+	assert.equal(getAnchorText(changed, anchor), 'AB');
+	assert.deepEqual(anchor, { pageRects: [[0, 0, 0, 10, 1]] });
+	assert.deepEqual(getChunks(original)[0].anchor, anchor);
 });
 
-for (let [name, rect] of [
-	['zero-width boundary', [2, 0, 2, 1]],
-	['overlapping', [1.5, 0, 2.5, 1]],
+for (let [name, rect, expected] of [
+	['zero-width boundary', [2, 0, 2, 1], 'ABC'],
+	['partly overlapping', [1.5, 0, 2.5, 1], 'AB'],
+	['fully contained', [1.25, 0, 1.75, 1], 'ABC'],
 ]) {
-	it(`recovers an adjacent ${name} glyph along with a small chunk`, () => {
+	it(`handles an adjacent ${name} glyph at a small chunk boundary`, () => {
 		let structure = pdf('ABC', [[0, 0, 1, 1], [1, 0, 2, 1], rect]);
 		let [chunk] = getChunks(structure, { maxSize: 2, minSize: 0, overlap: 0 });
 		assert.equal(chunk.text, 'AB');
-		assert.equal(getPositionsText(structure, JSON.parse(JSON.stringify(chunk.positions))), 'ABC');
+		assert.equal(getAnchorText(structure, JSON.parse(JSON.stringify(chunk.anchor))), expected);
 	});
 }
 
@@ -36,13 +38,13 @@ for (let [edge, glyph] of [
 	['bottom', shift => [0, -shift, 1, -shift]],
 	['top', shift => [0, 1 + shift, 1, 1 + shift]],
 ]) {
-	it(`tolerates small center shifts at the PDF rectangle's ${edge} edge only`, () => {
+	it(`tolerates small shifts at the PDF rectangle's ${edge} edge only`, () => {
 		let positions = [{ pageIndex: 0, rects: [[0, 0, 1, 1]] }];
 		// Include enough distant glyphs to exercise the spatial tree as well.
 		let distant = Array.from({ length: 32 }, (_, i) => [20 + i, 20, 21 + i, 21]);
 		for (let [shift, expected] of [[0.005, 'A'], [0.02, null]]) {
 			let structure = pdf('A' + 'B'.repeat(distant.length), [glyph(shift), ...distant]);
-			assert.equal(getPositionsText(structure, positions), expected);
+			assert.equal(getAnchorText(structure, pdfAnchor(positions)), expected);
 		}
 		assert.deepEqual(positions, [{ pageIndex: 0, rects: [[0, 0, 1, 1]] }]);
 	});
@@ -50,21 +52,21 @@ for (let [edge, glyph] of [
 
 it('recovers surviving PDF text when separate saved rectangles become empty', () => {
 	let rects = [[0, 0, 1, 1], [20, 0, 21, 1], [40, 0, 41, 1]];
-	let positions = JSON.parse(JSON.stringify(getChunks(pdf('ABC', rects))[0].positions));
-	assert.deepEqual(positions, [{ pageIndex: 0, rects }]);
+	let anchor = JSON.parse(JSON.stringify(getChunks(pdf('ABC', rects))[0].anchor));
+	assert.deepEqual(anchor, { pageRects: rects.map(rect => [0, ...rect]) });
 	for (let text of ['AC', 'A', 'C', '']) {
 		let changed = pdf(text, [...text].map(char => rects['ABC'.indexOf(char)]));
-		assert.equal(getPositionsText(changed, positions), text || null);
+		assert.equal(getAnchorText(changed, anchor), text || null);
 	}
 });
 
-it('requires every supplied PDF position to resolve some text, even on the same page', () => {
+it('requires surviving text per page rather than per rectangle', () => {
 	let a = [0, 0, 1, 1], b = [20, 0, 21, 1];
 	let positions = [{ pageIndex: 0, rects: [a] }, { pageIndex: 0, rects: [b] }];
-	assert.equal(getPositionsText(pdf('AB', [a, b]), positions), 'AB');
-	assert.equal(getPositionsText(pdf('A', [a]), positions), null);
-	assert.equal(getPositionsText(pdf('B', [b]), positions), null);
-	assert.equal(getPositionsText(pdf('A', [a]), [positions[0], positions[0]]), 'A');
+	assert.equal(getAnchorText(pdf('AB', [a, b]), pdfAnchor(positions)), 'AB');
+	assert.equal(getAnchorText(pdf('A', [a]), pdfAnchor(positions)), 'A');
+	assert.equal(getAnchorText(pdf('B', [b]), pdfAnchor(positions)), 'B');
+	assert.equal(getAnchorText(pdf('A', [a]), pdfAnchor([positions[0], positions[0]])), 'A');
 });
 
 it('rejects a partly unresolved multi-page selection instead of returning one page', () => {
@@ -72,7 +74,19 @@ it('rejects a partly unresolved multi-page selection instead of returning one pa
 	structure.content.push({ type: 'paragraph', content: [{ text: 'B', anchor: { textMap: '[[0,1,0,0,1,1]]' } }] });
 	structure.catalog.pages = [{ contentRange: [[0], [1]] }, { contentRange: [[1], [2]] }];
 	let positions = [{ pageIndex: 0, rects: [[0, 0, 1, 1]] }, { pageIndex: 1, rects: [[20, 0, 21, 1]] }];
-	assert.equal(getPositionsText(structure, positions), null);
+	assert.equal(getAnchorText(structure, pdfAnchor(positions)), null);
 	positions[1].rects = [[0, 0, 1, 1]];
-	assert.equal(getPositionsText(structure, positions), 'A\n\nB');
+	assert.equal(getAnchorText(structure, pdfAnchor(positions)), 'A\n\nB');
+});
+
+it('recovers reordered pages within one text node in source order', () => {
+	let text = ['A', 'B', 'C', 'D'].map(char => char.repeat(20)).join('');
+	let structure = pdf(text, []);
+	structure.content[0].content[0].anchor.textMap = JSON.stringify([2, 0, 2, 1].flatMap(page =>
+		Array.from({ length: 20 }, (_, x) => [0, page, x, 0, x + 1, 1])));
+	structure.catalog.pages = Array.from({ length: 3 }, () => ({ contentRange: [[0], [1]] }));
+	let pageRects = [1, 2].map(page => [page, 0, 0, 20, 1]);
+	let expected = 'A'.repeat(20) + ' ' + 'C'.repeat(20) + 'D'.repeat(20);
+	assert.equal(getAnchorText(structure, { pageRects }), expected);
+	assert.equal(getAnchorText(structure, { pageRects: [...pageRects].reverse() }), expected);
 });

@@ -1,6 +1,6 @@
 import { it } from 'node:test';
 import assert from 'node:assert/strict';
-import { getChunks, getPositionsText } from '../../src/chunker/index.js';
+import { getChunks, getAnchorText, getAnchorPositions } from '../../src/chunker/index.js';
 import { getTextChunks } from '../../src/chunker/text.js';
 
 const options = { maxSize: 200, minSize: 0, overlap: 0 };
@@ -30,9 +30,9 @@ function link(structure, first, next) {
 
 function roundTrip(structure, settings = options) {
 	let chunks = getChunks(structure, settings);
-	assert.deepEqual(chunks.map(({ positions, ...chunk }) => chunk), getTextChunks(structure, settings));
+	assert.deepEqual(chunks.map(({ anchor, ...chunk }) => chunk), getTextChunks(structure, settings));
 	for (let chunk of chunks) {
-		assert.equal(getPositionsText(JSON.parse(JSON.stringify(structure)), JSON.parse(JSON.stringify(chunk.positions))), chunk.text);
+		assert.equal(getAnchorText(JSON.parse(JSON.stringify(structure)), JSON.parse(JSON.stringify(chunk.anchor))), chunk.text);
 	}
 	return chunks;
 }
@@ -55,7 +55,7 @@ for (let type of ['pdf', 'epub', 'snapshot']) {
 		let [chunk] = roundTrip(structure);
 		assert.equal(chunk.text, 'The results demonstrate that the method works.\n\nAnother paragraph.');
 		assert.equal(chunk.embedText, chunk.text);
-		if (type === 'pdf') assert.deepEqual(chunk.positions.map(position => position.pageIndex), [0, 1, 2, 3]);
+		if (type === 'pdf') assert.deepEqual(getAnchorPositions(structure, chunk.anchor).map(position => position.pageIndex), [0, 1, 2, 3]);
 	});
 
 	it(`${type}: continues body text across a separate auxiliary passage`, () => {
@@ -66,7 +66,7 @@ for (let type of ['pdf', 'epub', 'snapshot']) {
 		assert.deepEqual(chunks.map(chunk => [chunk.text, chunk.auxiliary]), [
 			['The results show an improvement.\n\nAnother paragraph.', false], ['A footnote.', true],
 		]);
-		if (type === 'pdf') assert.deepEqual(chunks[0].positions.map(position => position.pageIndex), [0, 2, 3]);
+		if (type === 'pdf') assert.deepEqual(getAnchorPositions(structure, chunks[0].anchor).map(position => position.pageIndex), [0, 2, 3]);
 	});
 
 	it(`${type}: orders split body and auxiliary passages by their source starts`, () => {
@@ -132,11 +132,11 @@ it('keeps paragraph separation when a recovered selection omits text at either l
 		let positions = [{ type: 'TextPositionSelector', start: 0, end: 5 },
 			{ type: 'TextPositionSelector', start: texts[0].length + (omittedAtEnd ? 0 : 8),
 				end: texts[0].length + texts[1].length }];
-		assert.equal(getPositionsText(structure, positions), 'First\n\nSecond');
+		assert.equal(getAnchorText(structure, { selectors: positions }), 'First\n\nSecond');
 	}
 	let structure = document(['First OMITTED', 'Second']);
 	structure.content[0].content = [{ text: 'First', anchor: { stream: 0 } }, { text: ' OMITTED', anchor: { stream: 5 } }];
 	link(structure, 0, 1);
-	assert.equal(getPositionsText(structure, [{ type: 'TextPositionSelector', start: 0, end: 5 },
-		{ type: 'TextPositionSelector', start: 13, end: 19 }]), 'First\n\nSecond');
+	assert.equal(getAnchorText(structure, { selectors: [{ type: 'TextPositionSelector', start: 0, end: 5 },
+		{ type: 'TextPositionSelector', start: 13, end: 19 }] }), 'First\n\nSecond');
 });

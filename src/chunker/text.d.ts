@@ -37,3 +37,6 @@ export interface TextChunk {
 
 /** Returns source excerpts and embedding input without decoding geometry. Treat the structure as immutable. */
 export function getTextChunks(structure: StructuredDocumentText, options?: ChunkingOptions): TextChunk[];
+
+/** Returns the same count as getTextChunks without constructing outputs or decoding geometry. */
+export function getChunkCount(structure: StructuredDocumentText, options?: ChunkingOptions): number;

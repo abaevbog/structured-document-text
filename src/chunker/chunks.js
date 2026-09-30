@@ -19,8 +19,8 @@ const ASCII_SCRIPTS = Int8Array.from({ length: 128 }, (_, code) =>
 		: code >= 65 && code <= 90 || code >= 97 && code <= 122 ? 1
 			: code >= 48 && code <= 57 ? 0 : TOKEN_SCRIPTS.length);
 
-// Internal iterator: source spans live only until the caller builds its result.
-export function* iterateChunks(structure, options = {}, withSpans = true) {
+// Shared selection and splitting; counting stops before chunk output is built.
+function* splitGroups(structure, options = {}) {
 	let { maxTokens, maxSize, minSize, overlap, includeAuxiliary = false } = options;
 	if (typeof includeAuxiliary !== 'boolean') throw new TypeError('includeAuxiliary must be a boolean');
 	if (maxTokens !== undefined && (!Number.isSafeInteger(maxTokens) || maxTokens < 2 || maxSize !== undefined)) {
@@ -35,7 +35,6 @@ export function* iterateChunks(structure, options = {}, withSpans = true) {
 	let minimumTokens = MIN_TOKENS * Math.min(1, tokenBudget / BUDGET_TOKENS);
 	let document = getDocument(structure);
 	let unicode = new Map();
-	let chunks = [];
 	for (let { sections: group, tokens, auxiliary } of groupSections(sections(document, includeAuxiliary), maxSize, minSize, minimumTokens, unicode)) {
 		// Convert the estimated token budget to characters once per group.
 		// Explicit limits use UTF-16 units, including inserted outline context.
@@ -71,6 +70,20 @@ export function* iterateChunks(structure, options = {}, withSpans = true) {
 			return !!entry && entry.start <= offset && entry.span.entry.block.type === 'preformatted';
 		};
 		let pieces = [...splitText(text, maximum, minimum, carry, limitEnd, preserveWhitespace)];
+		yield { text, entries, spans, pieces, auxiliary, unicode };
+	}
+}
+
+export function countChunks(structure, options) {
+	let count = 0;
+	for (let { pieces } of splitGroups(structure, options)) count += pieces.length;
+	return count;
+}
+
+// Internal iterator: source spans live only until the caller builds its result.
+export function* iterateChunks(structure, options, withSpans = true) {
+	let chunks = [];
+	for (let { text, entries, spans, pieces, auxiliary, unicode } of splitGroups(structure, options)) {
 		let cursor = 0;
 		for (let [i, { start, end }] of pieces.entries()) {
 			while (entries[cursor].end <= start) cursor++;
@@ -260,12 +273,21 @@ function groupSections(sections, maxSize, minSize, minimumTokens, unicode) {
 			span.entry.block === heading || !span.entry.node.text.trim());
 		if (source.body.hasReferenceBody && !source.body.hasNonReferenceBody && headingOnly) continue;
 		let section = { ...source, textLength: text.length, heading, headingOnly };
-		let tokens = maxSize === undefined ? estimateTokens(text, unicode) : 0;
+		let counts = maxSize === undefined ? countScripts(text, unicode) : null;
+		let tokens = counts ? tokensFromCounts(counts) : 0;
 		// Group by body size, retaining heading-only sections and all source spans.
 		// Context selection still decides whether a heading can be replaced.
 		let body = section.heading
 			? spansText(section.spans.filter(span => span.entry.block !== section.heading)) || text : text;
-		let size = useTokens ? (body === text ? tokens : estimateTokens(body, unicode)) : body.length;
+		let size = body.length;
+		if (useTokens) {
+			size = tokens;
+			if (body !== text) {
+				// Subtract integer counts, not rounded or accumulated token costs.
+				let headingCounts = countScripts(spansText(section.spans.filter(span => span.entry.block === heading)), unicode);
+				size = tokensFromCounts(counts.map((count, i) => count - headingCounts[i]));
+			}
+		}
 		let auxiliary = section.auxiliaryRoot !== null;
 		if (auxiliary) {
 			auxiliaryGroups.push({ sections: [section], size, tokens, auxiliary });
@@ -295,6 +317,10 @@ function groupSections(sections, maxSize, minSize, minimumTokens, unicode) {
 // A script-aware estimate, not a model tokenizer. Whitespace is free;
 // each character is priced once, with punctuation falling through at one token.
 export function estimateTokens(text, unicode = new Map()) {
+	return tokensFromCounts(countScripts(text, unicode));
+}
+
+function countScripts(text, unicode) {
 	let counts = new Array(TOKEN_SCRIPTS.length + 1).fill(0);
 	for (let i = 0; i < text.length;) {
 		let point = text.codePointAt(i), width = point > 0xffff ? 2 : 1;
@@ -302,7 +328,11 @@ export function estimateTokens(text, unicode = new Map()) {
 		if (index !== -1) counts[index] += width;
 		i += width;
 	}
-	// Sum script totals in the original order, preserving rounding and splits.
+	return counts;
+}
+
+// Sum script totals in the original order, preserving rounding and splits.
+function tokensFromCounts(counts) {
 	return counts.reduce((tokens, count, i) => tokens + count / (TOKEN_SCRIPTS[i]?.[1] ?? 1), 0);
 }
 

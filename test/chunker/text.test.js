@@ -1,9 +1,10 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { getChunks, getPositionsText } from '../../src/chunker/index.js';
-import { getTextChunks } from '../../src/chunker/text.js';
+import { getChunks, getAnchorText } from '../../src/chunker/index.js';
+import { getTextChunks, getChunkCount } from '../../src/chunker/text.js';
 import { splitText } from '../../src/chunker/split.js';
 import { estimateTokens } from '../../src/chunker/chunks.js';
+import { discoverFixtures } from '../helpers.js';
 import { noOverlap, paragraph, document, textDocument, pdf, pdfBlock, dom, roundTrip, restore } from './helpers.js';
 
 describe('chunk splitting', () => {
@@ -146,7 +147,7 @@ describe('chunk splitting', () => {
 			let isPDF = structure.metadata.processor.type === 'pdf';
 			for (let options of [{ maxSize: 2, minSize: 0, overlap: 0 }, { maxSize: 3, minSize: 0, overlap: 1 }]) {
 				let chunks = getChunks(structure, options);
-				assert.deepEqual(chunks.map(({ positions, ...chunk }) => chunk), getTextChunks(structure, options));
+				assert.deepEqual(chunks.map(({ anchor, ...chunk }) => chunk), getTextChunks(structure, options));
 				if (!options.overlap) {
 					assert.equal(chunks.map(chunk => chunk.text).join('').replace(/\s/gu, ''), code.replace(/\s/gu, ''));
 				}
@@ -155,8 +156,8 @@ describe('chunk splitting', () => {
 				}
 				for (let [i, chunk] of chunks.entries()) {
 					assert.ok(/\S/u.test(chunk.text) && chunk.text.length <= options.maxSize);
-					assert.ok(chunk.positions.length);
-					let recovered = getPositionsText(structure, restore(chunk.positions));
+					assert.ok(chunk.anchor);
+					let recovered = getAnchorText(structure, restore(chunk.anchor));
 					assert.equal(isPDF ? recovered.trim() : recovered, isPDF ? chunk.text.trim() : chunk.text);
 					assert.equal(chunk.sectionPart, i + 1);
 					assert.equal(chunk.sectionParts, chunks.length);
@@ -185,12 +186,12 @@ describe('chunk splitting', () => {
 				let options = { maxSize, minSize: 0, overlap: 0 };
 				let chunks = getChunks(structure, options);
 				assert.equal(chunks.map(chunk => chunk.text).join(''), code);
-				assert.deepEqual(chunks.map(({ positions, ...chunk }) => chunk), getTextChunks(structure, options));
+				assert.deepEqual(chunks.map(({ anchor, ...chunk }) => chunk), getTextChunks(structure, options));
 				for (let chunk of chunks) {
 					assert.ok(chunk.text.length <= maxSize);
 					assert.ok(/\S/u.test(chunk.text), 'Do not embed a whitespace-only slice');
-					assert.ok(chunk.positions.length);
-					let recovered = getPositionsText(structure, restore(chunk.positions));
+					assert.ok(chunk.anchor);
+					let recovered = getAnchorText(structure, restore(chunk.anchor));
 					assert.equal(typeof recovered, 'string');
 					assert.ok(code.includes(recovered));
 					assert.equal(type === 'pdf' ? recovered.trim() : recovered,
@@ -217,6 +218,8 @@ describe('chunk splitting', () => {
 		assert.deepEqual(getTextChunks(structure).map(chunk => [chunk.text, chunk.auxiliary]), [['Body', false]]);
 		assert.deepEqual(getTextChunks(structure, { includeAuxiliary: true }).map(chunk => [chunk.text, chunk.auxiliary]),
 			[['Body', false], ['Caption', true]]);
+		assert.equal(getChunkCount(structure), 1);
+		assert.equal(getChunkCount(structure, { includeAuxiliary: true }), 2);
 	});
 
 	it('sizes the actual text, traverses every piece of a large block, and preserves coverage', () => {
@@ -281,9 +284,65 @@ describe('chunk splitting', () => {
 		assert.deepEqual(getTextChunks(textDocument([])), []);
 		assert.deepEqual(getTextChunks(textDocument([paragraph(' \n\t ')])), []);
 		for (let options of [{ maxSize: 1 }, { minSize: -1 }, { maxSize: 2400, overlap: 2400 }, { overlap: -1 },
-			{ maxSize: Infinity }, { maxSize: 2400, minSize: 2401 }, { overlap: 0.5 }, { includeAuxiliary: 'true' }]) {
-			assert.throws(() => getTextChunks(textDocument([]), options), TypeError);
+			{ maxSize: Infinity }, { maxSize: 2400, minSize: 2401 }, { overlap: 0.5 }, { includeAuxiliary: 'true' },
+			{ maxTokens: 1 }, { maxTokens: 2.5 }, { maxTokens: Infinity }, { maxTokens: 459, maxSize: 1000 }]) {
+			for (let get of [getTextChunks, getChunkCount]) {
+				assert.throws(() => get(textDocument([]), options), TypeError);
+			}
 		}
+	});
+});
+
+describe('chunk counts', () => {
+	for (let { format, name, data } of discoverFixtures()) {
+		it(`${format}/${name}: counts text and anchored chunks with the same options`, () => {
+			for (let options of [undefined, { includeAuxiliary: true }, { maxTokens: 120, includeAuxiliary: true },
+				{ maxSize: 2400, minSize: 450, overlap: 180 },
+				{ maxSize: 500, minSize: 0, overlap: 0, includeAuxiliary: true }]) {
+				let count = getChunkCount(data, options);
+				let where = JSON.stringify(options);
+				assert.equal(count, getTextChunks(data, options).length, `Text count: ${where}`);
+				assert.equal(count, getChunks(data, options).length, `Anchored count: ${where}`);
+			}
+		});
+	}
+
+	it('counts empty and whitespace-only documents, including tiny preformatted slices', () => {
+		for (let type of ['pdf', 'epub', 'snapshot']) {
+			for (let texts of [[], [' \n\t '], [' \tabc\n\n def \n']]) {
+				let structure = type === 'pdf' ? pdf(texts.map(text => pdfBlock(text))) : dom(texts, type);
+				for (let block of structure.content) block.type = 'preformatted';
+				for (let options of [{ maxSize: 2, minSize: 0, overlap: 0 }, { maxSize: 3, minSize: 0, overlap: 1 }]) {
+					let count = getChunkCount(structure, options);
+					assert.equal(count, getTextChunks(structure, options).length);
+					assert.equal(count, getChunks(structure, options).length);
+					if (texts.length === 0 || !texts[0].trim()) assert.equal(count, 0);
+				}
+			}
+		}
+	});
+
+	it('keeps chunks whose source geometry cannot produce an anchor in the count', () => {
+		let structure = pdf([pdfBlock('Body '.repeat(30))]);
+		structure.content[0].content[0].anchor.textMap = 'not valid JSON';
+		let chunks = getChunks(structure, noOverlap);
+		assert.ok(chunks.length > 1 && chunks.every(chunk => chunk.anchor === null));
+		assert.equal(getChunkCount(structure, noOverlap), chunks.length);
+		assert.equal(getChunkCount(structure, noOverlap), getTextChunks(structure, noOverlap).length);
+	});
+
+	it('counts without decoding source geometry or reading page metadata', t => {
+		let structure = pdf([pdfBlock('Body '.repeat(30))]);
+		let block = structure.content[0], textMap = block.content[0].anchor.textMap;
+		let parse = JSON.parse;
+		t.mock.method(JSON, 'parse', (...args) => {
+			assert.notEqual(args[0], textMap, 'Count must not decode PDF text geometry');
+			return parse(...args);
+		});
+		for (let [object, key] of [[block.anchor, 'pageRects'], [structure.catalog, 'pages']]) {
+			Object.defineProperty(object, key, { get() { throw new Error(`Count accessed ${key}`); } });
+		}
+		assert.ok(getChunkCount(structure, noOverlap) > 1);
 	});
 });
 
@@ -298,7 +357,7 @@ describe('passage metadata', () => {
 			assert.deepEqual(chunks.map(chunk => chunk.text), ['Before\n\nAfter', 'First caption', 'Second caption']);
 			assert.deepEqual(chunks.map(chunk => chunk.auxiliary), [false, true, true]);
 			assert.ok(chunks.every(chunk => chunk.sectionPart === 1 && chunk.sectionParts === 1));
-			assert.deepEqual(chunks.map(({ positions, ...chunk }) => chunk), getTextChunks(structure, { includeAuxiliary: true }));
+			assert.deepEqual(chunks.map(({ anchor, ...chunk }) => chunk), getTextChunks(structure, { includeAuxiliary: true }));
 			assert.deepEqual(getChunks(structure), chunks.filter(chunk => !chunk.auxiliary));
 		});
 	}
@@ -526,8 +585,12 @@ it('recognizes CJK sentence boundaries without requiring inter-sentence whitespa
 
 it('validates custom minimum and overlap against the automatic script budget', () => {
 	for (let options of [{ minSize: 3000 }, { overlap: 3000 }]) {
-		assert.throws(() => getTextChunks(textDocument([paragraph('前文'.repeat(10000))]), options), TypeError);
-		assert.ok(getTextChunks(textDocument([paragraph('a '.repeat(10000))]), options).length);
+		let cjk = textDocument([paragraph('前文'.repeat(10000))]);
+		let latin = textDocument([paragraph('a '.repeat(10000))]);
+		for (let get of [getTextChunks, getChunkCount]) assert.throws(() => get(cjk, options), TypeError);
+		let chunks = getTextChunks(latin, options);
+		assert.ok(chunks.length);
+		assert.equal(getChunkCount(latin, options), chunks.length);
 	}
 });
 

@@ -1,4 +1,4 @@
-import { iterateChunks } from './chunks.js';
+import { countChunks, iterateChunks } from './chunks.js';
 
 export const CHUNKER_VERSION = 1;
 
@@ -10,4 +10,14 @@ export const CHUNKER_VERSION = 1;
  */
 export function getTextChunks(structure, options) {
 	return Array.from(iterateChunks(structure, options, false));
+}
+
+/**
+ * Count the same selected chunks without constructing outputs or decoding geometry.
+ * @param {import('../../schema').StructuredDocumentText} structure
+ * @param {import('./text').ChunkingOptions} [options]
+ * @returns {number}
+ */
+export function getChunkCount(structure, options) {
+	return countChunks(structure, options);
 }

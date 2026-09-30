@@ -53,7 +53,7 @@ SDT packs are produced by `document-worker`.
 ## Text chunking
 
 The optional [passage chunker](src/chunker/README.md) splits a materialized SDT
-into excerpts and embedding input with existing reader positions. The package
+into excerpts and embedding input with source anchors and on-demand Reader positions. The package
 root and `src/read.js` do not load it. Passage chunks are separate from compressed
 storage chunks.
 

@@ -1,6 +1,6 @@
 import { it } from 'node:test';
 import assert from 'node:assert/strict';
-import { getChunks, getPositionsText } from '../../src/chunker/index.js';
+import { getChunks, getAnchorText } from '../../src/chunker/index.js';
 import { splitText } from '../../src/chunker/split.js';
 import { dom } from './helpers.js';
 
@@ -15,10 +15,10 @@ it('starts default passage overlap at complete sentences', () => {
 	for (let [i, chunk] of chunks.entries()) {
 		assert.ok(chunk.text.startsWith('Sentence '), chunk.text.slice(0, 80));
 		assert.ok(chunk.tokens <= 768);
-		assert.equal(getPositionsText(structure, chunk.positions), chunk.text);
+		assert.equal(getAnchorText(structure, chunk.anchor), chunk.text);
 		if (i) {
-			let previous = chunks[i - 1].positions[0];
-			let current = chunk.positions[0];
+			let previous = chunks[i - 1].anchor.selectors[0];
+			let current = chunk.anchor.selectors[0];
 			assert.ok(current.start > previous.start && current.start < previous.end);
 		}
 	}
@@ -77,7 +77,7 @@ it('avoids near-duplicate tails with large sentence overlap in token mode', () =
 	for (let sentence of sentences) assert.ok(chunks.some(chunk => chunk.text.includes(sentence)));
 	for (let chunk of chunks) {
 		assert.ok(chunk.tokens <= 512);
-		assert.equal(getPositionsText(structure, chunk.positions), chunk.text);
+		assert.equal(getAnchorText(structure, chunk.anchor), chunk.text);
 	}
 });
 

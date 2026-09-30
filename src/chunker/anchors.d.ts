@@ -4,7 +4,7 @@ import type { ChunkingOptions, TextChunk } from './text.js';
 export interface PDFPosition {
 	pageIndex: number;
 	rects: [number, number, number, number][];
-	/** Existing adjacent-page representation, accepted when reading positions. */
+	/** Existing adjacent-page Reader representation. */
 	nextPageRects?: [number, number, number, number][];
 }
 export interface FragmentSelector {
@@ -25,15 +25,26 @@ export interface CssSelector {
 /** Existing reader source positions; no multi-page extension to their shapes. */
 export type Position = PDFPosition | FragmentSelector | TextPositionSelector | CssSelector;
 
+export interface PDFChunkAnchor {
+	pageRects: [pageIndex: number, left: number, bottom: number, right: number, top: number][];
+}
+export interface DOMChunkAnchor {
+	selectors: (FragmentSelector | TextPositionSelector | CssSelector)[];
+}
+export type ChunkAnchor = PDFChunkAnchor | DOMChunkAnchor;
+
 export interface Chunk extends TextChunk {
-	/** Source locations, which can cover more than the chunk text; empty if mapping fails. */
-	positions: Position[];
+	/** Source coverage, which can exceed the chunk text; null if mapping fails. */
+	anchor: ChunkAnchor | null;
 }
 
 /** Returns serializable chunks with source locations attached. DOM text may use broader element anchors.
- * Text without source anchors is omitted before chunking. Unresolvable anchors yield positions: [].
+ * Text without source anchors is omitted before chunking. Unresolvable mappings yield anchor: null.
  * Unsupported formats and unexpected programming errors still throw. */
 export function getChunks(structure: StructuredDocumentText, options?: ChunkingOptions): Chunk[];
 /** Reads covered text in document order; it may differ from the chunk text or be empty after trimming.
- * Returns null for empty positions or an unresolved member; gaps within resolved selections are tolerated. */
-export function getPositionsText(structure: StructuredDocumentText, positions: Position[]): string | null;
+ * Returns null for invalid anchors or unresolved pages/selectors. Individual empty PDF rectangles are tolerated. */
+export function getAnchorText(structure: StructuredDocumentText, anchor: ChunkAnchor | null): string | null;
+/** Restores ordinary PDF line positions, one per page, or copies DOM selectors.
+ * DOM conversion does not verify text recovery or Reader resolution. */
+export function getAnchorPositions(structure: StructuredDocumentText, anchor: ChunkAnchor | null): Position[] | null;

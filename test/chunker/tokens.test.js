@@ -1,7 +1,7 @@
 import { it } from 'node:test';
 import assert from 'node:assert/strict';
 import { getTextChunks } from '../../src/chunker/text.js';
-import { getChunks, getPositionsText } from '../../src/chunker/index.js';
+import { getChunks, getAnchorText } from '../../src/chunker/index.js';
 import { estimateTokens } from '../../src/chunker/chunks.js';
 import { dom } from './helpers.js';
 
@@ -32,6 +32,31 @@ it('preserves the original script estimator on identical nonempty text', () => {
 		['𐞀𠀀😀', 3.928571428571429],
 	]) assert.ok(Math.abs(estimateTokens(text) - expected) < 1e-10, text);
 	assert.equal(estimateTokens(' \n\t '), 0);
+});
+
+it('preserves mixed-script body grouping at the exact minimum', () => {
+	let following = 'body '.repeat(160).trim();
+	for (let punctuation of [55, 56]) {
+		// These bodies cost 119 and 120 tokens. Subtracting the heading's
+		// floating-point estimate moves the latter just below the minimum.
+		let first = 'я'.repeat(188) + 'กก' + '!'.repeat(punctuation);
+		let structure = document([first, 'Next', following], 'Methods');
+		structure.content[2].type = 'heading';
+		structure.catalog.outline.push({ title: 'Next', ref: [2] });
+		let chunks = getTextChunks(structure, { overlap: 0 });
+		assert.deepEqual(chunks.map(chunk => [chunk.text, chunk.embedText]), punctuation === 55
+			? [[first + '\n\n' + following, 'Methods\n\n' + first + '\n\nNext\n\n' + following]]
+			: [[first, 'Methods\n\n' + first], [following, 'Next\n\n' + following]]);
+	}
+});
+
+it('sizes a heading-only section by its retained text before grouping', () => {
+	let title = '研究'.repeat(84), following = 'body '.repeat(160).trim();
+	let structure = document(['Next', following], title);
+	structure.content[1].type = 'heading';
+	structure.catalog.outline.push({ title: 'Next', ref: [1] });
+	assert.deepEqual(getTextChunks(structure, { overlap: 0 }).map(chunk => [chunk.text, chunk.embedText]),
+		[[title, title], [following, 'Next\n\n' + following]]);
 });
 
 it('bounds dense passages without losing text when a section has mixed token densities', () => {
@@ -67,11 +92,11 @@ it('makes progress when token density leaves less room than the requested overla
 	let chunks = getChunks(structure, { maxTokens: 40, minSize: 0, overlap: 80 });
 	let previousEnd = 0;
 	for (let chunk of chunks) {
-		let { start, end } = chunk.positions[0];
+		let { start, end } = chunk.anchor.selectors[0];
 		assert.ok(end > previousEnd);
 		assert.ok(!text.slice(previousEnd, start).trim(), 'Do not skip source text');
 		assert.ok(estimateTokens(chunk.embedText) <= 40 + 1e-7);
-		assert.equal(getPositionsText(structure, chunk.positions), chunk.text);
+		assert.equal(getAnchorText(structure, chunk.anchor), chunk.text);
 		previousEnd = end;
 	}
 	assert.equal(previousEnd, text.length);
@@ -150,10 +175,10 @@ it('preserves source positions and default output with explicit token budgets', 
 		let structure = dom(texts, type);
 		assert.deepEqual(getChunks(structure, { maxTokens: 768 }), getChunks(structure));
 		let chunks = getChunks(structure, { maxTokens: 459 });
-		assert.deepEqual(chunks.map(({ positions, ...chunk }) => chunk), getTextChunks(structure, { maxTokens: 459 }));
+		assert.deepEqual(chunks.map(({ anchor, ...chunk }) => chunk), getTextChunks(structure, { maxTokens: 459 }));
 		for (let chunk of chunks) {
 			assert.ok(estimateTokens(chunk.embedText) <= 459 + 1e-7);
-			assert.equal(getPositionsText(structure, JSON.parse(JSON.stringify(chunk.positions))), chunk.text);
+			assert.equal(getAnchorText(structure, JSON.parse(JSON.stringify(chunk.anchor))), chunk.text);
 		}
 	}
 });
