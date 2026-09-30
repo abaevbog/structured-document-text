@@ -40,3 +40,6 @@ export function getTextChunks(structure: StructuredDocumentText, options?: Chunk
 
 /** Returns the same count as getTextChunks without constructing outputs or decoding geometry. */
 export function getChunkCount(structure: StructuredDocumentText, options?: ChunkingOptions): number;
+
+/** Splits plain text with no structure: blank lines separate paragraphs; single newlines and form feeds read as spaces. */
+export function getPlainTextChunks(text: string, options?: ChunkingOptions): TextChunk[];

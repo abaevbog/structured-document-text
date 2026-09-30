@@ -51,6 +51,10 @@ location metadata and result sorting. Counting still performs text selection and
 splitting; it does not retain a plan for a later chunking call. Use the same
 immutable structure and options for both calls.
 
+For plain text with no structure, both entry points export `getPlainTextChunks(text, options)`.
+Blank lines separate its paragraphs; a single newline is a wrapped line and a form
+feed a page break, so both read as a space. It returns what `getTextChunks` returns.
+
 | Field | Meaning |
 | --- | --- |
 | `text` | Selected source excerpt. |
