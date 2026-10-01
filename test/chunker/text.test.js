@@ -53,8 +53,8 @@ describe('chunk splitting', () => {
 				if (nested) structure.content[auxiliary] = { type: 'blockquote', content: [structure.content[auxiliary]] };
 				structure.content[auxiliary].flowClass = 'auxiliary';
 				structure.catalog.outline = [{ title: 'References', ref: [0] }, { title: 'Following', ref: [3] }];
-				let chunks = getTextChunks(structure, { ...noOverlap, includeAuxiliary: true });
-				assert.deepEqual(chunks.map(chunk => [chunk.text, chunk.auxiliary]), [['Footnote', true], ['Following', false]]);
+				let chunks = getTextChunks(structure, noOverlap);
+				assert.deepEqual(chunks.map(chunk => chunk.text), ['Footnote', 'Following']);
 			}
 		}
 	});
@@ -69,10 +69,12 @@ describe('chunk splitting', () => {
 				delete structure.content[3].anchor;
 				delete structure.content[3].content[0].anchor;
 			}
-			let chunks = getTextChunks(structure, { ...noOverlap, includeAuxiliary: true });
-			assert.deepEqual(chunks.map(chunk => chunk.text),
-				anchored ? ['Footnote', 'Ordinary body'] : ['References', 'Footnote']);
-			if (anchored) assert.equal(chunks[1].embedText, 'References\n\nOrdinary body');
+			// The body after the heading keeps the section from reading as
+			// references only, anchored or not; the footnote between them
+			// keeps its place
+			let chunks = getTextChunks(structure, noOverlap);
+			assert.deepEqual(chunks.map(chunk => chunk.text), anchored ? ['Footnote\n\nOrdinary body'] : ['Footnote']);
+			assert.equal(chunks[0].embedText, anchored ? 'References\n\nFootnote\n\nOrdinary body' : 'References\n\nFootnote');
 		}
 		let structure = textDocument([paragraph('Heading', { type: 'heading' }),
 			paragraph('Auxiliary citation', { flowClass: 'auxiliary', reference: true })],
@@ -209,17 +211,14 @@ describe('chunk splitting', () => {
 		assert.equal(chunks[1].outlinePath, 'First > Second');
 	});
 
-	it('omits auxiliary passages by default and includes them only when requested', () => {
+	it('folds auxiliary passages into the body and leaves excluded and reference blocks out', () => {
 		let structure = textDocument([
 			paragraph('Header', { flowClass: 'excluded' }), paragraph('Body'),
 			{ type: 'blockquote', flowClass: 'excluded', content: [paragraph('Hidden child')] },
 			paragraph('Reference', { reference: true }), paragraph('Caption', { flowClass: 'auxiliary' }),
 		]);
-		assert.deepEqual(getTextChunks(structure).map(chunk => [chunk.text, chunk.auxiliary]), [['Body', false]]);
-		assert.deepEqual(getTextChunks(structure, { includeAuxiliary: true }).map(chunk => [chunk.text, chunk.auxiliary]),
-			[['Body', false], ['Caption', true]]);
+		assert.deepEqual(getTextChunks(structure).map(chunk => chunk.text), ['Body\n\nCaption']);
 		assert.equal(getChunkCount(structure), 1);
-		assert.equal(getChunkCount(structure, { includeAuxiliary: true }), 2);
 	});
 
 	it('sizes the actual text, traverses every piece of a large block, and preserves coverage', () => {
@@ -284,7 +283,7 @@ describe('chunk splitting', () => {
 		assert.deepEqual(getTextChunks(textDocument([])), []);
 		assert.deepEqual(getTextChunks(textDocument([paragraph(' \n\t ')])), []);
 		for (let options of [{ maxSize: 1 }, { minSize: -1 }, { maxSize: 2400, overlap: 2400 }, { overlap: -1 },
-			{ maxSize: Infinity }, { maxSize: 2400, minSize: 2401 }, { overlap: 0.5 }, { includeAuxiliary: 'true' },
+			{ maxSize: Infinity }, { maxSize: 2400, minSize: 2401 }, { overlap: 0.5 },
 			{ maxTokens: 1 }, { maxTokens: 2.5 }, { maxTokens: Infinity }, { maxTokens: 459, maxSize: 1000 }]) {
 			for (let get of [getTextChunks, getChunkCount]) {
 				assert.throws(() => get(textDocument([]), options), TypeError);
@@ -296,9 +295,9 @@ describe('chunk splitting', () => {
 describe('chunk counts', () => {
 	for (let { format, name, data } of discoverFixtures()) {
 		it(`${format}/${name}: counts text and anchored chunks with the same options`, () => {
-			for (let options of [undefined, { includeAuxiliary: true }, { maxTokens: 120, includeAuxiliary: true },
+			for (let options of [undefined, { maxTokens: 120 },
 				{ maxSize: 2400, minSize: 450, overlap: 180 },
-				{ maxSize: 500, minSize: 0, overlap: 0, includeAuxiliary: true }]) {
+				{ maxSize: 500, minSize: 0, overlap: 0 }]) {
 				let count = getChunkCount(data, options);
 				let where = JSON.stringify(options);
 				assert.equal(count, getTextChunks(data, options).length, `Text count: ${where}`);
@@ -348,34 +347,30 @@ describe('chunk counts', () => {
 
 describe('passage metadata', () => {
 	for (let type of ['pdf', 'epub', 'snapshot']) {
-		it(`${type}: groups short body sections independently of auxiliary inclusion`, () => {
+		it(`${type}: folds captions into the group of their section`, () => {
 			let texts = ['Before', 'First caption', 'Second caption', 'After'];
 			let structure = type === 'pdf' ? pdf(texts.map((text, i) => pdfBlock(text, 0, 0, i * 10))) : dom(texts, type);
 			structure.content[1].flowClass = structure.content[2].flowClass = 'auxiliary';
 			structure.catalog.outline = [{ title: 'First', ref: [0] }, { title: 'Last', ref: [3] }];
-			let chunks = roundTrip(structure, { includeAuxiliary: true }).map(({ chunk }) => chunk);
-			assert.deepEqual(chunks.map(chunk => chunk.text), ['Before\n\nAfter', 'First caption', 'Second caption']);
-			assert.deepEqual(chunks.map(chunk => chunk.auxiliary), [false, true, true]);
+			let chunks = roundTrip(structure).map(({ chunk }) => chunk);
+			assert.deepEqual(chunks.map(chunk => chunk.text), ['Before\n\nFirst caption\n\nSecond caption\n\nAfter']);
 			assert.ok(chunks.every(chunk => chunk.sectionPart === 1 && chunk.sectionParts === 1));
-			assert.deepEqual(chunks.map(({ anchor, ...chunk }) => chunk), getTextChunks(structure, { includeAuxiliary: true }));
-			assert.deepEqual(getChunks(structure), chunks.filter(chunk => !chunk.auxiliary));
+			assert.deepEqual(chunks.map(({ anchor, ...chunk }) => chunk), getTextChunks(structure));
 		});
 	}
 
-	it('inherits auxiliary classification through containers and numbers each split group independently', () => {
+	it('inherits auxiliary classification through containers and numbers the split group', () => {
 		let structure = textDocument([
 			paragraph('Before'),
 			{ type: 'blockquote', flowClass: 'auxiliary', content: [paragraph('Caption '.repeat(30)), paragraph('Continuation')] },
 			paragraph('After'),
 		]);
-		let chunks = getTextChunks(structure, { maxSize: 50, minSize: 10, overlap: 0, includeAuxiliary: true });
-		let auxiliary = chunks.filter(chunk => chunk.auxiliary);
-		assert.ok(auxiliary.length > 1);
-		assert.deepEqual(chunks.filter(chunk => !chunk.auxiliary).map(chunk => [chunk.text, chunk.sectionPart, chunk.sectionParts]),
-			[['Before\n\nAfter', 1, 1]]);
-		assert.deepEqual(auxiliary.map(chunk => chunk.sectionPart), auxiliary.map((_, i) => i + 1));
-		assert.ok(auxiliary.every(chunk => chunk.sectionParts === auxiliary.length));
-		assert.equal(auxiliary.map(chunk => chunk.text).join('').replace(/\s/gu, ''), 'Caption'.repeat(30) + 'Continuation');
+		let chunks = getTextChunks(structure, { maxSize: 50, minSize: 10, overlap: 0 });
+		assert.ok(chunks.length > 1);
+		assert.deepEqual(chunks.map(chunk => chunk.sectionPart), chunks.map((_, i) => i + 1));
+		assert.ok(chunks.every(chunk => chunk.sectionParts === chunks.length));
+		assert.equal(chunks.map(chunk => chunk.text).join('').replace(/\s/gu, ''),
+			'Before' + 'Caption'.repeat(30) + 'Continuation' + 'After');
 	});
 
 	it('numbers combined short sections as one group and counts embedding context in token estimates', () => {

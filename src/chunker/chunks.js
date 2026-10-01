@@ -1,5 +1,5 @@
 import { compareRefs } from '../range.js';
-import { getDocument, indexSpans, sliceSpans, spansText } from './document.js';
+import { getChains, getDocument, indexSpans, readingOrder, sliceSpans, spansText } from './document.js';
 import { splitText } from './split.js';
 
 // First matching script wins; other non-whitespace UTF-16 units cost one token.
@@ -21,8 +21,7 @@ const ASCII_SCRIPTS = Int8Array.from({ length: 128 }, (_, code) =>
 
 // Shared selection and splitting; counting stops before chunk output is built.
 function* splitGroups(structure, options = {}) {
-	let { maxTokens, maxSize, minSize, overlap, includeAuxiliary = false } = options;
-	if (typeof includeAuxiliary !== 'boolean') throw new TypeError('includeAuxiliary must be a boolean');
+	let { maxTokens, maxSize, minSize, overlap } = options;
 	if (maxTokens !== undefined && (!Number.isSafeInteger(maxTokens) || maxTokens < 2 || maxSize !== undefined)) {
 		throw new TypeError('Require maxTokens >= 2 and omit maxSize when using maxTokens');
 	}
@@ -35,7 +34,7 @@ function* splitGroups(structure, options = {}) {
 	let minimumTokens = MIN_TOKENS * Math.min(1, tokenBudget / BUDGET_TOKENS);
 	let document = getDocument(structure);
 	let unicode = new Map();
-	for (let { sections: group, tokens, auxiliary } of groupSections(sections(document, includeAuxiliary), maxSize, minSize, minimumTokens, unicode)) {
+	for (let { sections: group, tokens } of groupSections(sections(document), maxSize, minSize, minimumTokens, unicode)) {
 		// Convert the estimated token budget to characters once per group.
 		// Explicit limits use UTF-16 units, including inserted outline context.
 		let scale = maxSize === undefined
@@ -70,7 +69,7 @@ function* splitGroups(structure, options = {}) {
 			return !!entry && entry.start <= offset && entry.span.entry.block.type === 'preformatted';
 		};
 		let pieces = [...splitText(text, maximum, minimum, carry, limitEnd, preserveWhitespace)];
-		yield { text, entries, spans, pieces, auxiliary, unicode };
+		yield { text, entries, spans, pieces, unicode };
 	}
 }
 
@@ -82,8 +81,7 @@ export function countChunks(structure, options) {
 
 // Internal iterator: source spans live only until the caller builds its result.
 export function* iterateChunks(structure, options, withSpans = true) {
-	let chunks = [];
-	for (let { text, entries, spans, pieces, auxiliary, unicode } of splitGroups(structure, options)) {
+	for (let { text, entries, spans, pieces, unicode } of splitGroups(structure, options)) {
 		let cursor = 0;
 		for (let [i, { start, end }] of pieces.entries()) {
 			while (entries[cursor].end <= start) cursor++;
@@ -93,58 +91,58 @@ export function* iterateChunks(structure, options, withSpans = true) {
 			let chunk = { text: text.slice(start, end), embedText,
 				tokens: Math.round(estimateTokens(embedText, unicode)), outlinePath: first.span.outlinePath,
 				pageLabel: pageLabel(structure, first.span.entry, offset),
-				sectionPart: i + 1, sectionParts: pieces.length, auxiliary };
+				sectionPart: i + 1, sectionParts: pieces.length };
 			if (withSpans) chunk.spans = sliceSpans(spans, entries, cursor, start, end);
-			chunks.push({ entry: first.span.entry.index, offset, chunk });
+			yield chunk;
 		}
 	}
-	// A body group can span auxiliary groups; order the final chunks, not groups.
-	chunks.sort((a, b) => a.entry - b.entry || a.offset - b.offset);
-	for (let { chunk } of chunks) yield chunk;
 }
 
-function sections(document, includeAuxiliary) {
+// One section per outline entry, read in reading order. Auxiliary text --
+// captions, tables, footnotes -- reads as paragraphs of the body. A later part
+// of a continued paragraph stays in the section its paragraph starts in.
+function sections(document) {
 	let result = [];
 	let type = document.structure.metadata?.processor?.type;
-	let excluded = [], references = [], auxiliaryRoots = [];
+	let excluded = [], references = [], auxiliary = [];
 	for (let { block, parent } of document.blocks) {
-		auxiliaryRoots.push(auxiliaryRoots[parent] ?? (block.flowClass === 'auxiliary' ? excluded.length : null));
 		excluded.push(excluded[parent] || block.flowClass === 'excluded');
 		references.push(references[parent] || !!block.reference);
+		auxiliary.push(auxiliary[parent] || block.flowClass === 'auxiliary');
 	}
+	// The outline entry each text node sits under, in document order
 	let outline = flattenOutline(document.structure.catalog?.outline ?? []).sort((a, b) => compareRefs(a.ref, b.ref));
 	let boundary = 0;
-	// Keep each outline section's body together across auxiliary interruptions.
-	// Each auxiliary root has its own spans and reference classification.
-	let sectionsByRoot = new Map();
 	let context = { outlinePath: '' };
+	let contexts = [];
 	for (let entry of document.entries) {
 		while (boundary < outline.length && compareRefs(outline[boundary].ref, entry.ref) <= 0) {
-			sectionsByRoot = new Map();
 			context = outline[boundary++];
 		}
+		contexts.push(context);
+	}
+	let chains = getChains(document);
+	let section = null, current = null;
+	for (let { entry } of readingOrder(document, document.entries.map(entry => ({ entry, start: 0 })))) {
 		if (excluded[entry.blockIndex]) continue;
-		let auxiliaryRoot = auxiliaryRoots[entry.blockIndex];
-		if (!includeAuxiliary && auxiliaryRoot !== null) continue;
-		let section = sectionsByRoot.get(auxiliaryRoot);
-		if (!section) {
-			section = { ...context, body: {}, spans: [], auxiliaryRoot };
-			sectionsByRoot.set(auxiliaryRoot, section);
-			result.push(section);
+		let context = contexts[chains[entry.index]];
+		if (context !== current) {
+			current = context;
+			result.push(section = { ...context, body: {}, spans: [] });
 		}
 		let reference = references[entry.blockIndex];
 		if (!reference && hasSourceAnchor(entry, type)) {
 			section.spans.push({ entry, start: 0, end: entry.node.text.length, outlinePath: section.outlinePath });
 		}
-		// Classify body text independently of source anchors; excluded furniture
-		// and whitespace are not evidence that a section contains only references.
-		if (entry.block.type !== 'heading' && /\S/u.test(entry.node.text)) {
+		// Classify body text independently of source anchors; excluded furniture,
+		// auxiliary text and whitespace are not evidence that a section contains
+		// only references.
+		if (!auxiliary[entry.blockIndex] && entry.block.type !== 'heading' && /\S/u.test(entry.node.text)) {
 			if (reference) section.body.hasReferenceBody = true;
 			else section.body.hasNonReferenceBody = true;
 		}
 	}
-	return result.filter(section => section.spans.length)
-		.sort((a, b) => a.spans[0].entry.index - b.spans[0].entry.index);
+	return result.filter(section => section.spans.length);
 }
 
 // The path of the last outline entry at or before a ref: the section it sits in.
@@ -274,7 +272,7 @@ function fitTokenBudget(offsets, start, end, budget) {
 function groupSections(sections, maxSize, minSize, minimumTokens, unicode) {
 	let useTokens = maxSize === undefined && minSize === undefined;
 	let minimum = minSize ?? (maxSize === undefined ? minimumTokens : maxSize * MIN_TOKENS / BUDGET_TOKENS);
-	let groups = [], auxiliaryGroups = [];
+	let groups = [];
 	for (let source of sections) {
 		let text = spansText(source.spans);
 		if (!text.trim()) continue;
@@ -298,21 +296,16 @@ function groupSections(sections, maxSize, minSize, minimumTokens, unicode) {
 				size = tokensFromCounts(counts.map((count, i) => count - headingCounts[i]));
 			}
 		}
-		let auxiliary = section.auxiliaryRoot !== null;
-		if (auxiliary) {
-			auxiliaryGroups.push({ sections: [section], size, tokens, auxiliary });
-			continue;
-		}
 		let previous = groups.at(-1);
 		if (previous && previous.size < minimum) {
 			previous.sections.push(section);
 			previous.size += size + (useTokens ? 0 : 2);
 			previous.tokens += tokens;
 		}
-		else groups.push({ sections: [section], size, tokens, auxiliary });
+		else groups.push({ sections: [section], size, tokens });
 	}
 	mergeTail();
-	return [...groups, ...auxiliaryGroups];
+	return groups;
 
 	function mergeTail() {
 		let tail = groups.at(-1), previous = groups.at(-2);

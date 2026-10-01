@@ -7,7 +7,7 @@ import { noOverlap, paragraph, textDocument, pdf, pdfBlock, dom, restore, recove
 
 it('has minimal text-only exports and a stable chunk shape', async () => {
 	assert.deepEqual(getTextChunks(textDocument([paragraph('Body')])), [{ text: 'Body', embedText: 'Body', tokens: 1,
-		outlinePath: '', pageLabel: null, sectionPart: 1, sectionParts: 1, auxiliary: false }]);
+		outlinePath: '', pageLabel: null, sectionPart: 1, sectionParts: 1 }]);
 	assert.deepEqual(Object.keys(await import('../../src/chunker/text.js')).sort(), ['CHUNKER_VERSION', 'getChunkCount', 'getPlainTextChunks', 'getTextChunks']);
 	assert.deepEqual(Object.keys(await import('../../src/chunker/index.js')).sort(),
 		['CHUNKER_VERSION', 'compactAnchor', 'expandAnchor', 'getAnchorContent', 'getAnchorPositions', 'getChunkCount', 'getChunks', 'getPlainTextChunks']);
@@ -61,7 +61,7 @@ it('returns self-contained chunks that survive serialization', () => {
 	for (let structure of [pdf([pdfBlock('First', 0), pdfBlock('Second', 1)]),
 		dom(['First', 'Second'], 'epub'), dom(['First', 'Second'], 'snapshot')]) {
 		for (let chunk of getChunks(structure, noOverlap)) {
-			assert.deepEqual(Object.keys(chunk).sort(), ['anchor', 'auxiliary', 'embedText', 'outlinePath', 'pageLabel',
+			assert.deepEqual(Object.keys(chunk).sort(), ['anchor', 'embedText', 'outlinePath', 'pageLabel',
 				'sectionPart', 'sectionParts', 'text', 'tokens']);
 			let saved = restore(chunk);
 			assert.equal(recoveredText(restore(structure), saved.anchor), saved.text);

@@ -7,7 +7,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":2723,"end":2736},{"type":"CssSelector","value":"#mwAQ > table:first-of-type > tbody > tr:nth-child(2) > td"},{"type":"CssSelector","value":"#mwAQ > table:first-of-type > tbody > tr:nth-child(3) > td"},{"type":"TextPositionSelector","start":2795,"end":2806},{"type":"TextPositionSelector","start":2955,"end":3162},{"type":"TextPositionSelector","start":6515,"end":6823},{"type":"TextPositionSelector","start":6824,"end":7975},{"type":"TextPositionSelector","start":7976,"end":8434},{"type":"TextPositionSelector","start":8435,"end":8677}]}
   },
   {
@@ -18,7 +17,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":8678,"end":8818},{"type":"TextPositionSelector","start":8835,"end":9314},{"type":"TextPositionSelector","start":9346,"end":9848},{"type":"TextPositionSelector","start":9939,"end":10057},{"type":"TextPositionSelector","start":10058,"end":11128}]}
   },
   {
@@ -29,7 +27,6 @@
     "pageLabel": null,
     "sectionPart": 3,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":11129,"end":11558},{"type":"TextPositionSelector","start":11559,"end":11612},{"type":"TextPositionSelector","start":11613,"end":12957},{"type":"TextPositionSelector","start":12958,"end":13838}]}
   },
   {
@@ -40,7 +37,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 5,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":13859,"end":13865},{"type":"TextPositionSelector","start":13907,"end":14177},{"type":"TextPositionSelector","start":14178,"end":14531},{"type":"TextPositionSelector","start":14532,"end":14867},{"type":"TextPositionSelector","start":14868,"end":15930}]}
   },
   {
@@ -51,7 +47,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 5,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":15931,"end":16633},{"type":"TextPositionSelector","start":16634,"end":17342},{"type":"TextPositionSelector","start":17343,"end":17706},{"type":"TextPositionSelector","start":17707,"end":18450}]}
   },
   {
@@ -62,7 +57,6 @@
     "pageLabel": null,
     "sectionPart": 3,
     "sectionParts": 5,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":18452,"end":18710},{"type":"TextPositionSelector","start":19107,"end":19206},{"type":"TextPositionSelector","start":19207,"end":19274},{"type":"TextPositionSelector","start":19275,"end":19675},{"type":"TextPositionSelector","start":19676,"end":20190},{"type":"TextPositionSelector","start":20191,"end":20299},{"type":"TextPositionSelector","start":20971,"end":21276},{"type":"TextPositionSelector","start":21278,"end":21657}]}
   },
   {
@@ -73,7 +67,6 @@
     "pageLabel": null,
     "sectionPart": 4,
     "sectionParts": 5,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":21659,"end":22508},{"type":"TextPositionSelector","start":22509,"end":22789},{"type":"TextPositionSelector","start":22791,"end":22916},{"type":"TextPositionSelector","start":22933,"end":23048},{"type":"TextPositionSelector","start":23049,"end":23096},{"type":"TextPositionSelector","start":23097,"end":23193},{"type":"TextPositionSelector","start":23194,"end":23669},{"type":"TextPositionSelector","start":23670,"end":24264}]}
   },
   {
@@ -84,7 +77,6 @@
     "pageLabel": null,
     "sectionPart": 5,
     "sectionParts": 5,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":24265,"end":24553},{"type":"TextPositionSelector","start":24554,"end":24806},{"type":"TextPositionSelector","start":24807,"end":25375},{"type":"TextPositionSelector","start":25376,"end":25596},{"type":"TextPositionSelector","start":25597,"end":25947},{"type":"TextPositionSelector","start":25948,"end":26385},{"type":"TextPositionSelector","start":26386,"end":26594}]}
   },
   {
@@ -95,7 +87,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 1,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":26614,"end":26620},{"type":"TextPositionSelector","start":26621,"end":26672},{"type":"TextPositionSelector","start":26673,"end":26887},{"type":"TextPositionSelector","start":27918,"end":27924},{"type":"TextPositionSelector","start":27925,"end":27975},{"type":"TextPositionSelector","start":28247,"end":28253},{"type":"TextPositionSelector","start":28305,"end":28329},{"type":"TextPositionSelector","start":28330,"end":28835},{"type":"TextPositionSelector","start":28836,"end":29135},{"type":"TextPositionSelector","start":29136,"end":29473},{"type":"TextPositionSelector","start":29474,"end":29940},{"type":"TextPositionSelector","start":29941,"end":30418}]}
   },
   {
@@ -106,7 +97,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 5,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":30588,"end":30594},{"type":"TextPositionSelector","start":30595,"end":30638},{"type":"TextPositionSelector","start":30639,"end":31778},{"type":"TextPositionSelector","start":31779,"end":32603},{"type":"TextPositionSelector","start":32618,"end":32664},{"type":"TextPositionSelector","start":32665,"end":32720},{"type":"TextPositionSelector","start":32721,"end":33146},{"type":"TextPositionSelector","start":33147,"end":33578}]}
   },
   {
@@ -117,7 +107,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 5,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":33579,"end":33763},{"type":"TextPositionSelector","start":33764,"end":34845},{"type":"TextPositionSelector","start":34846,"end":35636},{"type":"TextPositionSelector","start":35713,"end":35937},{"type":"TextPositionSelector","start":35938,"end":36012},{"type":"TextPositionSelector","start":36013,"end":36074},{"type":"TextPositionSelector","start":36075,"end":36336}]}
   },
   {
@@ -128,7 +117,6 @@
     "pageLabel": null,
     "sectionPart": 3,
     "sectionParts": 5,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":36337,"end":36871},{"type":"TextPositionSelector","start":36872,"end":37131},{"type":"TextPositionSelector","start":37132,"end":37715},{"type":"TextPositionSelector","start":37716,"end":37919},{"type":"TextPositionSelector","start":37945,"end":38227},{"type":"TextPositionSelector","start":38250,"end":38411}]}
   },
   {
@@ -139,7 +127,6 @@
     "pageLabel": null,
     "sectionPart": 4,
     "sectionParts": 5,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":38426,"end":38823},{"type":"TextPositionSelector","start":38838,"end":39410},{"type":"TextPositionSelector","start":39504,"end":39569},{"type":"TextPositionSelector","start":39570,"end":39611},{"type":"TextPositionSelector","start":39612,"end":40132},{"type":"TextPositionSelector","start":40133,"end":40524}]}
   },
   {
@@ -150,7 +137,6 @@
     "pageLabel": null,
     "sectionPart": 5,
     "sectionParts": 5,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":40525,"end":40795},{"type":"TextPositionSelector","start":40796,"end":40943},{"type":"TextPositionSelector","start":40964,"end":41149},{"type":"TextPositionSelector","start":41150,"end":41499},{"type":"TextPositionSelector","start":41500,"end":41924},{"type":"TextPositionSelector","start":41947,"end":42285},{"type":"TextPositionSelector","start":42286,"end":42753}]}
   },
   {
@@ -161,7 +147,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 12,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":42773,"end":42779},{"type":"TextPositionSelector","start":42781,"end":42789},{"type":"TextPositionSelector","start":42790,"end":42798},{"type":"TextPositionSelector","start":42799,"end":42806},{"type":"TextPositionSelector","start":42807,"end":42812},{"type":"TextPositionSelector","start":42813,"end":42819},{"type":"TextPositionSelector","start":42820,"end":42829},{"type":"TextPositionSelector","start":42830,"end":42836},{"type":"TextPositionSelector","start":42837,"end":42846},{"type":"TextPositionSelector","start":42847,"end":42856},{"type":"TextPositionSelector","start":42857,"end":42865},{"type":"TextPositionSelector","start":42866,"end":42882},{"type":"TextPositionSelector","start":42883,"end":42892},{"type":"TextPositionSelector","start":42893,"end":42901},{"type":"TextPositionSelector","start":42902,"end":42909},{"type":"TextPositionSelector","start":42910,"end":42921},{"type":"TextPositionSelector","start":42922,"end":42931},{"type":"TextPositionSelector","start":42932,"end":42939},{"type":"TextPositionSelector","start":42940,"end":42950},{"type":"TextPositionSelector","start":42951,"end":42962},{"type":"TextPositionSelector","start":42963,"end":42973},{"type":"TextPositionSelector","start":42974,"end":42980},{"type":"TextPositionSelector","start":42981,"end":42986},{"type":"TextPositionSelector","start":42987,"end":42996},{"type":"TextPositionSelector","start":42997,"end":43003},{"type":"TextPositionSelector","start":43004,"end":43012},{"type":"TextPositionSelector","start":43013,"end":43020},{"type":"TextPositionSelector","start":43021,"end":43026},{"type":"TextPositionSelector","start":43027,"end":43038},{"type":"TextPositionSelector","start":43039,"end":43047},{"type":"TextPositionSelector","start":43048,"end":43057},{"type":"TextPositionSelector","start":43058,"end":43071},{"type":"TextPositionSelector","start":43072,"end":43079},{"type":"TextPositionSelector","start":43080,"end":43088},{"type":"TextPositionSelector","start":43089,"end":43098},{"type":"TextPositionSelector","start":43099,"end":43105},{"type":"TextPositionSelector","start":43106,"end":43113},{"type":"TextPositionSelector","start":43114,"end":43119},{"type":"TextPositionSelector","start":43120,"end":43130},{"type":"TextPositionSelector","start":43131,"end":43140},{"type":"TextPositionSelector","start":43141,"end":43152},{"type":"TextPositionSelector","start":43153,"end":43161},{"type":"TextPositionSelector","start":43179,"end":43212},{"type":"TextPositionSelector","start":43213,"end":43250},{"type":"TextPositionSelector","start":43251,"end":43314},{"type":"TextPositionSelector","start":43315,"end":43361},{"type":"TextPositionSelector","start":43362,"end":43378},{"type":"TextPositionSelector","start":43379,"end":43392},{"type":"TextPositionSelector","start":43393,"end":43410},{"type":"TextPositionSelector","start":43411,"end":43421},{"type":"TextPositionSelector","start":43422,"end":43447},{"type":"TextPositionSelector","start":43448,"end":43466},{"type":"TextPositionSelector","start":43467,"end":43491},{"type":"TextPositionSelector","start":43492,"end":43576},{"type":"TextPositionSelector","start":44550,"end":44642},{"type":"TextPositionSelector","start":44643,"end":44644},{"type":"TextPositionSelector","start":71438,"end":71533},{"type":"TextPositionSelector","start":71534,"end":71671},{"type":"TextPositionSelector","start":71672,"end":71764},{"type":"TextPositionSelector","start":71765,"end":71834},{"type":"TextPositionSelector","start":71835,"end":72052},{"type":"TextPositionSelector","start":72053,"end":72213},{"type":"TextPositionSelector","start":72214,"end":72440}]}
   },
   {
@@ -172,7 +157,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 12,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":72441,"end":72691},{"type":"TextPositionSelector","start":72692,"end":73035},{"type":"TextPositionSelector","start":73036,"end":73263},{"type":"TextPositionSelector","start":73264,"end":73635},{"type":"TextPositionSelector","start":73636,"end":73886},{"type":"TextPositionSelector","start":73887,"end":74165}]}
   },
   {
@@ -183,7 +167,6 @@
     "pageLabel": null,
     "sectionPart": 3,
     "sectionParts": 12,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":74166,"end":74463},{"type":"TextPositionSelector","start":74464,"end":74549},{"type":"TextPositionSelector","start":74550,"end":74731},{"type":"TextPositionSelector","start":74732,"end":74857},{"type":"TextPositionSelector","start":74858,"end":75020},{"type":"TextPositionSelector","start":75021,"end":75179},{"type":"TextPositionSelector","start":75180,"end":75274},{"type":"TextPositionSelector","start":75275,"end":75406},{"type":"TextPositionSelector","start":75407,"end":75517},{"type":"TextPositionSelector","start":75518,"end":75636},{"type":"TextPositionSelector","start":75637,"end":75723},{"type":"TextPositionSelector","start":75724,"end":75803},{"type":"TextPositionSelector","start":75804,"end":76030},{"type":"TextPositionSelector","start":76031,"end":76194}]}
   },
   {
@@ -194,7 +177,6 @@
     "pageLabel": null,
     "sectionPart": 4,
     "sectionParts": 12,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":76195,"end":76315},{"type":"TextPositionSelector","start":76316,"end":76411},{"type":"TextPositionSelector","start":76412,"end":76592},{"type":"TextPositionSelector","start":76593,"end":76748},{"type":"TextPositionSelector","start":76749,"end":76872},{"type":"TextPositionSelector","start":76873,"end":76983},{"type":"TextPositionSelector","start":76984,"end":77127},{"type":"TextPositionSelector","start":77128,"end":77248},{"type":"TextPositionSelector","start":77249,"end":77379},{"type":"TextPositionSelector","start":77380,"end":77491},{"type":"TextPositionSelector","start":77492,"end":77584},{"type":"TextPositionSelector","start":77585,"end":77761},{"type":"TextPositionSelector","start":77762,"end":77922},{"type":"TextPositionSelector","start":77923,"end":78024}]}
   },
   {
@@ -205,7 +187,6 @@
     "pageLabel": null,
     "sectionPart": 5,
     "sectionParts": 12,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":78025,"end":78151},{"type":"TextPositionSelector","start":78152,"end":78285},{"type":"TextPositionSelector","start":78286,"end":78619},{"type":"TextPositionSelector","start":78620,"end":78640},{"type":"TextPositionSelector","start":78641,"end":78661},{"type":"TextPositionSelector","start":78662,"end":78685},{"type":"TextPositionSelector","start":78730,"end":78872},{"type":"TextPositionSelector","start":78873,"end":79023},{"type":"TextPositionSelector","start":79024,"end":79044},{"type":"TextPositionSelector","start":79045,"end":79226},{"type":"TextPositionSelector","start":79227,"end":79305},{"type":"TextPositionSelector","start":79306,"end":79406},{"type":"TextPositionSelector","start":79407,"end":79707},{"type":"TextPositionSelector","start":79708,"end":79820},{"type":"TextPositionSelector","start":79821,"end":79899}]}
   },
   {
@@ -216,7 +197,6 @@
     "pageLabel": null,
     "sectionPart": 6,
     "sectionParts": 12,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":79900,"end":80054},{"type":"TextPositionSelector","start":80055,"end":80151},{"type":"TextPositionSelector","start":80152,"end":80235},{"type":"TextPositionSelector","start":80236,"end":80333},{"type":"TextPositionSelector","start":80334,"end":80401},{"type":"TextPositionSelector","start":80402,"end":80621},{"type":"TextPositionSelector","start":80622,"end":80784},{"type":"TextPositionSelector","start":80785,"end":80934},{"type":"TextPositionSelector","start":80935,"end":81283},{"type":"TextPositionSelector","start":81284,"end":81389},{"type":"TextPositionSelector","start":81390,"end":81528},{"type":"TextPositionSelector","start":81529,"end":81657}]}
   },
   {
@@ -227,7 +207,6 @@
     "pageLabel": null,
     "sectionPart": 7,
     "sectionParts": 12,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":81658,"end":81815},{"type":"TextPositionSelector","start":81816,"end":81955},{"type":"TextPositionSelector","start":81956,"end":82022},{"type":"TextPositionSelector","start":82023,"end":82082},{"type":"TextPositionSelector","start":82083,"end":82221},{"type":"TextPositionSelector","start":82222,"end":82348},{"type":"TextPositionSelector","start":82349,"end":82425},{"type":"TextPositionSelector","start":82426,"end":82528},{"type":"TextPositionSelector","start":82529,"end":82590},{"type":"TextPositionSelector","start":82591,"end":82660},{"type":"TextPositionSelector","start":82661,"end":82738},{"type":"TextPositionSelector","start":82739,"end":82815},{"type":"TextPositionSelector","start":82816,"end":83010},{"type":"TextPositionSelector","start":83011,"end":83154},{"type":"TextPositionSelector","start":83155,"end":83306},{"type":"TextPositionSelector","start":83307,"end":83522}]}
   },
   {
@@ -238,7 +217,6 @@
     "pageLabel": null,
     "sectionPart": 8,
     "sectionParts": 12,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":83523,"end":83827},{"type":"TextPositionSelector","start":83828,"end":83891},{"type":"TextPositionSelector","start":83892,"end":83957},{"type":"TextPositionSelector","start":83958,"end":84055},{"type":"TextPositionSelector","start":84056,"end":84216},{"type":"TextPositionSelector","start":84217,"end":84351},{"type":"TextPositionSelector","start":84352,"end":84489},{"type":"TextPositionSelector","start":84490,"end":84608},{"type":"TextPositionSelector","start":84609,"end":84724},{"type":"TextPositionSelector","start":84725,"end":84893},{"type":"TextPositionSelector","start":84894,"end":84972},{"type":"TextPositionSelector","start":84973,"end":85089},{"type":"TextPositionSelector","start":85090,"end":85364}]}
   },
   {
@@ -249,7 +227,6 @@
     "pageLabel": null,
     "sectionPart": 9,
     "sectionParts": 12,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":85365,"end":85527},{"type":"TextPositionSelector","start":85528,"end":85686},{"type":"TextPositionSelector","start":85687,"end":85976},{"type":"TextPositionSelector","start":85977,"end":86050},{"type":"TextPositionSelector","start":86051,"end":86195},{"type":"TextPositionSelector","start":86196,"end":86361},{"type":"TextPositionSelector","start":86362,"end":86539},{"type":"TextPositionSelector","start":86540,"end":86619},{"type":"TextPositionSelector","start":86620,"end":86793},{"type":"TextPositionSelector","start":86794,"end":86905},{"type":"TextPositionSelector","start":86906,"end":87024},{"type":"TextPositionSelector","start":87025,"end":87213}]}
   },
   {
@@ -260,7 +237,6 @@
     "pageLabel": null,
     "sectionPart": 10,
     "sectionParts": 12,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":87214,"end":87322},{"type":"TextPositionSelector","start":87323,"end":87405},{"type":"TextPositionSelector","start":87406,"end":87514},{"type":"TextPositionSelector","start":87515,"end":87668},{"type":"TextPositionSelector","start":87669,"end":87869},{"type":"TextPositionSelector","start":88193,"end":88300},{"type":"TextPositionSelector","start":88301,"end":88499},{"type":"TextPositionSelector","start":88500,"end":88619},{"type":"TextPositionSelector","start":88620,"end":88742},{"type":"TextPositionSelector","start":88743,"end":88830},{"type":"TextPositionSelector","start":88831,"end":88978},{"type":"TextPositionSelector","start":88979,"end":89104},{"type":"TextPositionSelector","start":89105,"end":89271}]}
   },
   {
@@ -271,7 +247,6 @@
     "pageLabel": null,
     "sectionPart": 11,
     "sectionParts": 12,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":89272,"end":89444},{"type":"TextPositionSelector","start":89445,"end":89558},{"type":"TextPositionSelector","start":89559,"end":89756},{"type":"TextPositionSelector","start":89757,"end":89876},{"type":"TextPositionSelector","start":89877,"end":89958},{"type":"TextPositionSelector","start":89959,"end":90124},{"type":"TextPositionSelector","start":90125,"end":90220},{"type":"TextPositionSelector","start":90221,"end":90359},{"type":"TextPositionSelector","start":90360,"end":90474},{"type":"TextPositionSelector","start":90475,"end":90656},{"type":"TextPositionSelector","start":90678,"end":90782},{"type":"TextPositionSelector","start":90783,"end":90884},{"type":"TextPositionSelector","start":90885,"end":90990}]}
   },
   {
@@ -282,7 +257,6 @@
     "pageLabel": null,
     "sectionPart": 12,
     "sectionParts": 12,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"TextPositionSelector","start":90991,"end":91142},{"type":"TextPositionSelector","start":91143,"end":91291},{"type":"TextPositionSelector","start":91292,"end":91359},{"type":"TextPositionSelector","start":91360,"end":91498},{"type":"TextPositionSelector","start":91499,"end":91599},{"type":"TextPositionSelector","start":91600,"end":91696},{"type":"TextPositionSelector","start":91697,"end":91814},{"type":"TextPositionSelector","start":91815,"end":91968},{"type":"TextPositionSelector","start":91969,"end":92077},{"type":"TextPositionSelector","start":92078,"end":92257},{"type":"TextPositionSelector","start":92258,"end":92386},{"type":"TextPositionSelector","start":93700,"end":93784},{"type":"TextPositionSelector","start":93785,"end":93852},{"type":"TextPositionSelector","start":93853,"end":93912},{"type":"TextPositionSelector","start":93913,"end":93975},{"type":"TextPositionSelector","start":93976,"end":94131}]}
   }
 ]

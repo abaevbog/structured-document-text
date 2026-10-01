@@ -7,7 +7,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 1,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/2!/4/2,/2/1:0,/4/3:1)"},{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/4!/4/2/2/4)"},{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/4!/4/2,/4/1:0,/10/3:1)"}]}
   },
   {
@@ -18,7 +17,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 1,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/6!/4/2,/2/4/2/1:0,/14/8/1:7)"}]}
   },
   {
@@ -29,7 +27,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 4,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/10!/4/2,/2/2/1:0,/4/1:1683)"}]}
   },
   {
@@ -40,7 +37,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 4,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/10!/4/2,/6/1:0,/8/1:987)"}]}
   },
   {
@@ -51,7 +47,6 @@
     "pageLabel": null,
     "sectionPart": 3,
     "sectionParts": 4,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/10!/4/2/10/1,:0,:1690)"}]}
   },
   {
@@ -62,7 +57,6 @@
     "pageLabel": null,
     "sectionPart": 4,
     "sectionParts": 4,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/10!/4/2/10/1,:1567,:3374)"}]}
   },
   {
@@ -73,7 +67,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/12!/4/2,/2/2/1:0,/4/1:2146)"}]}
   },
   {
@@ -84,7 +77,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/12!/4/2,/6/1:0,/8/3:876)"}]}
   },
   {
@@ -95,7 +87,6 @@
     "pageLabel": null,
     "sectionPart": 3,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/12!/4/2,/10/1:0,/18/1:233)"}]}
   },
   {
@@ -106,7 +97,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 10,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/14!/4/2,/2/2/1:0,/14/1:325)"}]}
   },
   {
@@ -117,7 +107,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 10,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/14!/4/2,/16/1:0,/18/1:915)"}]}
   },
   {
@@ -128,7 +117,6 @@
     "pageLabel": null,
     "sectionPart": 3,
     "sectionParts": 10,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/14!/4/2,/20/1:0,/26/1:1823)"}]}
   },
   {
@@ -139,7 +127,6 @@
     "pageLabel": null,
     "sectionPart": 4,
     "sectionParts": 10,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/14!/4/2,/28/1:0,/32/1:769)"}]}
   },
   {
@@ -150,7 +137,6 @@
     "pageLabel": null,
     "sectionPart": 5,
     "sectionParts": 10,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/14!/4/2,/34/1:0,/42/1:193)"}]}
   },
   {
@@ -161,7 +147,6 @@
     "pageLabel": null,
     "sectionPart": 6,
     "sectionParts": 10,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/14!/4/2,/44/1:0,/56/1:1274)"}]}
   },
   {
@@ -172,7 +157,6 @@
     "pageLabel": null,
     "sectionPart": 7,
     "sectionParts": 10,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/14!/4/2,/58/1:0,/68/1:55)"}]}
   },
   {
@@ -183,7 +167,6 @@
     "pageLabel": null,
     "sectionPart": 8,
     "sectionParts": 10,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/14!/4/2,/70/1:0,/76/1:258)"}]}
   },
   {
@@ -194,7 +177,6 @@
     "pageLabel": null,
     "sectionPart": 9,
     "sectionParts": 10,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/14!/4/2,/78/1:0,/84/1:1012)"}]}
   },
   {
@@ -205,7 +187,6 @@
     "pageLabel": null,
     "sectionPart": 10,
     "sectionParts": 10,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/14!/4/2,/86/1:0,/92/3:52)"}]}
   },
   {
@@ -216,7 +197,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/16!/4/2,/2/2/1:0,/10/1:298)"}]}
   },
   {
@@ -227,7 +207,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/16!/4/2/12/1,:0,:1875)"}]}
   },
   {
@@ -238,7 +217,6 @@
     "pageLabel": null,
     "sectionPart": 3,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/16!/4/2,/14/1:0,/18/1:840)"}]}
   },
   {
@@ -249,7 +227,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 2,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/18!/4/2,/2/2/1:0,/8/1:655)"}]}
   },
   {
@@ -260,7 +237,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 2,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/18!/4/2,/10/1:0,/16/1:61)"}]}
   },
   {
@@ -271,7 +247,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 2,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/20!/4/2,/2/2/1:0,/6/1:1494)"}]}
   },
   {
@@ -282,7 +257,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 2,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/20!/4/2,/8/1:0,/20/1:160)"}]}
   },
   {
@@ -293,7 +267,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/22!/4/2,/2/2/1:0,/10/3:32)"}]}
   },
   {
@@ -304,7 +277,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/22!/4/2/12,/1:0,/3:783)"}]}
   },
   {
@@ -315,7 +287,6 @@
     "pageLabel": null,
     "sectionPart": 3,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/22!/4/2/14,/1:0,/3:1412)"}]}
   },
   {
@@ -326,7 +297,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 2,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/24!/4/2,/2/2/1:0,/8/1:1153)"}]}
   },
   {
@@ -337,7 +307,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 2,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/24!/4/2,/10/1:0,/14/1:848)"}]}
   },
   {
@@ -348,7 +317,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/26!/4/2,/2/2/1:0,/44/3:7)"}]}
   },
   {
@@ -359,7 +327,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/26!/4/2,/46/1:0,/68/1:288)"}]}
   },
   {
@@ -370,7 +337,6 @@
     "pageLabel": null,
     "sectionPart": 3,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/26!/4/2,/70/1:0,/80/1:698)"}]}
   },
   {
@@ -381,7 +347,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 4,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/28!/4/2,/2/2/1:0,/14/1:193)"}]}
   },
   {
@@ -392,7 +357,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 4,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/28!/4/2,/16/1:0,/24/1:699)"}]}
   },
   {
@@ -403,7 +367,6 @@
     "pageLabel": null,
     "sectionPart": 3,
     "sectionParts": 4,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/28!/4/2,/26/1:0,/42/1:29)"}]}
   },
   {
@@ -414,7 +377,6 @@
     "pageLabel": null,
     "sectionPart": 4,
     "sectionParts": 4,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/28!/4/2,/44/1:0,/52/1:1420)"}]}
   },
   {
@@ -425,7 +387,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/30!/4/2,/2/2/1:0,/22/1:970)"}]}
   },
   {
@@ -436,7 +397,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/30!/4/2,/24/1:0,/30/1:650)"}]}
   },
   {
@@ -447,7 +407,6 @@
     "pageLabel": null,
     "sectionPart": 3,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/30!/4/2,/32/1:0,/74/1:32)"}]}
   },
   {
@@ -458,7 +417,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/32!/4/2,/2/2/1:0,/10/10/14/1:25)"}]}
   },
   {
@@ -469,7 +427,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/32!/4/2,/12/1:0,/14/3:135)"}]}
   },
   {
@@ -480,7 +437,6 @@
     "pageLabel": null,
     "sectionPart": 3,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/32!/4/2,/16/1:0,/28/1:73)"}]}
   },
   {
@@ -491,7 +447,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 2,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/34!/4/2,/2/2/1:0,/14/1:14)"}]}
   },
   {
@@ -502,7 +457,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 2,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/34!/4/2,/16/1:0,/40/1:41)"}]}
   },
   {
@@ -513,7 +467,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 2,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/36!/4/2,/2/2/1:0,/8/1:643)"}]}
   },
   {
@@ -524,7 +477,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 2,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/36!/4/2,/10/1:0,/18/1:52)"}]}
   },
   {
@@ -535,7 +487,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 4,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/38!/4/2,/2/2/1:0,/4/1:1734)"}]}
   },
   {
@@ -546,7 +497,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 4,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/38!/4/2,/6/1:0,/8/1:69)"}]}
   },
   {
@@ -557,7 +507,6 @@
     "pageLabel": null,
     "sectionPart": 3,
     "sectionParts": 4,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/38!/4/2,/10/1:0,/32/1:56)"}]}
   },
   {
@@ -568,7 +517,6 @@
     "pageLabel": null,
     "sectionPart": 4,
     "sectionParts": 4,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/38!/4/2,/34/1:0,/52/1:783)"}]}
   },
   {
@@ -579,7 +527,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 5,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/40!/4/2,/2/2/1:0,/48/1:24)"}]}
   },
   {
@@ -590,7 +537,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 5,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/40!/4/2,/50/1:0,/78/1:264)"}]}
   },
   {
@@ -601,7 +547,6 @@
     "pageLabel": null,
     "sectionPart": 3,
     "sectionParts": 5,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/40!/4/2,/80/1:0,/88/1:321)"}]}
   },
   {
@@ -612,7 +557,6 @@
     "pageLabel": null,
     "sectionPart": 4,
     "sectionParts": 5,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/40!/4/2,/90/1:0,/92/3:99)"}]}
   },
   {
@@ -623,7 +567,6 @@
     "pageLabel": null,
     "sectionPart": 5,
     "sectionParts": 5,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/40!/4/2,/94/1:0,/98/1:1032)"}]}
   },
   {
@@ -634,7 +577,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/42!/4/2,/2/2/1:0,/10/1:415)"}]}
   },
   {
@@ -645,7 +587,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/42!/4/2,/12/1:0,/26/3:65)"}]}
   },
   {
@@ -656,7 +597,6 @@
     "pageLabel": null,
     "sectionPart": 3,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/42!/4/2,/28/1:0,/32/1:61)"}]}
   },
   {
@@ -667,7 +607,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 2,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/44!/4/2,/2/2/1:0,/16/1:55)"}]}
   },
   {
@@ -678,7 +617,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 2,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/44!/4/2,/18/1:0,/64/1:99)"}]}
   },
   {
@@ -689,7 +627,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 2,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/46!/4/2,/2/2/1:0,/12/1:1496)"}]}
   },
   {
@@ -700,7 +637,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 2,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/46!/4/2,/14/1:0,/16/1:149)"}]}
   },
   {
@@ -711,7 +647,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 7,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/48!/4/2,/2/2/1:0,/30/1:353)"}]}
   },
   {
@@ -722,7 +657,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 7,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/48!/4/2,/32/1:0,/64/1:89)"}]}
   },
   {
@@ -733,7 +667,6 @@
     "pageLabel": null,
     "sectionPart": 3,
     "sectionParts": 7,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/48!/4/2,/66/1:0,/92/1:683)"}]}
   },
   {
@@ -744,7 +677,6 @@
     "pageLabel": null,
     "sectionPart": 4,
     "sectionParts": 7,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/48!/4/2,/94/1:0,/102/1:254)"}]}
   },
   {
@@ -755,7 +687,6 @@
     "pageLabel": null,
     "sectionPart": 5,
     "sectionParts": 7,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/48!/4/2,/104/1:0,/124/1:713)"}]}
   },
   {
@@ -766,7 +697,6 @@
     "pageLabel": null,
     "sectionPart": 6,
     "sectionParts": 7,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/48!/4/2,/126/1:0,/146/1:159)"}]}
   },
   {
@@ -777,7 +707,6 @@
     "pageLabel": null,
     "sectionPart": 7,
     "sectionParts": 7,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/48!/4/2,/148/1:0,/178/1:260)"}]}
   },
   {
@@ -788,7 +717,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/50!/4/2,/2/2/1:0,/28/1:405)"}]}
   },
   {
@@ -799,7 +727,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/50!/4/2,/30/1:0,/50/1:166)"}]}
   },
   {
@@ -810,7 +737,6 @@
     "pageLabel": null,
     "sectionPart": 3,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/50!/4/2,/52/1:0,/58/3:463)"}]}
   },
   {
@@ -821,7 +747,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 4,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/52!/4/2,/2/2/1:0,/24/1:103)"}]}
   },
   {
@@ -832,7 +757,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 4,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/52!/4/2,/26/1:0,/64/1:48)"}]}
   },
   {
@@ -843,7 +767,6 @@
     "pageLabel": null,
     "sectionPart": 3,
     "sectionParts": 4,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/52!/4/2,/66/1:0,/70/3:73)"}]}
   },
   {
@@ -854,7 +777,6 @@
     "pageLabel": null,
     "sectionPart": 4,
     "sectionParts": 4,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/52!/4/2,/72/1:0,/90/3:32)"}]}
   },
   {
@@ -865,7 +787,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/54!/4/2,/2/2/1:0,/6/5:1302)"}]}
   },
   {
@@ -876,7 +797,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/54!/4/2,/8/1:0,/20/3:43)"}]}
   },
   {
@@ -887,7 +807,6 @@
     "pageLabel": null,
     "sectionPart": 3,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/54!/4/2,/22/1:0,/42/3:190)"}]}
   },
   {
@@ -898,7 +817,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/56!/4/2,/2/2/1:0,/22/1:58)"}]}
   },
   {
@@ -909,7 +827,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/56!/4/2,/24/1:0,/46/1:96)"}]}
   },
   {
@@ -920,7 +837,6 @@
     "pageLabel": null,
     "sectionPart": 3,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/56!/4/2,/48/1:0,/70/1:80)"}]}
   },
   {
@@ -931,7 +847,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/58!/4/2,/2/2/1:0,/20/1:34)"}]}
   },
   {
@@ -942,7 +857,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/58!/4/2,/22/1:0,/42/1:647)"}]}
   },
   {
@@ -953,7 +867,6 @@
     "pageLabel": null,
     "sectionPart": 3,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/58!/4/2,/44/1:0,/58/1:57)"}]}
   },
   {
@@ -964,7 +877,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/60!/4/2,/2/2/1:0,/22/1:42)"}]}
   },
   {
@@ -975,7 +887,6 @@
     "pageLabel": null,
     "sectionPart": 2,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/60!/4/2,/24/1:0,/32/1:791)"}]}
   },
   {
@@ -986,7 +897,6 @@
     "pageLabel": null,
     "sectionPart": 3,
     "sectionParts": 3,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/60!/4/2,/34/1:0,/44/1:207)"}]}
   },
   {
@@ -997,7 +907,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 1,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/62!/4/2,/2/2/1:0,/12/1:480)"}]}
   },
   {
@@ -1008,7 +917,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 1,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/64!/4/2/2/4)"},{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/64!/4/2,/4/2/1:0,/12/3:1)"}]}
   },
   {
@@ -1019,7 +927,6 @@
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 1,
-    "auxiliary": false,
     "anchor": {"selectors":[{"type":"FragmentSelector","conformsTo":"http://www.idpf.org/epub/linking/cfi/epub-cfi.html","value":"epubcfi(/6/66!/4/2,/4/2/2/1:0,/10/3:561)"}]}
   }
 ]

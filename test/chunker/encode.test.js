@@ -109,7 +109,7 @@ describe('compact anchors', () => {
 
 	for (let { format, name, data } of fixtures) {
 		it(`${format}/${name}: compact anchors recover every chunk identically`, () => {
-			let chunks = getChunks(data, { includeAuxiliary: true });
+			let chunks = getChunks(data);
 			assert.ok(chunks.length);
 			let json = 0, compact = 0;
 			for (let chunk of chunks) {

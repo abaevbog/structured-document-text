@@ -11,11 +11,9 @@ const fixtures = discoverFixtures();
 describe('real document fixtures', () => {
 	for (let { format, name, data, path } of fixtures) {
 		it(`${format}/${name}: every chunk has a source anchor`, () => {
-			let options = { includeAuxiliary: true };
-			let chunks = getChunks(data, options);
+			let chunks = getChunks(data);
 			assert.ok(chunks.length, 'Fixture must produce chunks');
-			assert.deepEqual(chunks.map(({ anchor, ...chunk }) => chunk), getTextChunks(data, options));
-			assert.deepEqual(getChunks(data), chunks.filter(chunk => !chunk.auxiliary));
+			assert.deepEqual(chunks.map(({ anchor, ...chunk }) => chunk), getTextChunks(data));
 			for (let chunk of chunks) {
 				assert.ok(estimateTokens(chunk.embedText) <= 768 + 1e-7, 'Complete embedding input exceeds estimated token budget');
 				let { anchor } = chunk;
@@ -23,11 +21,12 @@ describe('real document fixtures', () => {
 				let text = recoveredText(data, restore(anchor));
 				assert.equal(text, chunk.text);
 			}
-			assert.ok(getTextChunks(data, { maxSize: 2400, includeAuxiliary: true }).every(chunk => chunk.embedText.length <= 2400));
+			assert.ok(getTextChunks(data, { maxSize: 2400 }).every(chunk => chunk.embedText.length <= 2400));
 		});
 		it(`${format}/${name}: preserves expected chunks, including source anchors`, () => {
-			// Cover optional auxiliary output too; keep geometry on one line per field.
-			let chunks = getChunks(data, { includeAuxiliary: true }).map(chunk => {
+			// The snapshot shows where captions and footnotes land; keep
+			// geometry on one line per field.
+			let chunks = getChunks(data).map(chunk => {
 				let fields = Object.entries(chunk).map(([key, value]) => `    ${JSON.stringify(key)}: ${JSON.stringify(value)}`);
 				return `  {\n${fields.join(',\n')}\n  }`;
 			});
@@ -57,7 +56,7 @@ for (const { format, name, data } of fixtures) {
 	}
 
 	it(`${format}/${name}: recovers small chunks at interior source boundaries`, () => {
-		let chunks = getChunks(data, { maxSize: 60, minSize: 0, overlap: 7, includeAuxiliary: true });
+		let chunks = getChunks(data, { maxSize: 60, minSize: 0, overlap: 7 });
 		assert.ok(chunks.length, 'Fixture must produce chunks');
 		for (let [i, chunk] of chunks.entries()) {
 			let where = `${format}/${name} chunk ${i}: ${JSON.stringify(chunk.text)}`;

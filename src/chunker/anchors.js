@@ -1,7 +1,7 @@
 import { PDFPositionMapper } from './pdf.js';
 import { EPUBPositionMapper } from './epub.js';
 import { SnapshotPositionMapper } from './snapshot.js';
-import { getDocument, mergeSpans, spansText } from './document.js';
+import { getChains, getDocument, mergeSpans, readingOrder, spansText } from './document.js';
 import { iterateChunks, outlinePathAt, pageLabel } from './chunks.js';
 
 const formats = { pdf: PDFPositionMapper, epub: EPUBPositionMapper, snapshot: SnapshotPositionMapper };
@@ -42,9 +42,13 @@ export function getAnchorContent(structure, anchor) {
 	if (!positions) return null;
 	let spans = getMapper(structure)?.toSpans(positions);
 	if (!spans?.length) return null;
-	spans = mergeSpans(spans);
+	let document = getDocument(structure);
+	spans = readingOrder(document, mergeSpans(spans));
 	let { entry, start } = spans[0];
-	return { text: spansText(spans), outlinePath: outlinePathAt(structure, entry.ref), pageLabel: pageLabel(structure, entry, start) };
+	// A later part of a continued paragraph reads in the section its paragraph starts in
+	let sectionEntry = document.entries[getChains(document)[entry.index]];
+	return { text: spansText(spans), outlinePath: outlinePathAt(structure, sectionEntry.ref),
+		pageLabel: pageLabel(structure, entry, start) };
 }
 
 /**
