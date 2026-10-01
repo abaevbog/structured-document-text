@@ -5,6 +5,15 @@ import { discoverFixtures } from '../helpers.js';
 import { noOverlap, pdf, pdfBlock, dom, restore } from './helpers.js';
 
 const fixtures = discoverFixtures();
+const CFI_SPEC = 'http://www.idpf.org/epub/linking/cfi/epub-cfi.html';
+const range = (start, end) => ({ type: 'TextPositionSelector', start, end });
+const cfi = path => ({ type: 'FragmentSelector', conformsTo: CFI_SPEC, value: `epubcfi(${path})` });
+// The same JSON back, key order included
+function roundTrips(anchor) {
+	let bytes = compactAnchor(anchor);
+	assert.equal(JSON.stringify(expandAnchor(bytes)), JSON.stringify(anchor));
+	return bytes;
+}
 
 describe('compact anchors', () => {
 	it('keeps PDF rectangles within a tenth of a point, outward, and recovers the same text', () => {
@@ -48,6 +57,44 @@ describe('compact anchors', () => {
 		}
 	});
 
+	it('keeps snapshot selectors as a varint stream of ranges and element selectors', () => {
+		// The gap of 665 zigzags and doubles to 2660, two varint bytes; the length 123 is one
+		assert.deepEqual([...roundTrips({ selectors: [range(665, 788)] })], [3, 0xe4, 0x14, 0x7b]);
+		let bytes = roundTrips({ selectors: [
+			range(14, 56), range(56, 56), range(10, 12), range(2 ** 40, 2 ** 40 + 5),
+			{ type: 'CssSelector', value: 'pre:last-child' },
+			{ type: 'CssSelector', value: 'table > tbody > tr:nth-child(2)', refinedBy: range(3, 9) },
+			range(2 ** 40 + 9, 2 ** 40 + 300),
+		] });
+		assert.equal(bytes[0], 3);
+	});
+
+	it('keeps EPUB selectors as their CFI paths', () => {
+		let bytes = roundTrips({ selectors: [cfi('/6/4!/4,/10/1:0,/12/1:34')] });
+		assert.equal(bytes.length, 26);
+		assert.deepEqual([...bytes.subarray(0, 2)], [4, 24]);
+		assert.equal(roundTrips({ selectors: [cfi('/6/32!/4/2,/1:0,/3:68'), cfi('/6/34!/4[café]'), cfi('')] })[0], 4);
+	});
+
+	it('keeps as JSON the selectors its streams would not reproduce', () => {
+		for (let odd of [
+			{ selectors: [] },
+			{ selectors: [range(0, 5)], extra: true },
+			{ selectors: [{ ...range(0, 5), extra: 1 }] },
+			{ selectors: [{ start: 0, end: 5, type: 'TextPositionSelector' }] },
+			{ selectors: [range(-1, 5)] }, { selectors: [range(5, 4)] }, { selectors: [range(0.5, 4)] },
+			{ selectors: [{ type: 'CssSelector', value: '' }] },
+			{ selectors: [{ type: 'CssSelector', value: '\uD800' }] },
+			{ selectors: [{ type: 'CssSelector', value: '#p0', refinedBy: { ...range(0, 1), extra: 1 } }] },
+			{ selectors: [{ ...cfi('/6/4'), conformsTo: 'urn:other' }] },
+			{ selectors: [{ type: 'FragmentSelector', conformsTo: CFI_SPEC, value: '/6/4' }] },
+			{ selectors: [cfi('/6/4'), range(0, 5)] },
+			{ selectors: [{ type: 'XPathSelector', value: '/p' }] },
+		]) {
+			assert.equal(roundTrips(odd)[0], 2, JSON.stringify(odd));
+		}
+	});
+
 	it('rejects what it cannot read', () => {
 		assert.throws(() => compactAnchor(undefined), TypeError);
 		assert.throws(() => compactAnchor([]), TypeError);
@@ -55,6 +102,9 @@ describe('compact anchors', () => {
 		assert.throws(() => expandAnchor(new Uint8Array([9, 1])), TypeError);
 		let bytes = compactAnchor({ pageRects: [[0, 0, 0, 100, 100]] });
 		assert.throws(() => expandAnchor(bytes.subarray(0, bytes.length - 1)), /Truncated/);
+		assert.throws(() => expandAnchor(new Uint8Array([3, 5])), /Unknown compact anchor selector/);
+		assert.throws(() => expandAnchor(new Uint8Array([3, 0x80])), /Truncated/);
+		assert.throws(() => expandAnchor(new Uint8Array([4, 5, 65])), /Truncated/);
 	});
 
 	for (let { format, name, data } of fixtures) {
@@ -63,12 +113,13 @@ describe('compact anchors', () => {
 			assert.ok(chunks.length);
 			let json = 0, compact = 0;
 			for (let chunk of chunks) {
-				let bytes = compactAnchor(chunk.anchor);
+				let bytes = format === 'pdf' ? compactAnchor(chunk.anchor) : roundTrips(chunk.anchor);
 				json += JSON.stringify(chunk.anchor).length;
 				compact += bytes.length;
+				if (format !== 'pdf') assert.equal(bytes[0], format === 'epub' ? 4 : 3);
 				assert.deepEqual(getAnchorContent(data, expandAnchor(bytes)), getAnchorContent(data, restore(chunk.anchor)));
 			}
-			if (format === 'pdf') assert.ok(compact < json / 3, `${compact} of ${json} bytes`);
+			assert.ok(compact < json / 3, `${compact} of ${json} bytes`);
 		});
 	}
 });
