@@ -4,8 +4,6 @@ import type { StructuredDocumentText } from '../../schema.js';
 export const CHUNKER_VERSION: number;
 
 export interface ChunkingOptions {
-	/** Include separate auxiliary chunks, such as captions and footnotes. Defaults to false; body chunks are unchanged. */
-	includeAuxiliary?: boolean;
 	/** Estimated embedText token ceiling, including context; integer >= 2, default 768. Mutually exclusive with maxSize. */
 	maxTokens?: number;
 	/** Hard embedText limit in UTF-16 units; integer >= 2. Omit for automatic sizing with maxTokens. */
@@ -36,8 +34,6 @@ export interface TextChunk extends ChunkContent {
 	sectionPart: number;
 	/** Total passages in this split group; 1 when unsplit. */
 	sectionParts: number;
-	/** True for a separate auxiliary passage; body and auxiliary text are never mixed. */
-	auxiliary: boolean;
 }
 
 /** Returns source excerpts and embedding input without decoding geometry. Treat the structure as immutable. */

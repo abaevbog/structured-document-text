@@ -63,7 +63,6 @@ feed a page break, so both read as a space. It returns what `getTextChunks` retu
 | `outlinePath` | Path at the first selected text; a chunk can cross sections. |
 | `pageLabel` | First selected page's label, or a one-based PDF page ordinal. `null` when unavailable or for synthetic EPUB locations. |
 | `sectionPart`, `sectionParts` | One-based passage number and total within a split group, which may combine short sections. |
-| `auxiliary` | Whether the chunk belongs to a separate auxiliary group. |
 | `anchor` | Serializable source coverage; `null` if mapping fails. Present only with `getChunks`. |
 
 See [text types](text.d.ts) and [anchor types](anchors.d.ts) for the API.
@@ -73,7 +72,6 @@ The former `getNextChunk()` API is replaced by array iteration.
 
 | Option | Meaning |
 | --- | --- |
-| `includeAuxiliary` | Include separate auxiliary chunks, such as captions and footnotes. Defaults to `false`; body chunks are unchanged. |
 | `maxTokens` | Estimated `embedText` token ceiling, including context. Defaults to 768; integer ≥ 2. |
 | `maxSize` | Alternative hard `embedText` ceiling in UTF-16 code units; integer ≥ 2. Cannot be combined with `maxTokens`. |
 | `minSize` | Preferred source-text minimum in UTF-16 code units. `0` disables short-section grouping. |
@@ -103,14 +101,15 @@ enforce their model's actual token limit.
 ## Text selection
 
 - Reference blocks and `flowClass: 'excluded'` blocks are omitted with their subtrees.
-- Auxiliary blocks are omitted by default. Use `{ includeAuxiliary: true }` with
-  either chunking entry point to include them. Classification is inherited through
-  containers. Auxiliary groups stay separate from body text and other auxiliary
-  roots. Within each outline section,
-  body text stays together across auxiliary blocks.
-- Short adjacent body sections accumulate into groups; a short trailing group joins
-  the previous body group. Final chunks are ordered by their first selected source
-  position, so split body and auxiliary passages can interleave.
+- Text reads in document order, except that the later parts of a paragraph
+  continued on the next page follow its first part, ahead of anything between
+  them. A later part stays in the outline section its paragraph starts in.
+- Auxiliary blocks -- captions, tables, footnotes, figure and formula text --
+  read as paragraphs of the body. Classification is inherited through
+  containers. Auxiliary text does not count when deciding whether a section
+  holds nothing but references.
+- Short adjacent sections accumulate into groups; a short trailing group joins
+  the previous group. Chunks follow the order of the text.
 - Complete headings directly targeted by the outline are replaced with context
   only when their titles match after whitespace normalization and the context fits.
   Other headings stay in the excerpt. Standalone headings are retained; matching
@@ -162,7 +161,9 @@ entire element even when the chunk contains only part of its description.
 
 `getAnchorContent(structure, anchor)` resolves saved anchors against the
 supplied SDT, orders and deduplicates the covered text, and applies the whitespace
-rules above. It returns `{ text, outlinePath, pageLabel }`, the section and page
+rules above. The order is the document's, except that a paragraph's later parts
+follow its first ahead of anything between them, as they do in chunk text. It
+returns `{ text, outlinePath, pageLabel }`, the section and page
 being those at the first recovered text, as the chunker names them at its first
 selected text. It does not rerun chunking or exclusion policy. Empty, malformed or
 mixed-format anchors return `null`. Every represented PDF page must resolve some

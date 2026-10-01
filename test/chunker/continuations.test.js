@@ -59,26 +59,27 @@ for (let type of ['pdf', 'epub', 'snapshot']) {
 		if (type === 'pdf') assert.deepEqual(getAnchorPositions(structure, chunk.anchor).map(position => position.pageIndex), [0, 1, 2, 3]);
 	});
 
-	it(`${type}: continues body text across a separate auxiliary passage`, () => {
+	it(`${type}: continues body text across an auxiliary passage and folds it in after`, () => {
 		let structure = document(['The results', 'A footnote.', 'show an improvement.', 'Another paragraph.'], type);
 		link(structure, 0, 2);
 		structure.content[1].flowClass = 'auxiliary';
-		let chunks = roundTrip(structure, { ...options, includeAuxiliary: true });
-		assert.deepEqual(chunks.map(chunk => [chunk.text, chunk.auxiliary]), [
-			['The results show an improvement.\n\nAnother paragraph.', false], ['A footnote.', true],
-		]);
-		if (type === 'pdf') assert.deepEqual(getAnchorPositions(structure, chunks[0].anchor).map(position => position.pageIndex), [0, 2, 3]);
+		let [chunk] = roundTrip(structure, options);
+		assert.equal(chunk.text, 'The results show an improvement.\n\nA footnote.\n\nAnother paragraph.');
+		if (type === 'pdf') {
+			assert.deepEqual(getAnchorPositions(structure, chunk.anchor).map(position => position.pageIndex).sort(), [0, 1, 2, 3]);
+		}
 	});
 
-	it(`${type}: orders split body and auxiliary passages by their source starts`, () => {
+	it(`${type}: splits a section with its captions inline as one group`, () => {
 		let texts = ['Alpha one. Alpha two. Alpha three.', 'A separate caption.',
 			'Beta one. Beta two. Beta three.', 'Another caption.'];
 		let structure = document(texts, type);
 		structure.content[1].flowClass = structure.content[3].flowClass = 'auxiliary';
-		let chunks = roundTrip(structure, { maxSize: 35, minSize: 0, overlap: 0, includeAuxiliary: true });
-		assert.deepEqual(chunks.map(chunk => chunk.text), texts);
-		assert.deepEqual(chunks.map(chunk => [chunk.auxiliary, chunk.sectionPart, chunk.sectionParts]),
-			[[false, 1, 2], [true, 1, 1], [false, 2, 2], [true, 1, 1]]);
+		let chunks = roundTrip(structure, { maxSize: 35, minSize: 0, overlap: 0 });
+		assert.ok(chunks.length > 1);
+		assert.equal(chunks.map(chunk => chunk.text).join(' ').replace(/\s+/gu, ' '), texts.join(' '));
+		assert.deepEqual(chunks.map(chunk => chunk.sectionPart), chunks.map((_, i) => i + 1));
+		assert.ok(chunks.every(chunk => chunk.sectionParts === chunks.length));
 	});
 }
 

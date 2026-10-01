@@ -41,6 +41,42 @@ export function mergeSpans(spans) {
 	return merged;
 }
 
+const chains = new WeakMap();
+
+// Each entry's chain: the first entry of the paragraph it belongs to. A later
+// part of a continued paragraph chains back through previousPart links, which
+// run backward in document order and never from excluded text. For a paragraph
+// split by a caption -- part one at entry 10, the caption at 11, part two at
+// 12 -- the chains are 10, 11 and 10, so part two sorts ahead of the caption.
+export function getChains(document) {
+	if (chains.has(document)) return chains.get(document);
+	let blockByRef = new Map(document.blocks.map(({ ref }, index) => [ref.join('.'), index]));
+	let excluded = index => index !== null && index !== undefined
+		&& (document.blocks[index].block.flowClass === 'excluded' || excluded(document.blocks[index].parent));
+	let firstEntry = [], result = [];
+	for (let entry of document.entries) {
+		firstEntry[entry.blockIndex] ??= entry.index;
+		let index = entry.blockIndex, block = entry.block;
+		while (block.previousPart) {
+			let previous = blockByRef.get(block.previousPart.join('.'));
+			if (previous === undefined || previous >= index || excluded(previous)) break;
+			index = previous;
+			block = document.blocks[index].block;
+		}
+		result.push(firstEntry[index] ?? firstEntry[entry.blockIndex]);
+	}
+	chains.set(document, result);
+	return result;
+}
+
+// Document order, except that a paragraph's later parts follow its first,
+// ahead of anything between them, so that an auxiliary block never breaks them up.
+export function readingOrder(document, spans) {
+	let chain = getChains(document);
+	return [...spans].sort((a, b) => chain[a.entry.index] - chain[b.entry.index]
+		|| a.entry.index - b.entry.index || a.start - b.start);
+}
+
 // One serialization rule for both chunking and recovery. Preserve preformatted
 // whitespace; trim ordinary block edges and separate omitted text by a space.
 function serializeSpans(spans, indexed) {
