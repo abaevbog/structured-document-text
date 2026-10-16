@@ -1,7 +1,7 @@
 import { PDFPositionMapper } from './pdf.js';
 import { EPUBPositionMapper } from './epub.js';
 import { SnapshotPositionMapper } from './snapshot.js';
-import { getChains, getDocument, mergeSpans, readingOrder, spansText } from './document.js';
+import { getChains, getDocument, indexSpans, mergeSpans, readingOrder, sliceSpans, spanOffsets, spansText } from './document.js';
 import { iterateChunks, outlinePathAt, pageLabel } from './chunks.js';
 
 const formats = { pdf: PDFPositionMapper, epub: EPUBPositionMapper, snapshot: SnapshotPositionMapper };
@@ -42,13 +42,125 @@ export function getAnchorContent(structure, anchor) {
 	if (!positions) return null;
 	let spans = getMapper(structure)?.toSpans(positions);
 	if (!spans?.length) return null;
+	return locate(structure, readingOrder(getDocument(structure), mergeSpans(spans)));
+}
+
+// The spans' text with the section and page at its start
+function locate(structure, spans) {
 	let document = getDocument(structure);
-	spans = readingOrder(document, mergeSpans(spans));
 	let { entry, start } = spans[0];
 	// A later part of a continued paragraph reads in the section its paragraph starts in
 	let sectionEntry = document.entries[getChains(document)[entry.index]];
 	return { text: spansText(spans), outlinePath: outlinePathAt(structure, sectionEntry.ref),
 		pageLabel: pageLabel(structure, entry, start) };
+}
+
+/**
+ * Retrieve positions that cover the text between two offsets in the content of a chunk.
+ * Used to create annotations within the document from text selected in the textual
+ * render of the chunk. 
+ * @param {import('../../schema').StructuredDocumentText} structure
+ * @param {import('./anchors').ChunkAnchor | null} anchor
+ * @param {number} start - Offsets into the recovered text
+ * @param {number} end
+ * @returns {import('./anchors').AnchorSelection | null}
+ */
+export function getAnchorSelection(structure, anchor, start, end) {
+	let positions = readAnchor(structure, anchor);
+	if (!positions) return null;
+	let mapper = getMapper(structure);
+	let spans = mapper?.toSpans(positions);
+	if (!spans?.length) return null;
+	let document = getDocument(structure);
+	spans = readingOrder(document, mergeSpans(spans));
+	let { text, entries } = indexSpans(spans);
+	let bounds = clampRange(text, entries, start, end);
+	if (!bounds) return null;
+	[start, end] = bounds;
+	spans = sliceSpans(spans, entries, entries.findIndex(entry => entry.end > start), start, end);
+	// Blocks [1, 2, 3] with 2 auxiliary read as [1, 3, 2], so a selection
+	// from 1 into 3 is located as two runs, [1] and [3], since they aren't
+	// next to each other in the document: one position from 1 to 3 would
+	// take in 2 as well
+	let runs = splitRuns(document, spans).map(run => mapper.toPositions(run)).filter(run => run?.length);
+	return { ...locate(structure, spans), positions: runs.length ? runs : null };
+}
+
+// Offsets into recovered text as a selection of it: whole and in order, moved
+// off the separators between entries and the whitespace at either end.
+function clampRange(text, entries, start, end) {
+	if (!Number.isInteger(start) || !Number.isInteger(end) || start < 0 || end > text.length || start >= end) return null;
+	// Trimming preformatted whitespace can reach a separator, so go until settled
+	let from, to;
+	do {
+		[from, to] = [start, end];
+		let first = entries.find(entry => entry.end > start);
+		let last = entries.findLast(entry => entry.start < end);
+		if (!first || !last) return null;
+		start = Math.max(start, first.start);
+		end = Math.min(end, last.end);
+		while (start < end && /\s/u.test(text[start])) start++;
+		while (end > start && /\s/u.test(text[end - 1])) end--;
+		if (start >= end) return null;
+	} while (start !== from || end !== to);
+	return [start, end];
+}
+
+// Spans split where the next one doesn't follow in the document: a run is
+// consecutive text nodes, with only whitespace in any passed over
+function splitRuns(document, spans) {
+	let runs = [];
+	let previous;
+	for (let span of spans) {
+		let contiguous = previous && span.entry.index > previous.entry.index
+			&& document.entries.slice(previous.entry.index + 1, span.entry.index).every(entry => !/\S/u.test(entry.node.text));
+		if (contiguous) runs.at(-1).push(span);
+		else runs.push([span]);
+		previous = span;
+	}
+	return runs;
+}
+
+/**
+ * Find where positions fall within the covered text, as ranges of offsets
+ * into the content of the chunk.
+ * Used to mark annotations within the textual preview of a chunk.
+ * @param {import('../../schema').StructuredDocumentText} structure
+ * @param {import('./anchors').ChunkAnchor | null} anchor
+ * @param {import('./anchors').Position[]} positions
+ * @returns {Array<import('./anchors').TextRange[] | null> | null} - Null when the anchor doesn't resolve
+ */
+export function getAnchorOverlaps(structure, anchor, positions) {
+	let covering = readAnchor(structure, anchor);
+	if (!covering) return null;
+	let mapper = getMapper(structure);
+	let spans = mapper?.toSpans(covering);
+	if (!spans?.length) return null;
+	spans = readingOrder(getDocument(structure), mergeSpans(spans));
+	let { text, entries } = indexSpans(spans);
+	return positions.map((position) => {
+		if (!position || typeof position !== 'object') return null;
+		let found = mapper.toSpans([position]);
+		let ranges = found?.length ? settleRanges(text, spanOffsets(entries, mergeSpans(found))) : [];
+		return ranges.length ? ranges : null;
+	});
+}
+
+// Ranges as a highlight of the text reads: ones meeting across nothing but
+// whitespace -- a separator -- joined, and the whitespace at their ends,
+// which recovery takes in, left out
+function settleRanges(text, ranges) {
+	let settled = [];
+	for (let range of ranges) {
+		let last = settled.at(-1);
+		if (last && !/\S/u.test(text.slice(last.end, range.start))) last.end = Math.max(last.end, range.end);
+		else settled.push({ ...range });
+	}
+	for (let range of settled) {
+		while (range.start < range.end && /\s/u.test(text[range.start])) range.start++;
+		while (range.end > range.start && /\s/u.test(text[range.end - 1])) range.end--;
+	}
+	return settled.filter(range => range.start < range.end);
 }
 
 /**

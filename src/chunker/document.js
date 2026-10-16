@@ -144,3 +144,22 @@ export function sliceSpans(spans, entries, cursor, start, end) {
 	selected[selected.length - 1] = { ...selected.at(-1), end: last.span.end - (last.end - end) };
 	return selected;
 }
+
+// The reverse of sliceSpans(): where the given spans fall in the indexed
+// text, as { start, end } offsets in order, each the part of a span within
+// an indexed one on the same node. Spans on nothing indexed give nothing.
+export function spanOffsets(entries, spans) {
+	let byEntry = new Map();
+	for (let entry of entries) {
+		if (!byEntry.has(entry.span.entry)) byEntry.set(entry.span.entry, []);
+		byEntry.get(entry.span.entry).push(entry);
+	}
+	let ranges = [];
+	for (let span of spans) {
+		for (let entry of byEntry.get(span.entry) ?? []) {
+			let start = Math.max(span.start, entry.span.start), end = Math.min(span.end, entry.span.end);
+			if (start < end) ranges.push({ start: entry.start + start - entry.span.start, end: entry.start + end - entry.span.start });
+		}
+	}
+	return ranges.sort((a, b) => a.start - b.start);
+}

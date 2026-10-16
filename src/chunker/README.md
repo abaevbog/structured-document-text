@@ -172,6 +172,24 @@ DOM selector must resolve; one failed selector returns `null` for the whole anch
 A valid whitespace-only DOM selection can return `""` after
 ordinary-text trimming; preformatted whitespace is preserved.
 
+`getAnchorSelection(structure, anchor, start, end)` goes from text offsets
+within a chunk to positions in the document, so that a selection made in a
+chunk's preview can become a document annotation. It returns
+`{ text, outlinePath, pageLabel, positions }` for the recovered text between
+the offsets, with `positions` one run at a time: each run is a stretch of the
+selection whose blocks are next to each other in the document, as PDF line
+rectangles per page or one DOM selector. Blocks `[1, 2, 3]` with 2 auxiliary
+read as `[1, 3, 2]`, so a selection from 1 into 3 is two runs, `[1]` and
+`[3]`, each its own annotation: one position from 1 to 3 would take in 2 as
+well. Offsets on a separator or on whitespace are moved inward; a range
+outside the text, or empty once moved, returns `null`.
+
+`getAnchorOverlaps(structure, anchor, positions)` goes the other way: given
+document positions, such as annotations', it finds which text of the chunk
+each covers, so that annotations can be rendered in a chunk's preview. For each
+position it returns `{ start, end }` ranges into the recovered text, or `null`
+for one covering none of it.
+
 `getAnchorPositions(structure, anchor)` restores ordinary PDF line rectangles,
 one `{ pageIndex, rects }` position per selected page, or returns copies of DOM
 selectors. It preserves disjoint selections and supports any number of pages.

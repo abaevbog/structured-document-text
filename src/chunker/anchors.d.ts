@@ -37,6 +37,14 @@ export interface Chunk extends TextChunk {
 	/** Source coverage, which can exceed the chunk text; null if mapping fails. */
 	anchor: ChunkAnchor | null;
 }
+export interface AnchorSelection extends ChunkContent {
+	/** Positions of the selected text within a chunk */
+	positions: Position[][] | null;
+}
+export interface TextRange {
+	start: number;
+	end: number;
+}
 
 /** Returns serializable chunks with source locations attached. DOM text may use broader element anchors.
  * Text without source anchors is omitted before chunking. Unresolvable mappings yield anchor: null.
@@ -46,6 +54,11 @@ export function getChunks(structure: StructuredDocumentText, options?: ChunkingO
  * The text may differ from the chunk text or be empty after trimming.
  * Returns null for invalid anchors or unresolved pages/selectors. Individual empty PDF rectangles are tolerated. */
 export function getAnchorContent(structure: StructuredDocumentText, anchor: ChunkAnchor | null): ChunkContent | null;
+
+/** Calculate positions of selected text range inside of a chunk */
+export function getAnchorSelection(structure: StructuredDocumentText, anchor: ChunkAnchor | null, start: number, end: number): AnchorSelection | null;
+/** Calculate text ranges of provided positions within the chunk */
+export function getAnchorOverlaps(structure: StructuredDocumentText, anchor: ChunkAnchor | null, positions: Position[]): Array<TextRange[] | null> | null;
 /** Restores ordinary PDF line positions, one per page, or copies DOM selectors.
  * DOM conversion does not verify text recovery or Reader resolution. */
 export function getAnchorPositions(structure: StructuredDocumentText, anchor: ChunkAnchor | null): Position[] | null;
