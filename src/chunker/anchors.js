@@ -140,7 +140,10 @@ export function getAnchorOverlaps(structure, anchor, positions) {
 	let { text, entries } = indexSpans(spans);
 	return positions.map((position) => {
 		if (!position || typeof position !== 'object') return null;
-		let found = mapper.toSpans([position]);
+		// Reader positions come from exact glyph geometry, while stored glyph
+		// boxes are quantized and can poke out of a rectangle that covers
+		// them, so glyphs count by their centers
+		let found = mapper.toSpans([position], { byCenter: true });
 		let ranges = found?.length ? settleRanges(text, spanOffsets(entries, mergeSpans(found))) : [];
 		return ranges.length ? ranges : null;
 	});

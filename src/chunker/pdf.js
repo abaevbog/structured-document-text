@@ -309,7 +309,7 @@ export class PDFPositionMapper {
 		};
 	}
 
-	toSpans(positions) {
+	toSpans(positions, { byCenter = false } = {}) {
 		let pages = new Map();
 		for (let [index, position] of positions.entries()) {
 			if (!Number.isInteger(position.pageIndex) || position.pageIndex < 0 || 'nextPageIndex' in position) return null;
@@ -351,7 +351,7 @@ export class PDFPositionMapper {
 					if (!query) continue;
 					query.visit(tree.rect, target => {
 						visitCharacters(tree, chars, target.rect, pageIndex, i => {
-							if (!containsRect(target.rect, chars[i])) return;
+							if (!byCenter && !containsRect(target.rect, chars[i])) return;
 							resolved.add(target.index);
 							hits ??= new Uint8Array(chars.length);
 							hits[i] = 1;

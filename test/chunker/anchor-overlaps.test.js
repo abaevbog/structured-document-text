@@ -47,6 +47,18 @@ describe('finding positions within a recovered chunk', () => {
 		assert.deepEqual(overlaps(across.positions.flat()), [[{ start: 13, end: 26 }]]);
 	});
 
+	it('counts a glyph by its center, for Reader rectangles a little inside its stored box', () => {
+		let { select, overlaps } = recover(twoBlocks());
+		let word = select(5, 12);
+		// The Reader measures exact glyphs, while stored boxes are quantized,
+		// so its rectangles can fall short of a glyph's box on any side
+		let shrunk = word.positions.flat().map(position => ({
+			...position,
+			rects: position.rects.map(([left, bottom, right, top]) => [left + 0.05, bottom + 0.02, right - 0.15, top - 0.02])
+		}));
+		assert.deepEqual(overlaps(shrunk), [[{ start: 5, end: 12 }]]);
+	});
+
 	it('spans a page break through nextPageRects, as the Reader stores one', () => {
 		let structure = pdf([pdfBlock('Owls hunt at night.', 0), pdfBlock('Hawks hunt by day.', 1)]);
 		let { select, overlaps } = recover(structure);
