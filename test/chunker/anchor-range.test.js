@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { getChunks, getAnchorContent, getAnchorSelection } from '../../src/chunker/index.js';
-import { document, paragraph, pdf, pdfBlock, pdfAnchor, dom, restore } from './helpers.js';
+import { getChunks, getAnchorContent } from '../../src/chunker/index.js';
+import { document, paragraph, pdf, pdfBlock, pdfAnchor, dom, restore, selectOffsets } from './helpers.js';
 import { discoverFixtures } from '../helpers.js';
 
 const whole = { maxSize: 1000, minSize: 0, overlap: 0 };
@@ -9,7 +9,7 @@ const whole = { maxSize: 1000, minSize: 0, overlap: 0 };
 function recover(structure) {
 	let [chunk] = getChunks(structure, whole);
 	let content = getAnchorContent(structure, restore(chunk.anchor));
-	return { chunk, content, select: (start, end) => getAnchorSelection(structure, restore(chunk.anchor), start, end) };
+	return { chunk, content, select: (start, end) => selectOffsets(structure, restore(chunk.anchor), start, end) };
 }
 // What the given runs of positions cover, read back as an anchor of their own
 const covered = (structure, runs) => getAnchorContent(structure, structure.metadata.processor.type === 'pdf'
@@ -72,7 +72,7 @@ describe('selecting part of a recovered chunk', () => {
 		for (let [start, end] of [[-1, 3], [0, 0], [3, 2], [0, 20], [1.5, 3], ['1', 3], [undefined, 3], [0]]) {
 			assert.equal(select(start, end), null, JSON.stringify([start, end]));
 		}
-		assert.equal(getAnchorSelection(structure, null, 0, 1), null);
+		assert.equal(selectOffsets(structure, null, 0, 1), null);
 	});
 
 	// A paragraph split by a caption, in a DOM format: its parts read
@@ -153,7 +153,7 @@ describe('selecting part of a recovered chunk', () => {
 				let end = text.indexOf(' ', boundary + 2);
 				if (end === -1) end = text.length;
 				let selected = text.slice(start, end).trim();
-				let selection = getAnchorSelection(data, restore(chunk.anchor), start, end);
+				let selection = selectOffsets(data, restore(chunk.anchor), start, end);
 				assert.ok(selection, `${format}/${name}: ${JSON.stringify(selected)} not located`);
 				assert.equal(selection.text, selected);
 				assert.ok(selection.positions?.length, `${format}/${name}: no positions for ${JSON.stringify(selected)}`);

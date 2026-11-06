@@ -1,8 +1,9 @@
 import { PDFPositionMapper } from './pdf.js';
 import { EPUBPositionMapper } from './epub.js';
 import { SnapshotPositionMapper } from './snapshot.js';
-import { getChains, getDocument, indexSpans, mergeSpans, readingOrder, sliceSpans, spanOffsets, spansText } from './document.js';
+import { getChains, getDocument, indexSpans, mergeSpans, readingOrder, spanOffsets, spansText } from './document.js';
 import { iterateChunks, outlinePathAt, pageLabel } from './chunks.js';
+import { sameRef } from '../range.js';
 
 const formats = { pdf: PDFPositionMapper, epub: EPUBPositionMapper, snapshot: SnapshotPositionMapper };
 const mappers = new WeakMap();
@@ -38,15 +39,121 @@ export function getChunks(structure, options) {
  * @returns {import('./text').ChunkContent | null}
  */
 export function getAnchorContent(structure, anchor) {
+	let spans = recoverSpans(structure, anchor);
+	return spans && contentOf(structure, spans);
+}
+
+/**
+ * The structure of a recovered chunk's text: each stretch of it that comes
+ * from one text node, with the block the node sits in and the blocks
+ * around that, so the text can be shown as the document shows it and a
+ * selection of it addressed within the structure.
+ * @param {import('../../schema').StructuredDocumentText} structure
+ * @param {import('./anchors').ChunkAnchor | null} anchor
+ * @returns {import('./anchors').TextSegment[] | null}
+ */
+export function getAnchorSegments(structure, anchor) {
+	let spans = recoverSpans(structure, anchor);
+	return spans && describeSpans(getDocument(structure), spans);
+}
+
+// A recovered anchor's spans in reading order, null when it doesn't resolve
+function recoverSpans(structure, anchor) {
 	let positions = readAnchor(structure, anchor);
 	if (!positions) return null;
 	let spans = getMapper(structure)?.toSpans(positions);
 	if (!spans?.length) return null;
-	return locate(structure, readingOrder(getDocument(structure), mergeSpans(spans)));
+	return readingOrder(getDocument(structure), mergeSpans(spans));
+}
+
+// The indexed text's entries as segments: offsets into the text, the point
+// in the structure the segment starts at, the run of document-contiguous
+// spans it belongs to, and the leaf block and the blocks over it
+function describeSpans(document, spans) {
+	let runOf = new Map();
+	splitRuns(document, spans).forEach((run, i) => run.forEach(span => runOf.set(span, i)));
+	// A block's type and ref, and a list's numbering
+	let describe = ({ block, ref }) => ({ type: block.type, ref,
+		...(block.ordered != null ? { ordered: block.ordered } : {}),
+		...(block.startIndex != null ? { startIndex: block.startIndex } : {}) });
+	return indexSpans(spans).entries.map(({ span, index, start, end }) => {
+		let { entry } = span;
+		let path = [];
+		for (let parent = document.blocks[entry.blockIndex].parent; parent !== null; parent = document.blocks[parent].parent) {
+			path.unshift(describe(document.blocks[parent]));
+		}
+		let segment = { start, end, ref: entry.ref, offset: span.start, run: runOf.get(spans[index]) ?? 0,
+			block: describe(document.blocks[entry.blockIndex]), path };
+		if (entry.node.style) segment.style = entry.node.style;
+		return segment;
+	});
+}
+
+/**
+ * Locate content ranges in the structure as a selection: the text they
+ * cover and, per range that covers any, the positions in the source that
+ * cover it. A range is [start, end], each a content point: a text node's
+ * ref with an offset into its text. Used to create annotations within the
+ * document from text selected in a render of its structure, one range per
+ * run of the selection (see getAnchorSegments()).
+ * @param {import('../../schema').StructuredDocumentText} structure
+ * @param {import('./anchors').ContentRange[]} ranges
+ * @returns {import('./anchors').AnchorSelection | null}
+ */
+export function getRangeSelection(structure, ranges) {
+	if (!Array.isArray(ranges) || !ranges.length) return null;
+	let document = getDocument(structure);
+	let mapper = getMapper(structure);
+	if (!mapper) return null;
+	let runs = [], all = [];
+	for (let range of ranges) {
+		let spans = rangeSpans(document, range);
+		if (!spans) return null;
+		runs.push(spans);
+		all.push(...spans);
+	}
+	if (!all.length) return null;
+	let located = readingOrder(document, mergeSpans(all));
+	let resolved = runs.map(run => mapper.toPositions(run)).filter(run => run?.length);
+	return { ...contentOf(structure, located), positions: resolved.length ? resolved : null };
+}
+
+// The spans between a range's points, trimmed of the whitespace at either
+// end; null for a point on no text node or an empty range
+function rangeSpans(document, range) {
+	let point = (value) => {
+		if (!Array.isArray(value) || value.length < 2 || !value.every(Number.isInteger)) return null;
+		let ref = value.slice(0, -1), offset = value.at(-1);
+		let entry = document.entries.find(entry => sameRef(entry.ref, ref));
+		return entry && offset >= 0 && offset <= entry.node.text.length ? { entry, offset } : null;
+	};
+	let [start, end] = Array.isArray(range) && range.length === 2 ? range.map(point) : [null, null];
+	if (!start || !end) return null;
+	if (start.entry.index > end.entry.index || (start.entry === end.entry && start.offset >= end.offset)) return null;
+	let spans = [];
+	for (let index = start.entry.index; index <= end.entry.index; index++) {
+		let entry = document.entries[index];
+		spans.push({ entry, start: entry === start.entry ? start.offset : 0,
+			end: entry === end.entry ? end.offset : entry.node.text.length });
+	}
+	// Whitespace at the ends isn't selected text
+	while (spans.length) {
+		let first = spans[0], text = first.entry.node.text;
+		while (first.start < first.end && /\s/u.test(text[first.start])) first.start++;
+		if (first.start < first.end) break;
+		spans.shift();
+	}
+	while (spans.length) {
+		let last = spans.at(-1), text = last.entry.node.text;
+		while (last.end > last.start && /\s/u.test(text[last.end - 1])) last.end--;
+		if (last.end > last.start) break;
+		spans.pop();
+	}
+	return spans;
 }
 
 // The spans' text with the section and page at its start
-function locate(structure, spans) {
+function contentOf(structure, spans) {
 	let document = getDocument(structure);
 	let { entry, start } = spans[0];
 	// A later part of a continued paragraph reads in the section its paragraph starts in
@@ -55,59 +162,10 @@ function locate(structure, spans) {
 		pageLabel: pageLabel(structure, entry, start) };
 }
 
-/**
- * Retrieve positions that cover the text between two offsets in the content of a chunk.
- * Used to create annotations within the document from text selected in the textual
- * render of the chunk. 
- * @param {import('../../schema').StructuredDocumentText} structure
- * @param {import('./anchors').ChunkAnchor | null} anchor
- * @param {number} start - Offsets into the recovered text
- * @param {number} end
- * @returns {import('./anchors').AnchorSelection | null}
- */
-export function getAnchorSelection(structure, anchor, start, end) {
-	let positions = readAnchor(structure, anchor);
-	if (!positions) return null;
-	let mapper = getMapper(structure);
-	let spans = mapper?.toSpans(positions);
-	if (!spans?.length) return null;
-	let document = getDocument(structure);
-	spans = readingOrder(document, mergeSpans(spans));
-	let { text, entries } = indexSpans(spans);
-	let bounds = clampRange(text, entries, start, end);
-	if (!bounds) return null;
-	[start, end] = bounds;
-	spans = sliceSpans(spans, entries, entries.findIndex(entry => entry.end > start), start, end);
-	// Blocks [1, 2, 3] with 2 auxiliary read as [1, 3, 2], so a selection
-	// from 1 into 3 is located as two runs, [1] and [3], since they aren't
-	// next to each other in the document: one position from 1 to 3 would
-	// take in 2 as well
-	let runs = splitRuns(document, spans).map(run => mapper.toPositions(run)).filter(run => run?.length);
-	return { ...locate(structure, spans), positions: runs.length ? runs : null };
-}
-
-// Offsets into recovered text as a selection of it: whole and in order, moved
-// off the separators between entries and the whitespace at either end.
-function clampRange(text, entries, start, end) {
-	if (!Number.isInteger(start) || !Number.isInteger(end) || start < 0 || end > text.length || start >= end) return null;
-	// Trimming preformatted whitespace can reach a separator, so go until settled
-	let from, to;
-	do {
-		[from, to] = [start, end];
-		let first = entries.find(entry => entry.end > start);
-		let last = entries.findLast(entry => entry.start < end);
-		if (!first || !last) return null;
-		start = Math.max(start, first.start);
-		end = Math.min(end, last.end);
-		while (start < end && /\s/u.test(text[start])) start++;
-		while (end > start && /\s/u.test(text[end - 1])) end--;
-		if (start >= end) return null;
-	} while (start !== from || end !== to);
-	return [start, end];
-}
-
 // Spans split where the next one doesn't follow in the document: a run is
-// consecutive text nodes, with only whitespace in any passed over
+// consecutive text nodes, with only whitespace in any passed over. Blocks
+// [1, 2, 3] with 2 auxiliary read as [1, 3, 2], so text from 1 into 3 is
+// two runs, [1] and [3]: one range from 1 to 3 would take in 2 as well.
 function splitRuns(document, spans) {
 	let runs = [];
 	let previous;

@@ -172,17 +172,27 @@ DOM selector must resolve; one failed selector returns `null` for the whole anch
 A valid whitespace-only DOM selection can return `""` after
 ordinary-text trimming; preformatted whitespace is preserved.
 
-`getAnchorSelection(structure, anchor, start, end)` goes from text offsets
-within a chunk to positions in the document, so that a selection made in a
-chunk's preview can become a document annotation. It returns
-`{ text, outlinePath, pageLabel, positions }` for the recovered text between
-the offsets, with `positions` one run at a time: each run is a stretch of the
-selection whose blocks are next to each other in the document, as PDF line
-rectangles per page or one DOM selector. Blocks `[1, 2, 3]` with 2 auxiliary
-read as `[1, 3, 2]`, so a selection from 1 into 3 is two runs, `[1]` and
-`[3]`, each its own annotation: one position from 1 to 3 would take in 2 as
-well. Offsets on a separator or on whitespace are moved inward; a range
-outside the text, or empty once moved, returns `null`.
+`getAnchorSegments(structure, anchor)` describes the structure of the
+recovered text. It returns one segment per stretch of text from a single
+text node. A segment carries its offsets into the text, the node's ref and
+the node offset it starts at, its run, the leaf block, the blocks over that
+block, and the node's inline style. A run is a stretch of text whose blocks
+are next to each other in the document. Blocks `[1, 2, 3]` with 2 auxiliary
+read as `[1, 3, 2]`, so text from 1 into 3 is two runs, `[1]` and `[3]`. A
+consumer can render the text as the document's blocks, and can address a
+selection of it in the structure as content ranges. A content point is
+`[...ref, offset]`: a text node's ref and an offset into its text. A content
+range is `[start, end]`, two points in document order, as `makeContentRange()`
+builds one. A selection is one range per run it crosses; one range from 1 to
+3 would take in 2 as well.
+
+`getRangeSelection(structure, ranges)` takes content ranges and returns
+positions in the document, so that a selection made in a render of the
+structure can become a document annotation. It returns
+`{ text, outlinePath, pageLabel, positions }` for the text the ranges cover,
+with `positions` one run per range: PDF line rectangles per page, or one DOM
+selector. Whitespace at either end of a range isn't selected. A range on no
+text node, out of order, or empty once trimmed returns `null`.
 
 `getAnchorOverlaps(structure, anchor, positions)` goes the other way: given
 document positions, such as annotations', it finds which text of the chunk

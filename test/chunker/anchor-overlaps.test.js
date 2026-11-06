@@ -1,8 +1,8 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { getChunks, getAnchorContent, getAnchorSelection, getAnchorOverlaps } from '../../src/chunker/index.js';
+import { getChunks, getAnchorContent, getAnchorOverlaps } from '../../src/chunker/index.js';
 import { getDocument, indexSpans, sliceSpans, spanOffsets } from '../../src/chunker/document.js';
-import { pdf, pdfBlock, dom, restore } from './helpers.js';
+import { pdf, pdfBlock, dom, restore, selectOffsets } from './helpers.js';
 import { discoverFixtures } from '../helpers.js';
 
 const whole = { maxSize: 1000, minSize: 0, overlap: 0 };
@@ -13,7 +13,7 @@ function recover(structure) {
 	let anchor = () => restore(chunk.anchor);
 	return {
 		text: getAnchorContent(structure, anchor()).text,
-		select: (start, end) => getAnchorSelection(structure, anchor(), start, end),
+		select: (start, end) => selectOffsets(structure, anchor(), start, end),
 		overlaps: positions => getAnchorOverlaps(structure, anchor(), positions),
 	};
 }
@@ -100,7 +100,7 @@ describe('finding positions within a recovered chunk', () => {
 				let start = text.lastIndexOf(' ', boundary - 1) + 1;
 				let end = text.indexOf(' ', boundary + 2);
 				if (end === -1) end = text.length;
-				let selection = getAnchorSelection(data, restore(chunk.anchor), start, end);
+				let selection = selectOffsets(data, restore(chunk.anchor), start, end);
 				assert.ok(selection?.positions?.length);
 				// Where the selection settled once moved off whitespace
 				let from = text.indexOf(selection.text, start);

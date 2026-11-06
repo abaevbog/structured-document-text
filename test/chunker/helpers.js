@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { getChunks, getAnchorContent, getAnchorPositions } from '../../src/chunker/index.js';
+import { getChunks, getAnchorContent, getAnchorPositions, getAnchorSegments, getRangeSelection } from '../../src/chunker/index.js';
 
 export const noOverlap = { maxSize: 100, minSize: 0, overlap: 0 };
 export const paragraph = (text, extra = {}) => ({ type: 'paragraph', content: [{ text }], ...extra });
@@ -10,6 +10,26 @@ export const restore = value => JSON.parse(JSON.stringify(value));
 export const pdfAnchor = positions => ({ pageRects: positions.flatMap(({ pageIndex, rects }) => rects.map(rect => [pageIndex, ...rect])) });
 // The recovered text alone, for tests of what an anchor covers.
 export const recoveredText = (structure, anchor) => getAnchorContent(structure, anchor)?.text ?? null;
+
+// Offsets into a chunk's recovered text as a selection, the way a consumer
+// of its segments makes one: one content range per run the offsets cross,
+// between the structure's points at the offsets. Null for offsets not whole
+// and in order within the text, or on nothing but separators.
+export function selectOffsets(structure, anchor, start, end) {
+	let segments = getAnchorSegments(structure, anchor);
+	let text = getAnchorContent(structure, anchor)?.text;
+	if (!segments || !Number.isInteger(start) || !Number.isInteger(end) || start < 0 || end > text.length || start >= end) return null;
+	let ranges = [];
+	for (let segment of segments) {
+		let from = Math.max(start, segment.start), to = Math.min(end, segment.end);
+		if (from >= to) continue;
+		let point = offset => [...segment.ref, segment.offset + offset - segment.start];
+		let last = ranges.at(-1);
+		if (last?.run === segment.run) last.range[1] = point(to);
+		else ranges.push({ run: segment.run, range: [point(from), point(to)] });
+	}
+	return ranges.length ? getRangeSelection(structure, ranges.map(({ range }) => range)) : null;
+}
 
 // Text-focused tests still use anchored SDT, without manufacturing PDF geometry.
 export function textDocument(content, catalog = {}) {
