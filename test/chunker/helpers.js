@@ -11,24 +11,23 @@ export const pdfAnchor = positions => ({ pageRects: positions.flatMap(({ pageInd
 // The recovered text alone, for tests of what an anchor covers.
 export const recoveredText = (structure, anchor) => getAnchorContent(structure, anchor)?.text ?? null;
 
-// Offsets into a chunk's recovered text as a selection, the way a consumer
-// of its segments makes one: one content range per run the offsets cross,
-// between the structure's points at the offsets. Null for offsets not whole
-// and in order within the text, or on nothing but separators.
-export function selectOffsets(structure, anchor, start, end) {
+// The ranges of a chunk's segments between two offsets into its recovered
+// text, one per segment, the way a consumer of the segments describes a
+// selection; null for offsets not whole and in order within the text
+export function rangesBetween(structure, anchor, start, end) {
 	let segments = getAnchorSegments(structure, anchor);
 	let text = getAnchorContent(structure, anchor)?.text;
 	if (!segments || !Number.isInteger(start) || !Number.isInteger(end) || start < 0 || end > text.length || start >= end) return null;
-	let ranges = [];
-	for (let segment of segments) {
-		let from = Math.max(start, segment.start), to = Math.min(end, segment.end);
-		if (from >= to) continue;
-		let point = offset => [...segment.ref, segment.offset + offset - segment.start];
-		let last = ranges.at(-1);
-		if (last?.run === segment.run) last.range[1] = point(to);
-		else ranges.push({ run: segment.run, range: [point(from), point(to)] });
-	}
-	return ranges.length ? getRangeSelection(structure, ranges.map(({ range }) => range)) : null;
+	let point = (segment, offset) => [...segment.ref, segment.offset + offset - segment.start];
+	return segments.filter(segment => Math.max(start, segment.start) < Math.min(end, segment.end))
+		.map(segment => [point(segment, Math.max(start, segment.start)), point(segment, Math.min(end, segment.end))]);
+}
+
+// Offsets into a chunk's recovered text as a selection. Null for offsets
+// not whole and in order within the text, or on nothing but separators.
+export function selectOffsets(structure, anchor, start, end) {
+	let ranges = rangesBetween(structure, anchor, start, end);
+	return ranges?.length ? getRangeSelection(structure, ranges) : null;
 }
 
 // Text-focused tests still use anchored SDT, without manufacturing PDF geometry.

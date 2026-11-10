@@ -11,9 +11,9 @@ function recover(structure) {
 	let content = getAnchorContent(structure, restore(chunk.anchor));
 	return { chunk, content, select: (start, end) => selectOffsets(structure, restore(chunk.anchor), start, end) };
 }
-// What the given runs of positions cover, read back as an anchor of their own
-const covered = (structure, runs) => getAnchorContent(structure, structure.metadata.processor.type === 'pdf'
-	? pdfAnchor(runs.flat()) : { selectors: runs.flat() })?.text;
+// What the given positions cover, read back as an anchor of their own
+const covered = (structure, positions) => getAnchorContent(structure, structure.metadata.processor.type === 'pdf'
+	? pdfAnchor(positions) : { selectors: positions })?.text;
 
 describe('selecting part of a recovered chunk', () => {
 	it('reads the text between two offsets, with positions of its own that read back to it', () => {
@@ -22,12 +22,11 @@ describe('selecting part of a recovered chunk', () => {
 		assert.equal(content.text, 'Owls hunt at night.\n\nHawks hunt by day.');
 		let part = select(5, 12);
 		assert.deepEqual(part, { ...content, text: 'hunt at', positions: part.positions });
-		// One run, on one page
+		// One position, on one page
 		assert.equal(part.positions.length, 1);
-		assert.equal(part.positions[0].length, 1);
-		assert.equal(part.positions[0][0].pageIndex, 0);
+		assert.equal(part.positions[0].pageIndex, 0);
 		// One point per glyph in the fixture: the rectangles span the glyphs selected
-		let rects = part.positions[0][0].rects;
+		let rects = part.positions[0].rects;
 		assert.equal(Math.min(...rects.map(rect => rect[0])), 5);
 		assert.equal(Math.max(...rects.map(rect => rect[2])), 12);
 		assert.equal(covered(structure, part.positions), 'hunt at');
@@ -38,10 +37,9 @@ describe('selecting part of a recovered chunk', () => {
 		let { select } = recover(structure);
 		let part = select(13, 26);
 		assert.equal(part.text, 'night.\n\nHawks');
-		// Consecutive blocks: one run, on one page
+		// Consecutive blocks: one position, on one page
 		assert.equal(part.positions.length, 1);
-		assert.equal(part.positions[0].length, 1);
-		assert.deepEqual(new Set(part.positions[0][0].rects.map(rect => rect[1])), new Set([0, 2]));
+		assert.deepEqual(new Set(part.positions[0].rects.map(rect => rect[1])), new Set([0, 2]));
 		assert.equal(covered(structure, part.positions), 'night.\n\nHawks');
 	});
 
@@ -94,19 +92,21 @@ describe('selecting part of a recovered chunk', () => {
 		], type);
 	}
 
-	it('keeps DOM runs apart across a fold, where one selector would take in or lose text', () => {
+	it('stores a DOM selection as one selector where it reads in document order, else as an anchor would', () => {
 		for (let type of ['epub', 'snapshot']) {
 			let structure = folded(type);
 			let { content, select } = recover(structure);
 			assert.equal(content.text, 'Owls hunt at night and hawks hunt by day.\n\nFigure 1. An owl.', type);
 			let text = content.text;
 			let at = (from, to) => select(text.indexOf(from), text.indexOf(to) + to.length);
-			// From part one into part two, which aren't next to each other
-			// in the document: one selector would cover the caption too
+			// From part one into part two: one selector, which takes in the
+			// caption between them on the page, as a selector can't skip it
 			let acrossFold = at('night', 'hawks');
-			assert.equal(acrossFold.positions.length, 2, type);
-			assert.equal(covered(structure, acrossFold.positions), 'night and hawks', type);
-			// From part two into the caption, which runs backwards in the source
+			assert.equal(acrossFold.text, 'night and hawks', type);
+			assert.equal(acrossFold.positions.length, 1, type);
+			assert.equal(covered(structure, acrossFold.positions), 'night and hawks\n\nFigure 1. An owl.', type);
+			// From part two into the caption, which runs backwards in the
+			// source: one selector would lose the text, so one per stretch
 			let backwards = at('hawks', 'Figure');
 			assert.equal(backwards.positions.length, 2, type);
 			assert.equal(covered(structure, backwards.positions), 'hawks hunt by day.\n\nFigure', type);
@@ -119,7 +119,7 @@ describe('selecting part of a recovered chunk', () => {
 		}
 	});
 
-	it('keeps PDF runs apart across a fold, each over its own part', () => {
+	it('stores a PDF selection across a fold as one position, its rectangles over the selected lines alone', () => {
 		// The caption's line lies between the parts' lines on the page
 		let structure = pdf([
 			pdfBlock('Owls hunt at night and', 0, 0, 4, { nextPart: [2] }),
@@ -131,11 +131,10 @@ describe('selecting part of a recovered chunk', () => {
 		let text = content.text;
 		let acrossFold = select(text.indexOf('night'), text.indexOf('hawks') + 'hawks'.length);
 		assert.equal(acrossFold.text, 'night and hawks');
-		// Two runs on the one page, each with the rectangles of its own
-		// part's line: nothing on the caption's line between them
-		assert.equal(acrossFold.positions.length, 2);
-		let lines = acrossFold.positions.map(run => new Set(run.flatMap(position => position.rects.map(rect => rect[1]))));
-		assert.deepEqual(lines, [new Set([4]), new Set([0])]);
+		// One position on the one page, with the rectangles of the parts'
+		// lines: nothing on the caption's line between them
+		assert.equal(acrossFold.positions.length, 1);
+		assert.deepEqual(new Set(acrossFold.positions[0].rects.map(rect => rect[1])), new Set([4, 0]));
 		assert.equal(covered(structure, acrossFold.positions), 'night and hawks');
 	});
 
@@ -159,11 +158,17 @@ describe('selecting part of a recovered chunk', () => {
 				assert.ok(selection.positions?.length, `${format}/${name}: no positions for ${JSON.stringify(selected)}`);
 				// Positions read back as the text selected, except that
 				// synthetic text -- an image's description -- is located by
-				// its element and reads back whole
+				// its element and reads back whole, and a DOM selector takes
+				// in whatever the document has between the blocks selected
 				let readBack = covered(data, selection.positions);
-				if (selection.positions.flat().some(isElementPosition)) {
+				if (selection.positions.some(isElementPosition)) {
 					assert.ok(readBack.includes(selected),
 						`${format}/${name}: element positions of ${JSON.stringify(selected)} don't cover it`);
+				}
+				else if (format !== 'pdf') {
+					let [first, last] = [selected.split('\n\n')[0], selected.split('\n\n').at(-1)];
+					assert.ok(readBack.startsWith(first) && readBack.endsWith(last),
+						`${format}/${name}: positions of ${JSON.stringify(selected)} don't span it`);
 				}
 				else {
 					assert.equal(readBack, selected,
@@ -190,11 +195,11 @@ describe('selecting part of a recovered chunk', () => {
 			assert.equal(across.positions.length, 1, type);
 			assert.equal(covered(structure, across.positions), 'text.\n\nSecond');
 			if (type === 'snapshot') {
-				assert.deepEqual(word.positions, [[{ type: 'TextPositionSelector', start: 6, end: 13 }]]);
-				assert.deepEqual(across.positions, [[{ type: 'TextPositionSelector', start: 14, end: 25 }]]);
+				assert.deepEqual(word.positions, [{ type: 'TextPositionSelector', start: 6, end: 13 }]);
+				assert.deepEqual(across.positions, [{ type: 'TextPositionSelector', start: 14, end: 25 }]);
 			}
 			else {
-				assert.equal(word.positions[0][0].value, 'epubcfi(/6/2!/4/2/1,:6,:13)');
+				assert.equal(word.positions[0].value, 'epubcfi(/6/2!/4/2/1,:6,:13)');
 			}
 		}
 	});

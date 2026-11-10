@@ -1,4 +1,4 @@
-import type { StructuredDocumentText, TextStyle } from '../../schema.js';
+import type { ContentBlockNode, RefPath, StructuredDocumentText, TextStyle } from '../../schema.js';
 import type { ChunkingOptions, ChunkContent, TextChunk } from './text.js';
 
 export interface PDFPosition {
@@ -37,18 +37,14 @@ export interface Chunk extends TextChunk {
 	/** Source coverage, which can exceed the chunk text; null if mapping fails. */
 	anchor: ChunkAnchor | null;
 }
+/** Selected text with its source positions */
 export interface AnchorSelection extends ChunkContent {
-	/** Positions of the selected text, one run per range given */
-	positions: Position[][] | null;
-}
-export interface TextRange {
-	start: number;
-	end: number;
+	positions: Position[];
 }
 /** A block as it stands over a segment's text: its type and ref, and a list's numbering */
 export interface SegmentBlock {
-	type: string;
-	ref: number[];
+	type: ContentBlockNode['type'];
+	ref: RefPath;
 	ordered?: boolean;
 	startIndex?: number;
 }
@@ -58,13 +54,10 @@ export interface TextSegment {
 	start: number;
 	end: number;
 	/** The text node's ref, and the offset into its text the segment starts at */
-	ref: number[];
+	ref: RefPath;
 	offset: number;
-	/** The run of document-contiguous text the segment is part of; runs are numbered in text order */
-	run: number;
-	/** The leaf block the text node sits in, and the blocks over it, outermost first */
-	block: SegmentBlock;
-	path: SegmentBlock[];
+	/** The blocks over the text node, the outermost first and the one holding it last */
+	blocks: SegmentBlock[];
 	style?: TextStyle;
 }
 /** A content point: a text node's ref with an offset into its text, [...ref, offset] */
@@ -82,10 +75,12 @@ export function getChunks(structure: StructuredDocumentText, options?: ChunkingO
 export function getAnchorContent(structure: StructuredDocumentText, anchor: ChunkAnchor | null): ChunkContent | null;
 /** The structure of recovered text, segment by segment, in the text's order */
 export function getAnchorSegments(structure: StructuredDocumentText, anchor: ChunkAnchor | null): TextSegment[] | null;
-/** Locate content ranges in the structure as a selection, each range's source positions as one run */
+/** Locate content ranges of the structure's text as a selection: their text and the source
+ * positions the reader would store it as */
 export function getRangeSelection(structure: StructuredDocumentText, ranges: ContentRange[]): AnchorSelection | null;
-/** Calculate text ranges of provided positions within the chunk */
-export function getAnchorOverlaps(structure: StructuredDocumentText, anchor: ChunkAnchor | null, positions: Position[]): Array<TextRange[] | null> | null;
+/** Locate positions in the structure's text: per position, the content ranges of the text it covers,
+ * one per text node in document order, or null for one on none of it */
+export function getPositionRanges(structure: StructuredDocumentText, positions: Position[]): Array<ContentRange[] | null>;
 /** Restores ordinary PDF line positions, one per page, or copies DOM selectors.
  * DOM conversion does not verify text recovery or Reader resolution. */
 export function getAnchorPositions(structure: StructuredDocumentText, anchor: ChunkAnchor | null): Position[] | null;

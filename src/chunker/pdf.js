@@ -28,6 +28,11 @@ export class PDFPositionMapper {
 		return [...pages].map(([pageIndex, rects]) => ({ pageIndex, rects }));
 	}
 
+	// A position per page
+	toSelectionPositions(spans) {
+		return this.toPositions(spans);
+	}
+
 	toAnchor(spans) {
 		let selected = spansByEntry(spans);
 		let lines = this._lines(spans, selected);

@@ -1,7 +1,7 @@
 import { PDFPositionMapper } from './pdf.js';
 import { EPUBPositionMapper } from './epub.js';
 import { SnapshotPositionMapper } from './snapshot.js';
-import { getChains, getDocument, indexSpans, mergeSpans, readingOrder, spanOffsets, spansText } from './document.js';
+import { getChains, getDocument, indexSpans, mergeSpans, readingOrder, spansText } from './document.js';
 import { iterateChunks, outlinePathAt, pageLabel } from './chunks.js';
 import { sameRef } from '../range.js';
 
@@ -67,74 +67,67 @@ function recoverSpans(structure, anchor) {
 }
 
 // The indexed text's entries as segments: offsets into the text, the point
-// in the structure the segment starts at, the run of document-contiguous
-// spans it belongs to, and the leaf block and the blocks over it
+// in the structure the segment starts at, and the blocks over it, the
+// outermost first
 function describeSpans(document, spans) {
-	let runOf = new Map();
-	splitRuns(document, spans).forEach((run, i) => run.forEach(span => runOf.set(span, i)));
 	// A block's type and ref, and a list's numbering
 	let describe = ({ block, ref }) => ({ type: block.type, ref,
 		...(block.ordered != null ? { ordered: block.ordered } : {}),
 		...(block.startIndex != null ? { startIndex: block.startIndex } : {}) });
-	return indexSpans(spans).entries.map(({ span, index, start, end }) => {
+	return indexSpans(spans).entries.map(({ span, start, end }) => {
 		let { entry } = span;
-		let path = [];
-		for (let parent = document.blocks[entry.blockIndex].parent; parent !== null; parent = document.blocks[parent].parent) {
-			path.unshift(describe(document.blocks[parent]));
+		let blocks = [];
+		for (let index = entry.blockIndex; index !== null; index = document.blocks[index].parent) {
+			blocks.unshift(describe(document.blocks[index]));
 		}
-		let segment = { start, end, ref: entry.ref, offset: span.start, run: runOf.get(spans[index]) ?? 0,
-			block: describe(document.blocks[entry.blockIndex]), path };
+		let segment = { start, end, ref: entry.ref, offset: span.start, blocks };
 		if (entry.node.style) segment.style = entry.node.style;
 		return segment;
 	});
 }
 
 /**
- * Locate content ranges in the structure as a selection: the text they
- * cover and, per range that covers any, the positions in the source that
- * cover it. A range is [start, end], each a content point: a text node's
- * ref with an offset into its text. Used to create annotations within the
- * document from text selected in a render of its structure, one range per
- * run of the selection (see getAnchorSegments()).
+ * Locate content ranges of the structure's text as a selection: the text
+ * they cover, where it starts in the document, and the source positions
+ * that stand for it as the reader stores a selection -- one per page of a
+ * PDF, one per section of an EPUB, one for a snapshot. A range is
+ * [start, end], content points [...ref, offset] into one text node or
+ * across several in document order; the ranges come in text order. Used
+ * to create annotations from text selected in a render of the structure.
  * @param {import('../../schema').StructuredDocumentText} structure
  * @param {import('./anchors').ContentRange[]} ranges
- * @returns {import('./anchors').AnchorSelection | null}
+ * @returns {import('./anchors').AnchorSelection | null} - Null when the
+ *   ranges don't resolve
  */
 export function getRangeSelection(structure, ranges) {
-	if (!Array.isArray(ranges) || !ranges.length) return null;
-	let document = getDocument(structure);
-	let mapper = getMapper(structure);
-	if (!mapper) return null;
-	let runs = [], all = [];
-	for (let range of ranges) {
-		let spans = rangeSpans(document, range);
-		if (!spans) return null;
-		runs.push(spans);
-		all.push(...spans);
-	}
-	if (!all.length) return null;
-	let located = readingOrder(document, mergeSpans(all));
-	let resolved = runs.map(run => mapper.toPositions(run)).filter(run => run?.length);
-	return { ...contentOf(structure, located), positions: resolved.length ? resolved : null };
+	let selected = selectionSpans(getDocument(structure), ranges);
+	if (!selected?.length) return null;
+	let positions = getMapper(structure).toSelectionPositions(selected);
+	if (!positions?.length) return null;
+	return { ...contentOf(structure, selected), positions };
 }
 
-// The spans between a range's points, trimmed of the whitespace at either
-// end; null for a point on no text node or an empty range
-function rangeSpans(document, range) {
+// The document's spans between each range's points, in order, trimmed of
+// the whitespace at either end; null for a point on no text node, a range
+// out of order or an empty one
+function selectionSpans(document, ranges) {
+	if (!Array.isArray(ranges) || !ranges.length) return null;
 	let point = (value) => {
 		if (!Array.isArray(value) || value.length < 2 || !value.every(Number.isInteger)) return null;
 		let ref = value.slice(0, -1), offset = value.at(-1);
 		let entry = document.entries.find(entry => sameRef(entry.ref, ref));
 		return entry && offset >= 0 && offset <= entry.node.text.length ? { entry, offset } : null;
 	};
-	let [start, end] = Array.isArray(range) && range.length === 2 ? range.map(point) : [null, null];
-	if (!start || !end) return null;
-	if (start.entry.index > end.entry.index || (start.entry === end.entry && start.offset >= end.offset)) return null;
 	let spans = [];
-	for (let index = start.entry.index; index <= end.entry.index; index++) {
-		let entry = document.entries[index];
-		spans.push({ entry, start: entry === start.entry ? start.offset : 0,
-			end: entry === end.entry ? end.offset : entry.node.text.length });
+	for (let range of ranges) {
+		let [start, end] = Array.isArray(range) && range.length === 2 ? range.map(point) : [null, null];
+		if (!start || !end) return null;
+		if (start.entry.index > end.entry.index || (start.entry === end.entry && start.offset >= end.offset)) return null;
+		for (let index = start.entry.index; index <= end.entry.index; index++) {
+			let entry = document.entries[index];
+			spans.push({ entry, start: entry === start.entry ? start.offset : 0,
+				end: entry === end.entry ? end.offset : entry.node.text.length });
+		}
 	}
 	// Whitespace at the ends isn't selected text
 	while (spans.length) {
@@ -162,66 +155,34 @@ function contentOf(structure, spans) {
 		pageLabel: pageLabel(structure, entry, start) };
 }
 
-// Spans split where the next one doesn't follow in the document: a run is
-// consecutive text nodes, with only whitespace in any passed over. Blocks
-// [1, 2, 3] with 2 auxiliary read as [1, 3, 2], so text from 1 into 3 is
-// two runs, [1] and [3]: one range from 1 to 3 would take in 2 as well.
-function splitRuns(document, spans) {
-	let runs = [];
-	let previous;
-	for (let span of spans) {
-		let contiguous = previous && span.entry.index > previous.entry.index
-			&& document.entries.slice(previous.entry.index + 1, span.entry.index).every(entry => !/\S/u.test(entry.node.text));
-		if (contiguous) runs.at(-1).push(span);
-		else runs.push([span]);
-		previous = span;
-	}
-	return runs;
-}
-
 /**
- * Find where positions fall within the covered text, as ranges of offsets
- * into the content of the chunk.
- * Used to mark annotations within the textual preview of a chunk.
+ * Locate positions in the structure's text: per position, the content
+ * ranges of the text it covers, one per text node in document order; null
+ * for a position on none of the text, or that isn't one. Used to mark
+ * annotations over a render of the structure.
  * @param {import('../../schema').StructuredDocumentText} structure
- * @param {import('./anchors').ChunkAnchor | null} anchor
  * @param {import('./anchors').Position[]} positions
- * @returns {Array<import('./anchors').TextRange[] | null> | null} - Null when the anchor doesn't resolve
+ * @returns {Array<import('./anchors').ContentRange[] | null>}
  */
-export function getAnchorOverlaps(structure, anchor, positions) {
-	let covering = readAnchor(structure, anchor);
-	if (!covering) return null;
+export function getPositionRanges(structure, positions) {
 	let mapper = getMapper(structure);
-	let spans = mapper?.toSpans(covering);
-	if (!spans?.length) return null;
-	spans = readingOrder(getDocument(structure), mergeSpans(spans));
-	let { text, entries } = indexSpans(spans);
 	return positions.map((position) => {
-		if (!position || typeof position !== 'object') return null;
+		if (!mapper || !position || typeof position !== 'object') return null;
 		// Reader positions come from exact glyph geometry, while stored glyph
 		// boxes are quantized and can poke out of a rectangle that covers
 		// them, so glyphs count by their centers
 		let found = mapper.toSpans([position], { byCenter: true });
-		let ranges = found?.length ? settleRanges(text, spanOffsets(entries, mergeSpans(found))) : [];
+		if (!found?.length) return null;
+		// Recovery takes in the whitespace beside the glyphs a rectangle
+		// covers, which the position doesn't
+		let ranges = mergeSpans(found).map(({ entry, start, end }) => {
+			let text = entry.node.text;
+			while (start < end && /\s/u.test(text[start])) start++;
+			while (end > start && /\s/u.test(text[end - 1])) end--;
+			return start < end ? [[...entry.ref, start], [...entry.ref, end]] : null;
+		}).filter(Boolean);
 		return ranges.length ? ranges : null;
 	});
-}
-
-// Ranges as a highlight of the text reads: ones meeting across nothing but
-// whitespace -- a separator -- joined, and the whitespace at their ends,
-// which recovery takes in, left out
-function settleRanges(text, ranges) {
-	let settled = [];
-	for (let range of ranges) {
-		let last = settled.at(-1);
-		if (last && !/\S/u.test(text.slice(last.end, range.start))) last.end = Math.max(last.end, range.end);
-		else settled.push({ ...range });
-	}
-	for (let range of settled) {
-		while (range.start < range.end && /\s/u.test(text[range.start])) range.start++;
-		while (range.end > range.start && /\s/u.test(text[range.end - 1])) range.end--;
-	}
-	return settled.filter(range => range.start < range.end);
 }
 
 /**

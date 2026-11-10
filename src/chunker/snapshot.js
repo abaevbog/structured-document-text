@@ -1,5 +1,5 @@
 import { buildDomMapIndex, matchDomMapSelector } from '../dom/snapshot/dommap.js';
-import { elementRanges, normalizedOffset, originalOffset, toDOMPositions, toDOMSpans } from './dom.js';
+import { elementRanges, inDocumentOrder, normalizedOffset, originalOffset, toDOMPositions, toDOMSpans } from './dom.js';
 
 // Text uses the body's source stream; synthetic content keeps element selectors.
 export class SnapshotPositionMapper {
@@ -15,6 +15,13 @@ export class SnapshotPositionMapper {
 
 	toPositions(spans) {
 		return toDOMPositions(this, spans);
+	}
+
+	// A single position for spans in document order, with a fallback to
+	// multiple positions when needed
+	toSelectionPositions(spans) {
+		let position = inDocumentOrder(spans) ? this.toPosition(spans) : null;
+		return position ? [position] : this.toPositions(spans);
 	}
 
 	toSpans(positions) {
@@ -90,5 +97,5 @@ export class SnapshotPositionMapper {
 
 function sourceOffset(entry, offset) {
 	let original = originalOffset(entry.node, 0, offset);
-	return original === null ? NaN : entry.node.anchor.stream + original;
+	return original === null || !Number.isSafeInteger(entry.node.anchor?.stream) ? NaN : entry.node.anchor.stream + original;
 }

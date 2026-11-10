@@ -1,5 +1,5 @@
 import { expandBlockAnchor, expandSelectorMap, findCommonCFIPath, parseSelectorMapEntries } from '../dom/epub/decode.js';
-import { elementRanges, localOriginalToNFC, originalOffset, toDOMPositions, toDOMSpans } from './dom.js';
+import { elementRanges, inDocumentOrder, localOriginalToNFC, originalOffset, toDOMPositions, toDOMSpans } from './dom.js';
 
 // Source paths point directly into the shared document index. Merged SDT text
 // nodes have one CFI entry per original DOM text node.
@@ -30,6 +30,19 @@ export class EPUBPositionMapper {
 
 	toPositions(spans) {
 		return toDOMPositions(this, spans);
+	}
+
+	// A single position per section for spans in document order, with a
+	// fallback to multiple positions when needed
+	toSelectionPositions(spans) {
+		let sections = [];
+		for (let span of spans) {
+			let base = span.entry.block.anchor?.selectorMap?.split('!')[0];
+			if (sections.at(-1)?.base !== base) sections.push({ base, spans: [] });
+			sections.at(-1).spans.push(span);
+		}
+		let positions = sections.map(section => inDocumentOrder(section.spans) ? this.toPosition(section.spans) : null);
+		return positions.every(Boolean) ? positions : this.toPositions(spans);
 	}
 
 	toSpans(positions) {

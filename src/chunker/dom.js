@@ -45,6 +45,12 @@ function continuesTextRange(mapper, previous, span, previousIndex) {
 	return !/\S/u.test(gap);
 }
 
+// Whether one selector from the first span to the last covers every one,
+// rather than losing text that reads before an earlier span
+export function inDocumentOrder(spans) {
+	return spans.every((span, i) => !i || span.entry.index > spans[i - 1].entry.index);
+}
+
 export function toDOMSpans(mapper, positions) {
 	let spans = [];
 	for (let position of positions) {
