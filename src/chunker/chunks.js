@@ -34,7 +34,7 @@ function* splitGroups(structure, options = {}) {
 	let minimumTokens = MIN_TOKENS * Math.min(1, tokenBudget / BUDGET_TOKENS);
 	let document = getDocument(structure);
 	let unicode = new Map();
-	for (let { sections: group, tokens } of groupSections(sections(document), maxSize, minSize, minimumTokens, unicode)) {
+	for (let { sections: group, tokens, reference } of groupSections(sections(document), maxSize, minSize, minimumTokens, unicode)) {
 		// Convert the estimated token budget to characters once per group.
 		// Explicit limits use UTF-16 units, including inserted outline context.
 		let scale = maxSize === undefined
@@ -69,7 +69,7 @@ function* splitGroups(structure, options = {}) {
 			return !!entry && entry.start <= offset && entry.span.entry.block.type === 'preformatted';
 		};
 		let pieces = [...splitText(text, maximum, minimum, carry, limitEnd, preserveWhitespace)];
-		yield { text, entries, spans, pieces, unicode };
+		yield { text, entries, spans, pieces, unicode, reference };
 	}
 }
 
@@ -81,7 +81,7 @@ export function countChunks(structure, options) {
 
 // Internal iterator: source spans live only until the caller builds its result.
 export function* iterateChunks(structure, options, withSpans = true) {
-	for (let { text, entries, spans, pieces, unicode } of splitGroups(structure, options)) {
+	for (let { text, entries, spans, pieces, unicode, reference } of splitGroups(structure, options)) {
 		let cursor = 0;
 		for (let [i, { start, end }] of pieces.entries()) {
 			while (entries[cursor].end <= start) cursor++;
@@ -90,7 +90,7 @@ export function* iterateChunks(structure, options, withSpans = true) {
 			let embedText = embeddingText(text, entries, cursor, start, end);
 			let chunk = { text: text.slice(start, end), embedText,
 				tokens: Math.round(estimateTokens(embedText, unicode)), outlinePath: first.span.outlinePath,
-				sections: sectionStarts(entries, cursor, start, end),
+				sections: sectionStarts(entries, cursor, start, end), reference,
 				pageLabel: pageLabel(structure, first.span.entry, offset),
 				sectionPart: i + 1, sectionParts: pieces.length };
 			if (withSpans) chunk.spans = sliceSpans(spans, entries, cursor, start, end);
@@ -101,7 +101,10 @@ export function* iterateChunks(structure, options, withSpans = true) {
 
 // One section per outline entry, read in reading order. Auxiliary text --
 // captions, tables, footnotes -- reads as paragraphs of the body. A later part
-// of a continued paragraph stays in the section its paragraph starts in.
+// of a continued paragraph stays in the section its paragraph starts in. A
+// section is split where its text turns into or out of reference text, so a
+// chunk is wholly one or the other: blocks flagged as references, and a
+// heading whose next body text in its section is one.
 function sections(document) {
 	let result = [];
 	let type = document.structure.metadata?.processor?.type;
@@ -123,26 +126,31 @@ function sections(document) {
 		contexts.push(context);
 	}
 	let chains = getChains(document);
-	let section = null, current = null;
-	for (let { entry } of readingOrder(document, document.entries.map(entry => ({ entry, start: 0 })))) {
-		if (excluded[entry.blockIndex]) continue;
-		let context = contexts[chains[entry.index]];
-		if (context !== current) {
-			current = context;
-			result.push(section = { ...context, body: {}, spans: [] });
+	let contextOf = entry => contexts[chains[entry.index]];
+	let entries = readingOrder(document, document.entries.map(entry => ({ entry, start: 0 })))
+		.map(({ entry }) => entry).filter(entry => !excluded[entry.blockIndex]);
+	let isReference = (entry, i) => {
+		if (references[entry.blockIndex]) return true;
+		if (entry.block.type !== 'heading') return false;
+		for (let next = i + 1; next < entries.length && contextOf(entries[next]) === contextOf(entry); next++) {
+			let { blockIndex, block, node } = entries[next];
+			if (!auxiliary[blockIndex] && block.type !== 'heading' && /\S/u.test(node.text)) return references[blockIndex];
 		}
-		let reference = references[entry.blockIndex];
-		if (!reference && hasSourceAnchor(entry, type)) {
+		return false;
+	};
+	let section = null;
+	entries.forEach((entry, i) => {
+		let context = contextOf(entry);
+		// Blank text stays with the text before it
+		let reference = !/\S/u.test(entry.node.text) && section?.context === context
+			? section.reference : isReference(entry, i);
+		if (section?.context !== context || section.reference !== reference) {
+			result.push(section = { ...context, context, reference, spans: [] });
+		}
+		if (hasSourceAnchor(entry, type)) {
 			section.spans.push({ entry, start: 0, end: entry.node.text.length, outlinePath: section.outlinePath });
 		}
-		// Classify body text independently of source anchors; excluded furniture,
-		// auxiliary text and whitespace are not evidence that a section contains
-		// only references.
-		if (!auxiliary[entry.blockIndex] && entry.block.type !== 'heading' && /\S/u.test(entry.node.text)) {
-			if (reference) section.body.hasReferenceBody = true;
-			else section.body.hasNonReferenceBody = true;
-		}
-	}
+	});
 	return result.filter(section => section.spans.length);
 }
 
@@ -294,7 +302,6 @@ function groupSections(sections, maxSize, minSize, minimumTokens, unicode) {
 		let heading = matchingHeading(source);
 		let headingOnly = !!heading && source.spans.every(span =>
 			span.entry.block === heading || !span.entry.node.text.trim());
-		if (source.body.hasReferenceBody && !source.body.hasNonReferenceBody && headingOnly) continue;
 		let section = { ...source, textLength: text.length, heading, headingOnly };
 		let counts = maxSize === undefined ? countScripts(text, unicode) : null;
 		let tokens = counts ? tokensFromCounts(counts) : 0;
@@ -311,21 +318,23 @@ function groupSections(sections, maxSize, minSize, minimumTokens, unicode) {
 				size = tokensFromCounts(counts.map((count, i) => count - headingCounts[i]));
 			}
 		}
-		let previous = groups.at(-1);
+		// Reference text and other text group separately, each as if the
+		// other weren't there
+		let previous = groups.findLast(group => group.reference === section.reference);
 		if (previous && previous.size < minimum) {
 			previous.sections.push(section);
 			previous.size += size + (useTokens ? 0 : 2);
 			previous.tokens += tokens;
 		}
-		else groups.push({ sections: [section], size, tokens });
+		else groups.push({ sections: [section], size, tokens, reference: section.reference });
 	}
-	mergeTail();
+	for (let reference of [false, true]) mergeTail(groups.filter(group => group.reference === reference));
 	return groups;
 
-	function mergeTail() {
-		let tail = groups.at(-1), previous = groups.at(-2);
+	function mergeTail(same) {
+		let tail = same.at(-1), previous = same.at(-2);
 		if (!previous || tail.size >= minimum) return;
-		groups.pop();
+		groups.splice(groups.indexOf(tail), 1);
 		previous.sections.push(...tail.sections);
 		previous.size += tail.size + (useTokens ? 0 : 2);
 		previous.tokens += tail.tokens;

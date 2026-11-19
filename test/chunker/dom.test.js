@@ -153,7 +153,7 @@ it('resolves partial source ranges inside nested blocks and excludes complete su
 	assert.equal(recoveredText(structure, { selectors: [{ type: 'TextPositionSelector', start: 1, end: 5 }] }), 'b\n\ncd\n\ne');
 	assert.equal(recoveredText(structure, { selectors: [{ type: 'TextPositionSelector', start: 0, end: 2 }] }), 'ab');
 	let excluded = restore(structure);
-	excluded.content[0].content[1].reference = true;
+	excluded.content[0].content[1].flowClass = 'excluded';
 	let [{ chunk, positions }] = roundTrip(excluded);
 	assert.equal(chunk.text, 'ab\n\nef');
 	assert.equal(positions.length, 2);

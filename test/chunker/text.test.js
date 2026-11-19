@@ -24,25 +24,28 @@ describe('chunk splitting', () => {
 		assert.equal(getTextChunks(textDocument(content, { outline: {} }), noOverlap)[0].text, 'Heading\n\nBody text');
 	});
 
-	it('suppresses only matching headings whose body consists entirely of references', () => {
+	it('keeps a reference-only section whole, with its heading, as reference chunks', () => {
 		let heading = paragraph('References', { type: 'heading' });
 		let outline = [{ title: 'References', ref: [0] }, { title: 'Following', ref: [2] }];
 		for (let body of [paragraph('Citation', { reference: true }),
 			{ type: 'blockquote', reference: true, content: [paragraph('Citation')] },
 			{ type: 'blockquote', content: [paragraph(' \n'), paragraph('Citation', { reference: true })] }]) {
 			let structure = textDocument([heading, body, paragraph('Following body')], { outline });
-			assert.deepEqual(getTextChunks(structure, noOverlap).map(chunk => chunk.text), ['Following body']);
+			let chunks = getTextChunks(structure, noOverlap);
+			assert.deepEqual(chunks.map(chunk => [chunk.text, chunk.reference]), [['Citation', true], ['Following body', false]]);
+			assert.equal(chunks[0].embedText, 'References\n\nCitation');
 		}
 		let structure = textDocument([heading, paragraph('Citation')], { outline: outline.slice(0, 1) });
-		assert.equal(getTextChunks(structure, noOverlap)[0].text, 'Citation');
+		assert.deepEqual(getTextChunks(structure, noOverlap).map(chunk => [chunk.text, chunk.reference]), [['Citation', false]]);
 		let headingOnly = textDocument([heading], { outline: outline.slice(0, 1) });
-		assert.equal(getTextChunks(headingOnly, noOverlap)[0].text, 'References');
+		assert.deepEqual(getTextChunks(headingOnly, noOverlap).map(chunk => [chunk.text, chunk.reference]), [['References', false]]);
 		let unmatched = textDocument([heading, paragraph('Citation', { reference: true })],
 			{ outline: [{ title: 'Different heading', ref: [0] }] });
-		assert.equal(getTextChunks(unmatched, noOverlap)[0].text, 'References');
+		assert.deepEqual(getTextChunks(unmatched, noOverlap).map(chunk => [chunk.text, chunk.reference]),
+			[['References\n\nCitation', true]]);
 	});
 
-	it('suppresses reference-only headings regardless of auxiliary block order', () => {
+	it('keeps auxiliary text in a reference list out of the reference chunks', () => {
 		for (let referenceFirst of [false, true]) {
 			for (let nested of [false, true]) {
 				let texts = ['References', ...(referenceFirst ? ['Citation', 'Footnote'] : ['Footnote', 'Citation']), 'Following'];
@@ -53,13 +56,17 @@ describe('chunk splitting', () => {
 				if (nested) structure.content[auxiliary] = { type: 'blockquote', content: [structure.content[auxiliary]] };
 				structure.content[auxiliary].flowClass = 'auxiliary';
 				structure.catalog.outline = [{ title: 'References', ref: [0] }, { title: 'Following', ref: [3] }];
+				// The heading goes with the references it heads, as far as the
+				// footnote lets it
 				let chunks = getTextChunks(structure, noOverlap);
-				assert.deepEqual(chunks.map(chunk => chunk.text), ['Footnote', 'Following']);
+				assert.deepEqual(chunks.map(chunk => [chunk.text, chunk.reference]), referenceFirst
+					? [['Citation', true], ['Footnote', false], ['Following', false]]
+					: [['References', true], ['Footnote', false], ['Citation', true], ['Following', false]]);
 			}
 		}
 	});
 
-	it('keeps main-body classification separate from auxiliary interruptions', () => {
+	it('splits a section where its text turns into or out of references, never grouping the two', () => {
 		for (let anchored of [false, true]) {
 			let structure = textDocument([
 				paragraph('References', { type: 'heading' }), paragraph('Citation', { reference: true }),
@@ -69,17 +76,31 @@ describe('chunk splitting', () => {
 				delete structure.content[3].anchor;
 				delete structure.content[3].content[0].anchor;
 			}
-			// The body after the heading keeps the section from reading as
-			// references only, anchored or not; the footnote between them
-			// keeps its place
+			// The heading goes with the citation it introduces; the text after
+			// the citation is in the same section, but not reference text
 			let chunks = getTextChunks(structure, noOverlap);
-			assert.deepEqual(chunks.map(chunk => chunk.text), anchored ? ['Footnote\n\nOrdinary body'] : ['Footnote']);
-			assert.equal(chunks[0].embedText, anchored ? 'References\n\nFootnote\n\nOrdinary body' : 'References\n\nFootnote');
+			assert.deepEqual(chunks.map(chunk => [chunk.text, chunk.reference, chunk.outlinePath]), [
+				['Citation', true, 'References'],
+				[anchored ? 'Footnote\n\nOrdinary body' : 'Footnote', false, 'References'],
+			]);
+			assert.equal(chunks[0].embedText, 'References\n\nCitation');
 		}
-		let structure = textDocument([paragraph('Heading', { type: 'heading' }),
+		// A reference list with no heading of its own, after a section's body
+		let structure = textDocument([
+			paragraph('Conclusions', { type: 'heading' }), paragraph('Short body.'),
+			paragraph('First citation', { reference: true }), paragraph('Second citation', { reference: true }),
+		], { outline: [{ title: 'Conclusions', ref: [0] }] });
+		assert.deepEqual(getTextChunks(structure).map(chunk => [chunk.text, chunk.reference]),
+			[['Short body.', false], ['First citation\n\nSecond citation', true]]);
+		let auxiliary = textDocument([paragraph('Heading', { type: 'heading' }),
 			paragraph('Auxiliary citation', { flowClass: 'auxiliary', reference: true })],
 		{ outline: [{ title: 'Heading', ref: [0] }] });
-		assert.deepEqual(getTextChunks(structure, noOverlap).map(chunk => chunk.text), ['Heading']);
+		assert.deepEqual(getTextChunks(auxiliary, noOverlap).map(chunk => [chunk.text, chunk.reference]),
+			[['Heading', false], ['Auxiliary citation', true]]);
+		// Text on either side of a reference list groups as if the list weren't there
+		let around = textDocument([paragraph('Before'), paragraph('Citation', { reference: true }), paragraph('After')]);
+		assert.deepEqual(getTextChunks(around).map(chunk => [chunk.text, chunk.reference]),
+			[['Before\n\nAfter', false], ['Citation', true]]);
 	});
 
 	it('keeps standalone headings around excluded furniture and whitespace-only references', () => {
@@ -99,7 +120,12 @@ describe('chunk splitting', () => {
 
 	it('keeps headings with unanchored ordinary body, including mixed reference sections', () => {
 		for (let type of ['pdf', 'epub', 'snapshot']) {
-			for (let body of [['Unmapped'], ['Citation', 'Unmapped'], ['Unmapped', 'Citation']]) {
+			for (let [body, expected] of [
+				[['Unmapped'], [['Preface', false], ['Actual introduction', false]]],
+				// The heading goes with the body text right after it
+				[['Citation', 'Unmapped'], [['Citation', true], ['Actual introduction', false]]],
+				[['Unmapped', 'Citation'], [['Preface', false], ['Citation', true], ['Actual introduction', false]]],
+			]) {
 				let texts = ['Preface', ...body, 'Introduction', 'Actual introduction'];
 				let structure = type === 'pdf' ? pdf(texts.map((text, i) => pdfBlock(text, 0, 0, i * 2))) : dom(texts, type);
 				let following = texts.length - 2;
@@ -114,9 +140,8 @@ describe('chunk splitting', () => {
 					};
 				}
 				structure.catalog.outline = [{ title: 'Preface', ref: [0] }, { title: 'Introduction', ref: [following] }];
-				let expected = ['Preface', 'Actual introduction'];
-				assert.deepEqual(getTextChunks(structure, noOverlap).map(chunk => chunk.text), expected);
-				assert.deepEqual(roundTrip(structure, noOverlap).map(({ chunk }) => chunk.text), expected);
+				assert.deepEqual(getTextChunks(structure, noOverlap).map(chunk => [chunk.text, chunk.reference]), expected);
+				assert.deepEqual(roundTrip(structure, noOverlap).map(({ chunk }) => [chunk.text, chunk.reference]), expected);
 			}
 		}
 	});
@@ -211,14 +236,15 @@ describe('chunk splitting', () => {
 		assert.equal(chunks[1].outlinePath, 'First > Second');
 	});
 
-	it('folds auxiliary passages into the body and leaves excluded and reference blocks out', () => {
+	it('folds auxiliary passages into the text around them, keeps references apart and leaves excluded blocks out', () => {
 		let structure = textDocument([
 			paragraph('Header', { flowClass: 'excluded' }), paragraph('Body'),
 			{ type: 'blockquote', flowClass: 'excluded', content: [paragraph('Hidden child')] },
 			paragraph('Reference', { reference: true }), paragraph('Caption', { flowClass: 'auxiliary' }),
 		]);
-		assert.deepEqual(getTextChunks(structure).map(chunk => chunk.text), ['Body\n\nCaption']);
-		assert.equal(getChunkCount(structure), 1);
+		assert.deepEqual(getTextChunks(structure).map(chunk => [chunk.text, chunk.reference]),
+			[['Body\n\nCaption', false], ['Reference', true]]);
+		assert.equal(getChunkCount(structure), 2);
 	});
 
 	it('sizes the actual text, traverses every piece of a large block, and preserves coverage', () => {

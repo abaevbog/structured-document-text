@@ -40,6 +40,8 @@ export interface TextChunk extends ChunkContent {
 	embedText: string;
 	/** Rounded script-based estimate for embedText; not an exact model token count. */
 	tokens: number;
+	/** Whether the text is a reference list's. Reference text is chunked apart from other text, so a chunk is wholly one or the other, and is for previews and reading rather than embedding. */
+	reference: boolean;
 	/** One-based passage number within this split group, which may combine short sections. */
 	sectionPart: number;
 	/** Total passages in this split group; 1 when unsplit. */

@@ -46,7 +46,7 @@ the package root and `src/read.js` do not load the chunker.
 For a preliminary progress total, use `getChunkCount(structure, options)` from
 either entry point. It shares the same selection and splitting rules and returns
 the same count as `getTextChunks()` or `getChunks()`, including chunks whose anchor
-would be `null`. It skips chunk output construction, final per-chunk token estimates,
+would be `null` and reference chunks. It skips chunk output construction, final per-chunk token estimates,
 location metadata and result sorting. Counting still performs text selection and
 splitting; it does not retain a plan for a later chunking call. Use the same
 immutable structure and options for both calls.
@@ -61,6 +61,7 @@ feed a page break, so both read as a space. It returns what `getTextChunks` retu
 | `embedText` | Embedding input with selected outline paths inserted at section boundaries. |
 | `tokens` | Rounded, script-based estimate for the complete `embedText`; not a model token count. |
 | `outlinePath` | Path at the first selected text; a chunk can cross sections. |
+| `reference` | Whether the chunk is reference text; see [text selection](#text-selection). |
 | `sections` | Each section the text crosses, in text order, as `{ outlinePath, start }`: the first at `0` with `outlinePath`, each later one at the offset of its first text. A heading replaced by context isn't in `text`, so this is where the text says a section begins. |
 | `pageLabel` | First selected page's label, or a one-based PDF page ordinal. `null` when unavailable or for synthetic EPUB locations. |
 | `sectionPart`, `sectionParts` | One-based passage number and total within a split group, which may combine short sections. |
@@ -101,20 +102,26 @@ enforce their model's actual token limit.
 
 ## Text selection
 
-- Reference blocks and `flowClass: 'excluded'` blocks are omitted with their subtrees.
+- `flowClass: 'excluded'` blocks are omitted with their subtrees.
+- Reference text -- blocks flagged `reference`, with their subtrees -- is kept,
+  but chunked apart from other text: a chunk is wholly reference text or wholly
+  not, as its `reference` field says. Reference chunks are meant for previews and
+  reading, not for embedding. A heading is reference text when the next body
+  text in its section is, so a reference list's heading goes with it.
 - Text reads in document order, except that the later parts of a paragraph
   continued on the next page follow its first part, ahead of anything between
   them. A later part stays in the outline section its paragraph starts in.
 - Auxiliary blocks -- captions, tables, footnotes, figure and formula text --
-  read as paragraphs of the body. Classification is inherited through
-  containers. Auxiliary text does not count when deciding whether a section
-  holds nothing but references.
+  read as paragraphs of the body, including inside a reference list, and are
+  never reference text unless flagged. Classification is inherited through
+  containers. Auxiliary text does not decide which text a heading goes with.
 - Short adjacent sections accumulate into groups; a short trailing group joins
-  the previous group. Chunks follow the order of the text.
+  the previous group. Reference text and other text group separately, each as if
+  the other weren't there, so text on either side of a reference list can share
+  a chunk. Chunks are ordered by their first text.
 - Complete headings directly targeted by the outline are replaced with context
   only when their titles match after whitespace normalization and the context fits.
-  Other headings stay in the excerpt. Standalone headings are retained; matching
-  headings whose body consists entirely of references are omitted.
+  Other headings stay in the excerpt. Standalone headings are retained.
 
 Both entry points omit text without source anchors before sizing. PDF text nodes
 need their own nonempty `textMap`; block maps and rectangles are not substitutes.
