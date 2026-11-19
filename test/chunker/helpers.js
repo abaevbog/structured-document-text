@@ -82,7 +82,7 @@ export function roundTrip(structure, options) {
 		let positions = getAnchorPositions(structure, restore(anchor));
 		assert.ok(positions?.length, `No positions for ${JSON.stringify(chunk.text)}`);
 		assert.deepEqual(getAnchorContent(structure, restore(anchor)),
-			{ text: chunk.text, outlinePath: chunk.outlinePath, pageLabel: chunk.pageLabel });
+			{ text: chunk.text, outlinePath: chunk.outlinePath, sections: chunk.sections, pageLabel: chunk.pageLabel });
 		return { chunk, anchor, positions };
 	});
 }

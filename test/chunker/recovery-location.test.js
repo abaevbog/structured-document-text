@@ -4,7 +4,7 @@ import { getChunks, getAnchorContent } from '../../src/chunker/index.js';
 import { noOverlap, document, pdfBlock, dom, restore } from './helpers.js';
 
 const heading = (text, page = 0) => pdfBlock(text, page, 0, 0, { type: 'heading' });
-const location = ({ text, outlinePath, pageLabel }) => ({ text, outlinePath, pageLabel });
+const location = ({ text, outlinePath, sections, pageLabel }) => ({ text, outlinePath, sections, pageLabel });
 
 describe('recovering a chunk with its location', () => {
 	it('names the section and page at the first recovered text, as the chunk does', () => {

@@ -634,6 +634,32 @@ it('joins a short trailing section to the preceding group', () => {
 	let chunks = roundTrip(structure, { maxSize: 100, minSize: 50, overlap: 0 });
 	assert.equal(chunks.length, 1);
 	assert.equal(chunks[0].chunk.text, 'a'.repeat(60) + '\n\nend');
+	assert.deepEqual(chunks[0].chunk.sections, [{ outlinePath: 'First', start: 0 }, { outlinePath: 'Last', start: 62 }]);
+});
+
+it('marks where each section of a group starts, its heading replaced by context', () => {
+	let heading = text => ({ type: 'heading', content: [{ text }] });
+	let structure = textDocument([
+		heading('Intro'), paragraph('Owls hunt at night.'), heading('Methods'), paragraph('We tracked forty owls.'),
+	], { outline: [{ title: 'Intro', ref: [0] }, { title: 'Methods', ref: [2] }] });
+	let chunks = roundTrip(structure).map(result => result.chunk);
+	assert.equal(chunks.length, 1);
+	assert.equal(chunks[0].text, 'Owls hunt at night.\n\nWe tracked forty owls.');
+	assert.deepEqual(chunks[0].sections, [
+		{ outlinePath: 'Intro', start: 0 },
+		{ outlinePath: 'Methods', start: chunks[0].text.indexOf('We tracked') },
+	]);
+});
+
+it('starts each piece of a split group in the section of its first text', () => {
+	let structure = dom(['abc', 'defghijklmnopqrstuvwxyz'], 'snapshot');
+	structure.catalog.outline = [{ title: 'First', ref: [0] }, { title: 'Second', ref: [1] }];
+	let chunks = roundTrip(structure, { maxSize: 10, minSize: 6, overlap: 0 }).map(result => result.chunk);
+	assert.ok(chunks.some(chunk => chunk.sections.length > 1));
+	for (let chunk of chunks) {
+		assert.deepEqual(chunk.sections[0], { outlinePath: chunk.outlinePath, start: 0 });
+		assert.ok(chunk.sections.slice(1).every(({ start }) => start > 0 && start < chunk.text.length));
+	}
 });
 
 it('does not repeat text across a paragraph boundary', () => {

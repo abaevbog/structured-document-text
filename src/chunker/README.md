@@ -31,7 +31,7 @@ const recovered = getAnchorContent(structure, anchor);
 if (recovered === null) {
     throw new Error(`Cannot recover chunk anchor: ${savedAnchorJSON}`);
 }
-// recovered is { text, outlinePath, pageLabel }; its text can differ from the original excerpt.
+// recovered is { text, outlinePath, sections, pageLabel }; its text can differ from the original excerpt.
 const positions = getAnchorPositions(structure, anchor);
 if (positions === null) {
     throw new Error(`Cannot resolve Reader positions: ${savedAnchorJSON}`);
@@ -61,6 +61,7 @@ feed a page break, so both read as a space. It returns what `getTextChunks` retu
 | `embedText` | Embedding input with selected outline paths inserted at section boundaries. |
 | `tokens` | Rounded, script-based estimate for the complete `embedText`; not a model token count. |
 | `outlinePath` | Path at the first selected text; a chunk can cross sections. |
+| `sections` | Each section the text crosses, in text order, as `{ outlinePath, start }`: the first at `0` with `outlinePath`, each later one at the offset of its first text. A heading replaced by context isn't in `text`, so this is where the text says a section begins. |
 | `pageLabel` | First selected page's label, or a one-based PDF page ordinal. `null` when unavailable or for synthetic EPUB locations. |
 | `sectionPart`, `sectionParts` | One-based passage number and total within a split group, which may combine short sections. |
 | `anchor` | Serializable source coverage; `null` if mapping fails. Present only with `getChunks`. |
@@ -163,9 +164,10 @@ entire element even when the chunk contains only part of its description.
 supplied SDT, orders and deduplicates the covered text, and applies the whitespace
 rules above. The order is the document's, except that a paragraph's later parts
 follow its first ahead of anything between them, as they do in chunk text. It
-returns `{ text, outlinePath, pageLabel }`, the section and page
+returns `{ text, outlinePath, sections, pageLabel }`, the section and page
 being those at the first recovered text, as the chunker names them at its first
-selected text. It does not rerun chunking or exclusion policy. Empty, malformed or
+selected text, and `sections` where each section in the recovered text starts,
+as the chunk's do in its text. It does not rerun chunking or exclusion policy. Empty, malformed or
 mixed-format anchors return `null`. Every represented PDF page must resolve some
 text, though individual rectangles on a surviving page may become empty. Every
 DOM selector must resolve; one failed selector returns `null` for the whole anchor.
@@ -188,7 +190,7 @@ nothing the render didn't show is selected.
 `getRangeSelection(structure, ranges)` takes content ranges and returns
 positions in the document, so that a selection made in a render of the
 structure can become a document annotation. It returns
-`{ text, outlinePath, pageLabel, positions }` for the text the ranges cover,
+`{ text, outlinePath, sections, pageLabel, positions }` for the text the ranges cover,
 with `positions` as the reader would store the selection: one per page of a
 PDF, or per two pages where the selection runs onto the next one, with that
 page's rectangles as `nextPageRects`; one per section of an EPUB, one for a

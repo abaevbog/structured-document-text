@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { getChunks } from '../../src/chunker/index.js';
+import { getChunks, getAnchorContent } from '../../src/chunker/index.js';
 import { getTextChunks } from '../../src/chunker/text.js';
 import { estimateTokens } from '../../src/chunker/chunks.js';
 import { discoverFixtures, isUpdateMode, readExpected, writeExpected } from '../helpers.js';
@@ -18,8 +18,9 @@ describe('real document fixtures', () => {
 				assert.ok(estimateTokens(chunk.embedText) <= 768 + 1e-7, 'Complete embedding input exceeds estimated token budget');
 				let { anchor } = chunk;
 				assert.ok(anchor);
-				let text = recoveredText(data, restore(anchor));
-				assert.equal(text, chunk.text);
+				let content = getAnchorContent(data, restore(anchor));
+				assert.equal(content?.text, chunk.text);
+				assert.deepEqual(content.sections, chunk.sections);
 			}
 			assert.ok(getTextChunks(data, { maxSize: 2400 }).every(chunk => chunk.embedText.length <= 2400));
 		});

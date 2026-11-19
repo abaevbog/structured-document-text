@@ -90,6 +90,7 @@ export function* iterateChunks(structure, options, withSpans = true) {
 			let embedText = embeddingText(text, entries, cursor, start, end);
 			let chunk = { text: text.slice(start, end), embedText,
 				tokens: Math.round(estimateTokens(embedText, unicode)), outlinePath: first.span.outlinePath,
+				sections: sectionStarts(entries, cursor, start, end),
 				pageLabel: pageLabel(structure, first.span.entry, offset),
 				sectionPart: i + 1, sectionParts: pieces.length };
 			if (withSpans) chunk.spans = sliceSpans(spans, entries, cursor, start, end);
@@ -224,6 +225,20 @@ function matchingHeading(section) {
 	let text = normalize(first.block.content.map(node => node.text ?? '').join(''));
 	let selected = spansText(section.spans.filter(span => span.entry.block === first.block));
 	return text && text === normalize(section.title) && text === normalize(selected) ? first.block : null;
+}
+
+// Where each section in text[start, end) starts in it: the first at 0, each
+// later one at its first text. A heading replaced by context isn't in the
+// text, so this is where the text says a section begins.
+function sectionStarts(entries, cursor, start, end) {
+	let sections = [];
+	for (let i = cursor; i < entries.length && entries[i].start < end; i++) {
+		let { outlinePath } = entries[i].span;
+		if (sections.at(-1)?.outlinePath !== outlinePath) {
+			sections.push({ outlinePath, start: sections.length ? entries[i].start - start : 0 });
+		}
+	}
+	return sections;
 }
 
 // Insert context at each selected section's start, including continuation chunks.

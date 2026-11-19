@@ -4,6 +4,7 @@
     "embedText": "Main Title\n\nFirst paragraph with bold and italic text.\n\nMain Title > Section One\n\nSome content in section one.\n\nItem one\n\nItem two\n\nItem three\n\nMain Title > Section Two\n\nContent with a link.\n\nMain Title > Section Two > Subsection\n\nDeeper content.\n\nA quoted passage.\n\nHeader 1\n\nHeader 2\n\nCell 1\n\nCell 2\n\nMain Title > Navigation Heading\n\nThis should be excluded from outline.\n\nCode block\nwith preserved whitespace\n\nMain Title > NFC Stress Tests\n\nCafé lattés are nice.\n\nViet Nam: Hṍ Chí Minh\n\nKorean: 한글\n\nNormal text, café is NFC but café is NFD, then more normal.\n\nEspañol and Swedish: ångström\n\nÀB́ĈD̃Ë\n\nNFC: café\nNFD: café",
     "tokens": 142,
     "outlinePath": "Main Title",
+    "sections": [{"outlinePath":"Main Title","start":0},{"outlinePath":"Main Title > Section One","start":44},{"outlinePath":"Main Title > Section Two","start":106},{"outlinePath":"Main Title > Section Two > Subsection","start":128},{"outlinePath":"Main Title > Navigation Heading","start":200},{"outlinePath":"Main Title > NFC Stress Tests","start":277}],
     "pageLabel": null,
     "sectionPart": 1,
     "sectionParts": 1,

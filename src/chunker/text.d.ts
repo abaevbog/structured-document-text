@@ -14,12 +14,22 @@ export interface ChunkingOptions {
 	overlap?: number;
 }
 
-/** What a chunk has: its text, and the section and page at the first of it */
+/** Where a section starts in a chunk's text */
+export interface ChunkSection {
+	/** The section's outline path, '' for text before the first outline entry. */
+	outlinePath: string;
+	/** UTF-16 offset into the text: 0 for the first section, the start of its first text for each later one. */
+	start: number;
+}
+
+/** What a chunk has: its text, the section and page at the first of it, and where each section in it starts */
 export interface ChunkContent {
 	/** Selected source text, excluding headings safely replaced by embedding context. */
 	text: string;
 	/** Path at the first selected text; a chunk can contain several short sections. */
 	outlinePath: string;
+	/** Each section the text crosses, in text order; the first has outlinePath. A heading replaced by context isn't in the text, so this is where a later section begins. */
+	sections: ChunkSection[];
 	/** First selected page's label, or PDF page ordinal when unlabeled. Null without a label or for synthetic EPUB locations. */
 	pageLabel: string | null;
 }

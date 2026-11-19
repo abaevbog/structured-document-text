@@ -1,7 +1,7 @@
 import { PDFPositionMapper } from './pdf.js';
 import { EPUBPositionMapper } from './epub.js';
 import { SnapshotPositionMapper } from './snapshot.js';
-import { getChains, getDocument, indexSpans, mergeSpans, readingOrder, spansText } from './document.js';
+import { getChains, getDocument, indexSpans, mergeSpans, readingOrder } from './document.js';
 import { iterateChunks, outlinePathAt, pageLabel } from './chunks.js';
 import { sameRef } from '../range.js';
 
@@ -147,14 +147,26 @@ function selectionSpans(document, ranges) {
 	return spans;
 }
 
-// The spans' text with the section and page at its start
+// The spans' text with the section and page at its start, and where each
+// section in it starts
 function contentOf(structure, spans) {
 	let document = getDocument(structure);
-	let { entry, start } = spans[0];
+	let chains = getChains(document);
+	let paths = new Map();
 	// A later part of a continued paragraph reads in the section its paragraph starts in
-	let sectionEntry = document.entries[getChains(document)[entry.index]];
-	return { text: spansText(spans), outlinePath: outlinePathAt(structure, sectionEntry.ref),
-		pageLabel: pageLabel(structure, entry, start) };
+	let sectionOf = (entry) => {
+		let first = chains[entry.index];
+		if (!paths.has(first)) paths.set(first, outlinePathAt(structure, document.entries[first].ref));
+		return paths.get(first);
+	};
+	let { text, entries } = indexSpans(spans);
+	let { entry, start } = spans[0];
+	let sections = [{ outlinePath: sectionOf(entry), start: 0 }];
+	for (let { span, start: at } of entries) {
+		let outlinePath = sectionOf(span.entry);
+		if (outlinePath !== sections.at(-1).outlinePath) sections.push({ outlinePath, start: at });
+	}
+	return { text, outlinePath: sections[0].outlinePath, sections, pageLabel: pageLabel(structure, entry, start) };
 }
 
 /**
