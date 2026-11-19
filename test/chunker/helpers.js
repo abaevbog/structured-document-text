@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { getChunks, getAnchorContent, getAnchorPositions } from '../../src/chunker/index.js';
+import { getChunks, getAnchorContent, getAnchorPositions, getAnchorSegments, getRangeSelection } from '../../src/chunker/index.js';
 
 export const noOverlap = { maxSize: 100, minSize: 0, overlap: 0 };
 export const paragraph = (text, extra = {}) => ({ type: 'paragraph', content: [{ text }], ...extra });
@@ -7,9 +7,31 @@ export const document = (content, type = 'pdf', catalog = {}) => ({
 	metadata: { processor: { type, version: 1 } }, catalog: { outline: [], pages: [], ...catalog }, content,
 });
 export const restore = value => JSON.parse(JSON.stringify(value));
-export const pdfAnchor = positions => ({ pageRects: positions.flatMap(({ pageIndex, rects }) => rects.map(rect => [pageIndex, ...rect])) });
+export const pdfAnchor = positions => ({ pageRects: positions.flatMap(({ pageIndex, rects, nextPageRects = [] }) => [
+	...rects.map(rect => [pageIndex, ...rect]),
+	...nextPageRects.map(rect => [pageIndex + 1, ...rect]),
+]) });
 // The recovered text alone, for tests of what an anchor covers.
 export const recoveredText = (structure, anchor) => getAnchorContent(structure, anchor)?.text ?? null;
+
+// The ranges of a chunk's segments between two offsets into its recovered
+// text, one per segment, the way a consumer of the segments describes a
+// selection; null for offsets not whole and in order within the text
+export function rangesBetween(structure, anchor, start, end) {
+	let segments = getAnchorSegments(structure, anchor);
+	let text = getAnchorContent(structure, anchor)?.text;
+	if (!segments || !Number.isInteger(start) || !Number.isInteger(end) || start < 0 || end > text.length || start >= end) return null;
+	let point = (segment, offset) => [...segment.ref, segment.offset + offset - segment.start];
+	return segments.filter(segment => Math.max(start, segment.start) < Math.min(end, segment.end))
+		.map(segment => [point(segment, Math.max(start, segment.start)), point(segment, Math.min(end, segment.end))]);
+}
+
+// Offsets into a chunk's recovered text as a selection. Null for offsets
+// not whole and in order within the text, or on nothing but separators.
+export function selectOffsets(structure, anchor, start, end) {
+	let ranges = rangesBetween(structure, anchor, start, end);
+	return ranges?.length ? getRangeSelection(structure, ranges) : null;
+}
 
 // Text-focused tests still use anchored SDT, without manufacturing PDF geometry.
 export function textDocument(content, catalog = {}) {

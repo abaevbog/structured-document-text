@@ -28,6 +28,22 @@ export class PDFPositionMapper {
 		return [...pages].map(([pageIndex, rects]) => ({ pageIndex, rects }));
 	}
 
+	// As the reader stores a selection: a position per page, a page the selection
+	// runs onto from the one before as that position's nextPageRects
+	toSelectionPositions(spans) {
+		let positions = this.toPositions(spans);
+		if (!positions) return null;
+		let paired = [];
+		for (let position of positions) {
+			let previous = paired.at(-1);
+			if (previous && !previous.nextPageRects && position.pageIndex === previous.pageIndex + 1) {
+				previous.nextPageRects = position.rects;
+			}
+			else paired.push(position);
+		}
+		return paired;
+	}
+
 	toAnchor(spans) {
 		let selected = spansByEntry(spans);
 		let lines = this._lines(spans, selected);
@@ -309,7 +325,7 @@ export class PDFPositionMapper {
 		};
 	}
 
-	toSpans(positions) {
+	toSpans(positions, { byCenter = false } = {}) {
 		let pages = new Map();
 		for (let [index, position] of positions.entries()) {
 			if (!Number.isInteger(position.pageIndex) || position.pageIndex < 0 || 'nextPageIndex' in position) return null;
@@ -351,7 +367,7 @@ export class PDFPositionMapper {
 					if (!query) continue;
 					query.visit(tree.rect, target => {
 						visitCharacters(tree, chars, target.rect, pageIndex, i => {
-							if (!containsRect(target.rect, chars[i])) return;
+							if (!byCenter && !containsRect(target.rect, chars[i])) return;
 							resolved.add(target.index);
 							hits ??= new Uint8Array(chars.length);
 							hits[i] = 1;
