@@ -14,12 +14,12 @@ describe('chunk splitting', () => {
 			let structure = textDocument(content, { outline: [null, false, [], { title, ref: [0],
 				children: [{ title: 'Child', ref: [1], children: 'invalid' }] }] });
 			let chunks = getTextChunks(structure, noOverlap);
-			assert.deepEqual(chunks.map(chunk => [chunk.text, chunk.outlinePath]), [['Heading', ''], ['Body text', 'Child']]);
+			assert.deepEqual(chunks.map(chunk => [chunk.text, chunk.sections[0].outlinePath]), [['Heading', []], ['Body text', ['Child']]]);
 		}
 		for (let ref of [[], [-1], [0.5], ['0'], [null], [Infinity], {}]) {
 			let structure = textDocument(content, { outline: [{ title: 'Parent', ref,
 				children: [{ title: 'Child', ref: [1] }] }] });
-			assert.deepEqual(getTextChunks(structure, noOverlap).map(chunk => chunk.outlinePath), ['', 'Parent > Child']);
+			assert.deepEqual(getTextChunks(structure, noOverlap).map(chunk => chunk.sections[0].outlinePath), [[], ['Parent', 'Child']]);
 		}
 		assert.equal(getTextChunks(textDocument(content, { outline: {} }), noOverlap)[0].text, 'Heading\n\nBody text');
 	});
@@ -79,9 +79,9 @@ describe('chunk splitting', () => {
 			// The heading goes with the citation it introduces; the text after
 			// the citation is in the same section, but not reference text
 			let chunks = getTextChunks(structure, noOverlap);
-			assert.deepEqual(chunks.map(chunk => [chunk.text, chunk.reference, chunk.outlinePath]), [
-				['Citation', true, 'References'],
-				[anchored ? 'Footnote\n\nOrdinary body' : 'Footnote', false, 'References'],
+			assert.deepEqual(chunks.map(chunk => [chunk.text, chunk.reference, chunk.sections[0].outlinePath]), [
+				['Citation', true, ['References']],
+				[anchored ? 'Footnote\n\nOrdinary body' : 'Footnote', false, ['References']],
 			]);
 			assert.equal(chunks[0].embedText, 'References\n\nCitation');
 		}
@@ -233,7 +233,7 @@ describe('chunk splitting', () => {
 			{ outline: [{ title: 'First', ref: [0], children: [{ title: 'Second', ref: [1, 0] }] }] });
 		let chunks = getTextChunks(structure, { ...noOverlap, minSize: 0 });
 		assert.deepEqual(chunks.map(p => p.text), ['Introduction', 'Nested\n\nBody']);
-		assert.equal(chunks[1].outlinePath, 'First > Second');
+		assert.deepEqual(chunks[1].sections[0].outlinePath, ['First', 'Second']);
 	});
 
 	it('folds auxiliary passages into the text around them, keeps references apart and leaves excluded blocks out', () => {
@@ -488,7 +488,7 @@ describe('embedding context and heading selection', () => {
 			let [{ chunk, positions }] = roundTrip(structure, { maxSize: 400, minSize: 100, overlap: 0 });
 			assert.equal(chunk.text, 'We collected samples.\n\nWe found three patterns.');
 			assert.equal(chunk.embedText, 'Study > Methods\n\nWe collected samples.\n\nStudy > Results\n\nWe found three patterns.');
-			assert.equal(chunk.outlinePath, 'Study > Methods');
+			assert.deepEqual(chunk.sections[0].outlinePath, ['Study', 'Methods']);
 			assert.equal(positions.length, 2);
 			if (type === 'pdf') assert.deepEqual(positions.map(position => position.pageIndex), [1, 3]);
 		});
@@ -498,8 +498,8 @@ describe('embedding context and heading selection', () => {
 		let structure = textDocument([{ type: 'blockquote', content: [
 			{ type: 'heading', content: [{ text: ' Methods  ' }, { text: '\nand setup ' }] }, paragraph('Body'),
 		] }], { outline: [{ title: 'Methods and setup', ref: [0, 0] }] });
-		assert.deepEqual(getTextChunks(structure, noOverlap).map(({ text, embedText, outlinePath }) => [text, embedText, outlinePath]),
-			[['Body', 'Methods and setup\n\nBody', 'Methods and setup']]);
+		assert.deepEqual(getTextChunks(structure, noOverlap).map(({ text, embedText, sections }) => [text, embedText, sections[0].outlinePath]),
+			[['Body', 'Methods and setup\n\nBody', ['Methods and setup']]]);
 	});
 
 	it('keeps unmatched headings and ordinary or container outline targets', () => {
@@ -550,7 +550,7 @@ describe('embedding context and heading selection', () => {
 		for (let chunk of chunks) {
 			assert.ok(chunk.text.length <= 82);
 			assert.ok(chunk.embedText.length <= 100);
-			assert.ok(chunk.embedText.startsWith(chunk.outlinePath + '\n\n'));
+			assert.ok(chunk.embedText.startsWith(chunk.sections[0].outlinePath.join(' > ') + '\n\n'));
 			assert.ok(!/Methods|Results/u.test(chunk.text));
 		}
 	});
@@ -619,7 +619,7 @@ it('groups small outline sections and skips empty sections without losing inline
 	let structure = textDocument([paragraph(' '), { type: 'paragraph', content: [{ text: 'A  ' }, { text: ' B' }] }, paragraph(' C ')]);
 	structure.catalog.outline = ['Empty', 'A', 'B', 'C'].map((title, i) => ({ title, ref: [[0], [1], [1, 1], [2]][i] }));
 	assert.deepEqual(getTextChunks(structure, { maxSize: 10, minSize: 10, overlap: 0 })
-		.map(({ text, embedText, outlinePath }) => [text, embedText, outlinePath]), [['A   B\n\nC', 'A   B\n\nC', 'A']]);
+		.map(({ text, embedText, sections }) => [text, embedText, sections[0].outlinePath]), [['A   B\n\nC', 'A   B\n\nC', ['A']]]);
 });
 
 it('uses smaller automatic chunks for CJK while explicit character limits are script-independent', () => {
@@ -649,8 +649,7 @@ it('uses the first selected outline path when a merged group splits across secti
 	let structure = dom(['abc', 'defghijklmnopqrstuvwxyz'], 'snapshot');
 	structure.catalog.outline = [{ title: 'First', ref: [0] }, { title: 'Second', ref: [1] }];
 	let chunks = roundTrip(structure, { maxSize: 10, minSize: 6, overlap: 0 }).map(result => result.chunk);
-	assert.equal(chunks[0].outlinePath, 'First');
-	assert.ok(chunks.slice(1).every(chunk => chunk.outlinePath === 'Second'));
+	assert.deepEqual(chunks.map(chunk => chunk.sections[0].outlinePath), [['First'], ...chunks.slice(1).map(() => ['Second'])]);
 	assert.equal(chunks.map(chunk => chunk.text).join('').replace(/\s/gu, ''), 'abcdefghijklmnopqrstuvwxyz');
 });
 
@@ -660,7 +659,7 @@ it('joins a short trailing section to the preceding group', () => {
 	let chunks = roundTrip(structure, { maxSize: 100, minSize: 50, overlap: 0 });
 	assert.equal(chunks.length, 1);
 	assert.equal(chunks[0].chunk.text, 'a'.repeat(60) + '\n\nend');
-	assert.deepEqual(chunks[0].chunk.sections, [{ outlinePath: 'First', start: 0 }, { outlinePath: 'Last', start: 62 }]);
+	assert.deepEqual(chunks[0].chunk.sections, [{ outlinePath: ['First'], start: 0 }, { outlinePath: ['Last'], start: 62 }]);
 });
 
 it('marks where each section of a group starts, its heading replaced by context', () => {
@@ -672,8 +671,8 @@ it('marks where each section of a group starts, its heading replaced by context'
 	assert.equal(chunks.length, 1);
 	assert.equal(chunks[0].text, 'Owls hunt at night.\n\nWe tracked forty owls.');
 	assert.deepEqual(chunks[0].sections, [
-		{ outlinePath: 'Intro', start: 0 },
-		{ outlinePath: 'Methods', start: chunks[0].text.indexOf('We tracked') },
+		{ outlinePath: ['Intro'], start: 0 },
+		{ outlinePath: ['Methods'], start: chunks[0].text.indexOf('We tracked') },
 	]);
 });
 
@@ -683,7 +682,7 @@ it('starts each piece of a split group in the section of its first text', () => 
 	let chunks = roundTrip(structure, { maxSize: 10, minSize: 6, overlap: 0 }).map(result => result.chunk);
 	assert.ok(chunks.some(chunk => chunk.sections.length > 1));
 	for (let chunk of chunks) {
-		assert.deepEqual(chunk.sections[0], { outlinePath: chunk.outlinePath, start: 0 });
+		assert.equal(chunk.sections[0].start, 0);
 		assert.ok(chunk.sections.slice(1).every(({ start }) => start > 0 && start < chunk.text.length));
 	}
 });

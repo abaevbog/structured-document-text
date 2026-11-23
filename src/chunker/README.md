@@ -31,7 +31,7 @@ const recovered = getAnchorContent(structure, anchor);
 if (recovered === null) {
     throw new Error(`Cannot recover chunk anchor: ${savedAnchorJSON}`);
 }
-// recovered is { text, outlinePath, sections, pageLabel }; its text can differ from the original excerpt.
+// recovered is { text, sections, pageLabel }; its text can differ from the original excerpt.
 const positions = getAnchorPositions(structure, anchor);
 if (positions === null) {
     throw new Error(`Cannot resolve Reader positions: ${savedAnchorJSON}`);
@@ -55,14 +55,22 @@ For plain text with no structure, both entry points export `getPlainTextChunks(t
 Blank lines separate its paragraphs; a single newline is a wrapped line and a form
 feed a page break, so both read as a space. It returns what `getTextChunks` returns.
 
+For the sections of a document's chunks as a tree, both entry points export
+`getChunkOutline(chunks)`. It takes all of the chunks in order, as cut or as
+recovered from their anchors, and returns `{ title, chunks, children }` entries,
+one per outline path, in the order the text first comes to them. `chunks` are
+`[first, last]` pairs of chunk indexes, one per run of chunks that follow one
+another, with the section's text or its subsections'. A section the text comes
+back to after another one has more than one pair. Text before the first outline
+entry is under an entry with a `null` title.
+
 | Field | Meaning |
 | --- | --- |
 | `text` | Selected source excerpt. |
-| `embedText` | Embedding input with selected outline paths inserted at section boundaries. |
+| `embedText` | Embedding input with selected outline paths inserted at section boundaries, each path's titles joined with ` > `. |
 | `tokens` | Rounded, script-based estimate for the complete `embedText`; not a model token count. |
-| `outlinePath` | Path at the first selected text; a chunk can cross sections. |
 | `reference` | Whether the chunk is reference text; see [text selection](#text-selection). |
-| `sections` | Each section the text crosses, in text order, as `{ outlinePath, start }`: the first at `0` with `outlinePath`, each later one at the offset of its first text. A heading replaced by context isn't in `text`, so this is where the text says a section begins. |
+| `sections` | Each section the text crosses, in text order, as `{ outlinePath, start }`: the one at the first selected text at `0`, each later one at the offset of its first text. `outlinePath` is an array of the section's headings' titles from the outermost, empty before the first outline entry. A heading replaced by context isn't in `text`, so this is where the text says a section begins. |
 | `pageLabel` | First selected page's label, or a one-based PDF page ordinal. `null` when unavailable or for synthetic EPUB locations. |
 | `sectionPart`, `sectionParts` | One-based passage number and total within a split group, which may combine short sections. |
 | `anchor` | Serializable source coverage; `null` if mapping fails. Present only with `getChunks`. |
@@ -171,9 +179,9 @@ entire element even when the chunk contains only part of its description.
 supplied SDT, orders and deduplicates the covered text, and applies the whitespace
 rules above. The order is the document's, except that a paragraph's later parts
 follow its first ahead of anything between them, as they do in chunk text. It
-returns `{ text, outlinePath, sections, pageLabel }`, the section and page
-being those at the first recovered text, as the chunker names them at its first
-selected text, and `sections` where each section in the recovered text starts,
+returns `{ text, sections, pageLabel }`, the page being that at the first
+recovered text, as the chunker names it at its first selected text, and
+`sections` where each section in the recovered text starts, the first at `0`,
 as the chunk's do in its text. It does not rerun chunking or exclusion policy. Empty, malformed or
 mixed-format anchors return `null`. Every represented PDF page must resolve some
 text, though individual rectangles on a surviving page may become empty. Every
@@ -197,7 +205,7 @@ nothing the render didn't show is selected.
 `getRangeSelection(structure, ranges)` takes content ranges and returns
 positions in the document, so that a selection made in a render of the
 structure can become a document annotation. It returns
-`{ text, outlinePath, sections, pageLabel, positions }` for the text the ranges cover,
+`{ text, sections, pageLabel, positions }` for the text the ranges cover,
 with `positions` as the reader would store the selection: one per page of a
 PDF, or per two pages where the selection runs onto the next one, with that
 page's rectangles as `nextPageRects`; one per section of an EPUB, one for a

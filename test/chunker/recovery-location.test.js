@@ -4,7 +4,7 @@ import { getChunks, getAnchorContent } from '../../src/chunker/index.js';
 import { noOverlap, document, pdfBlock, dom, restore } from './helpers.js';
 
 const heading = (text, page = 0) => pdfBlock(text, page, 0, 0, { type: 'heading' });
-const location = ({ text, outlinePath, sections, pageLabel }) => ({ text, outlinePath, sections, pageLabel });
+const location = ({ text, sections, pageLabel }) => ({ text, sections, pageLabel });
 
 describe('recovering a chunk with its location', () => {
 	it('names the section and page at the first recovered text, as the chunk does', () => {
@@ -18,7 +18,7 @@ describe('recovering a chunk with its location', () => {
 		});
 		let chunks = getChunks(structure, noOverlap);
 		assert.ok(chunks.length > 3);
-		assert.deepEqual(new Set(chunks.map(chunk => chunk.outlinePath)), new Set(['Introduction', 'Methods']));
+		assert.deepEqual(new Set(chunks.map(chunk => chunk.sections[0].outlinePath.join(' > '))), new Set(['Introduction', 'Methods']));
 		assert.deepEqual(new Set(chunks.map(chunk => chunk.pageLabel)), new Set(['i', '2', '3']));
 		for (let chunk of chunks) {
 			assert.deepEqual(getAnchorContent(structure, restore(chunk.anchor)), location(chunk));
@@ -33,7 +33,7 @@ describe('recovering a chunk with its location', () => {
 			for (let chunk of chunks) {
 				assert.deepEqual(getAnchorContent(structure, restore(chunk.anchor)), location(chunk));
 			}
-			assert.equal(chunks.at(-1).outlinePath, 'Two');
+			assert.deepEqual(chunks.at(-1).sections[0].outlinePath, ['Two']);
 			assert.equal(getAnchorContent(structure, chunks.at(-1).anchor).pageLabel, null);
 		}
 	});

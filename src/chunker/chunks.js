@@ -89,7 +89,7 @@ export function* iterateChunks(structure, options, withSpans = true) {
 			let offset = first.span.start + start - first.start;
 			let embedText = embeddingText(text, entries, cursor, start, end);
 			let chunk = { text: text.slice(start, end), embedText,
-				tokens: Math.round(estimateTokens(embedText, unicode)), outlinePath: first.span.outlinePath,
+				tokens: Math.round(estimateTokens(embedText, unicode)),
 				sections: sectionStarts(entries, cursor, start, end), reference,
 				pageLabel: pageLabel(structure, first.span.entry, offset),
 				sectionPart: i + 1, sectionParts: pieces.length };
@@ -117,7 +117,7 @@ function sections(document) {
 	// The outline entry each text node sits under, in document order
 	let outline = flattenOutline(document.structure.catalog?.outline ?? []).sort((a, b) => compareRefs(a.ref, b.ref));
 	let boundary = 0;
-	let context = { outlinePath: '' };
+	let context = { outlinePath: [] };
 	let contexts = [];
 	for (let entry of document.entries) {
 		while (boundary < outline.length && compareRefs(outline[boundary].ref, entry.ref) <= 0) {
@@ -156,12 +156,17 @@ function sections(document) {
 
 // The path of the last outline entry at or before a ref: the section it sits in.
 export function outlinePathAt(structure, ref) {
-	let path = '';
+	let path = [];
 	for (let item of flattenOutline(structure.catalog?.outline ?? []).sort((a, b) => compareRefs(a.ref, b.ref))) {
 		if (compareRefs(item.ref, ref) > 0) break;
 		path = item.outlinePath;
 	}
 	return path;
+}
+
+// Whether two outline paths have the same titles
+export function sameOutlinePath(a, b) {
+	return a.length === b.length && a.every((title, i) => title === b[i]);
 }
 
 // Labels are display metadata, never SDT addresses. Catalog boundaries resolve
@@ -201,7 +206,8 @@ function selectContext(sections, allowance, measure) {
 	for (let section of sections) {
 		// A heading-only section has no body to attach context to. Keep its text
 		// and source anchor instead of producing an empty or unanchored chunk.
-		let path = section.headingOnly ? '' : section.outlinePath;
+		// The context is the path's titles on one line
+		let path = section.headingOnly ? '' : section.outlinePath.join(' > ');
 		if (runs.at(-1)?.path !== path) runs.push({ path, size: path ? measure(path + '\n\n') : 0, sections: [] });
 		runs.at(-1).sections.push(section);
 	}
@@ -242,7 +248,7 @@ function sectionStarts(entries, cursor, start, end) {
 	let sections = [];
 	for (let i = cursor; i < entries.length && entries[i].start < end; i++) {
 		let { outlinePath } = entries[i].span;
-		if (sections.at(-1)?.outlinePath !== outlinePath) {
+		if (!sections.length || !sameOutlinePath(sections.at(-1).outlinePath, outlinePath)) {
 			sections.push({ outlinePath, start: sections.length ? entries[i].start - start : 0 });
 		}
 	}
@@ -384,7 +390,7 @@ function flattenOutline(items, ancestors = []) {
 		let validRef = Array.isArray(item.ref) && item.ref.length
 			&& item.ref.every(index => Number.isSafeInteger(index) && index >= 0);
 		return [
-			...(title && validRef ? [{ ref: item.ref, title, outlinePath: path.join(' > ') }] : []),
+			...(title && validRef ? [{ ref: item.ref, title, outlinePath: path }] : []),
 			...flattenOutline(item.children ?? [], path),
 		];
 	});

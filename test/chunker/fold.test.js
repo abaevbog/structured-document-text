@@ -58,9 +58,9 @@ describe('folding auxiliary text', () => {
 		assert.equal(chunk.text, 'The results were significant in every trial.\n\n1 A footnote.\n\nSites and dates.\n\nA later paragraph.');
 		assert.equal(chunk.embedText,
 			'Findings\n\nThe results were significant in every trial.\n\n1 A footnote.\n\nTable 2\n\nSites and dates.\n\nA later paragraph.');
-		assert.deepEqual(cut(structure).map(chunk => [chunk.text, chunk.outlinePath]), [
-			['The results were significant in every trial.\n\n1 A footnote.', 'Findings'],
-			['Sites and dates.\n\nA later paragraph.', 'Table 2'],
+		assert.deepEqual(cut(structure).map(chunk => [chunk.text, chunk.sections[0].outlinePath]), [
+			['The results were significant in every trial.\n\n1 A footnote.', ['Findings']],
+			['Sites and dates.\n\nA later paragraph.', ['Table 2']],
 		]);
 	});
 
@@ -72,8 +72,8 @@ describe('folding auxiliary text', () => {
 		let chunks = cut(structure, { maxSize: 60, minSize: 0, overlap: 0 });
 		let opening = chunks.find(chunk => chunk.text.startsWith('The effect'));
 		assert.ok(opening);
-		assert.equal(opening.outlinePath, 'Findings');
-		assert.equal(getAnchorContent(structure, opening.anchor).outlinePath, 'Findings');
+		assert.deepEqual(opening.sections[0].outlinePath, ['Findings']);
+		assert.deepEqual(getAnchorContent(structure, opening.anchor).sections[0].outlinePath, ['Findings']);
 	});
 
 	it('does not read a paragraph as continuing excluded text, in the cut or in recovery', () => {

@@ -2,7 +2,7 @@ import { PDFPositionMapper } from './pdf.js';
 import { EPUBPositionMapper } from './epub.js';
 import { SnapshotPositionMapper } from './snapshot.js';
 import { getChains, getDocument, indexSpans, mergeSpans, readingOrder } from './document.js';
-import { iterateChunks, outlinePathAt, pageLabel } from './chunks.js';
+import { iterateChunks, outlinePathAt, pageLabel, sameOutlinePath } from './chunks.js';
 import { sameRef } from '../range.js';
 
 const formats = { pdf: PDFPositionMapper, epub: EPUBPositionMapper, snapshot: SnapshotPositionMapper };
@@ -147,8 +147,8 @@ function selectionSpans(document, ranges) {
 	return spans;
 }
 
-// The spans' text with the section and page at its start, and where each
-// section in it starts
+// The spans' text with the page at its start, and where each section in it
+// starts, the first at the text's start
 function contentOf(structure, spans) {
 	let document = getDocument(structure);
 	let chains = getChains(document);
@@ -164,9 +164,9 @@ function contentOf(structure, spans) {
 	let sections = [{ outlinePath: sectionOf(entry), start: 0 }];
 	for (let { span, start: at } of entries) {
 		let outlinePath = sectionOf(span.entry);
-		if (outlinePath !== sections.at(-1).outlinePath) sections.push({ outlinePath, start: at });
+		if (!sameOutlinePath(outlinePath, sections.at(-1).outlinePath)) sections.push({ outlinePath, start: at });
 	}
-	return { text, outlinePath: sections[0].outlinePath, sections, pageLabel: pageLabel(structure, entry, start) };
+	return { text, sections, pageLabel: pageLabel(structure, entry, start) };
 }
 
 /**
